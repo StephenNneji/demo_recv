@@ -139,6 +139,7 @@ setup(
     long_description='',
     packages=['rat'],
     package_data={'rat': [get_shared_object_name(libevent[0])]},
+    include_package_data=True,
     libraries=[libevent],
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.4', 'numpy'],
