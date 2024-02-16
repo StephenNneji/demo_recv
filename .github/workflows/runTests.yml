@@ -38,7 +38,4 @@ jobs:
           cd rat
           ls
           cd ..
-          cd build
-          ls
-          cd ..
           python examples/DSPC_custom_layers_example.py
