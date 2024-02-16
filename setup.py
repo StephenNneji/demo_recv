@@ -54,7 +54,7 @@ class BuildExt(build_ext):
     """A custom build extension for adding compiler-specific options."""
     c_opts = {
         'msvc': ['/EHsc'],
-        'unix': ['-fopenmp'],
+        'unix': ['-fopenmp', '-std=c++11'],
     }
     l_opts = {
         'msvc': [],
@@ -63,8 +63,8 @@ class BuildExt(build_ext):
 
     if sys.platform == 'darwin':
         darwin_opts = ['-stdlib=libc++', '-mmacosx-version-min=10.7']
-        c_opts['unix'] += darwin_opts
-        l_opts['unix'] = darwin_opts
+        c_opts['unix'] = [*darwin_opts, '-fopenmp']
+        l_opts['unix'] = [*darwin_opts, '-lomp']
 
     def build_extensions(self):
         ct = self.compiler.compiler_type
@@ -75,7 +75,6 @@ class BuildExt(build_ext):
                 self.compiler.compiler_so.remove('-Wstrict-prototypes')
 
             opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
-            # opts.append('-std=c++11')
             if has_flag(self.compiler, '-fvisibility=hidden'):
                 opts.append('-fvisibility=hidden')
         elif ct == 'msvc':
