@@ -31,7 +31,7 @@ ext_modules = [
 # check whether compiler supports a flag
 def has_flag(compiler, flagname):
     import tempfile
-    from distutils.errors import CompileError
+    from setuptools.errors import CompileError
     with tempfile.NamedTemporaryFile('w', suffix='.cpp') as f:
         f.write('int main (int argc, char **argv) { return 0; }')
         try:
@@ -83,13 +83,24 @@ class BuildExt(build_ext):
             ext.extra_compile_args = opts
             ext.extra_link_args = link_opts
         build_ext.build_extensions(self)
+    
+    def run(self):
+        super().run()
+        if self.inplace:
+            build_py = self.get_finalized_command('build_py')
+            obj_name = get_shared_object_name(libevent[0])
+            dest = f'{build_py.get_package_dir("rat")}/{obj_name}'
+            src = f'{build_py.build_lib}/rat/{obj_name}'
+            build_py.copy_file(src, dest)
+            
+
 
 
 class BuildClib(build_clib):
     def initialize_options(self):
         super().initialize_options()
         build_py = self.get_finalized_command('build_py')
-        self.build_clib =  f'{build_py.build_lib}/rat'
+        self.build_clib = f'{build_py.build_lib}/rat'
 
     def build_libraries(self, libraries):
         # bug in distutils: flag not valid for c++
@@ -139,7 +150,7 @@ setup(
     long_description='',
     packages=['rat'],
     include_package_data=True,
-    package_data={'': ['./eventManager.dylib']},
+    package_data={'': [get_shared_object_name(libevent[0])]},
     libraries=[libevent],
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.4', 'numpy'],
