@@ -139,7 +139,7 @@ setup(
     long_description='',
     packages=['rat'],
     include_package_data=True,
-    package_data={'': [get_shared_object_name(libevent[0])]},
+    package_data={'': ['./eventManager.dylib']},
     libraries=[libevent],
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.4', 'numpy'],
