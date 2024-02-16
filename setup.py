@@ -62,7 +62,7 @@ class BuildExt(build_ext):
     }
 
     if sys.platform == 'darwin':
-        darwin_opts = ['-stdlib=libc++', '-mmacosx-version-min=10.7']
+        darwin_opts = ['-stdlib=libc++', '-mmacosx-version-min=10.9']
         c_opts['unix'] = [*darwin_opts, '-fopenmp']
         l_opts['unix'] = [*darwin_opts, '-lomp']
 
@@ -145,6 +145,12 @@ setup(
     install_requires=['pybind11>=2.4', 'numpy'],
     python_requires='>=3.9',
     # setup_requires=['pybind11>=2.4'],
-    cmdclass={'build_ext': BuildExt, 'build_clib': BuildClib},
+    cmdclass={'build_clib': BuildClib, 'build_ext': BuildExt},
+    extras_require={"Matlab_2023b": ["matlabengine==23.2.1"],
+                    "Matlab_2023a": ["matlabengine==9.14.3"],
+                    "Matlab-2022b": ["matlabengine==9.13.9"],
+                    "Matlab_2022a": ["matlabengine==9.12.19"],
+                    "Matlab_2021b": ["matlabengine==9.11.21"],
+                    "Matlab_2021a": ["matlabengine==9.10.3"]},
     zip_safe=False,
 )

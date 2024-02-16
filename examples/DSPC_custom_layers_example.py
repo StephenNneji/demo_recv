@@ -2,7 +2,7 @@ import faulthandler
 import numpy as np
 from customBilayer import customBilayer
 from rat import events, rat_core
-from rat.misc import MatlabWrapper, DylibWrapper
+from rat.misc import  DylibWrapper # MatlabWrapper
 
 faulthandler.enable()
 
