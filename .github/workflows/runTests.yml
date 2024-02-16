@@ -35,4 +35,5 @@ jobs:
           export CXXFLAGS="$CXXFLAGS -I/usr/local/opt/libomp/include"
           export LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/local/opt/libomp/lib -L/usr/local/opt/libomp/lib -lomp"
           python -m pip install .
-          python examples/DSPC_custom_layers_example.py
+          cd /Users/runner/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/rat/
+          ls
