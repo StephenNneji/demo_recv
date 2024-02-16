@@ -34,8 +34,5 @@ jobs:
           export CFLAGS="$CFLAGS -I/usr/local/opt/libomp/include"
           export CXXFLAGS="$CXXFLAGS -I/usr/local/opt/libomp/include"
           export LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/local/opt/libomp/lib -L/usr/local/opt/libomp/lib -lomp"
-          python -m pip install -e .
-          cd rat
-          ls
-          cd ..
+          python -m pip install .
           python examples/DSPC_custom_layers_example.py
