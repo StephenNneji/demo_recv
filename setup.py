@@ -89,7 +89,7 @@ class BuildClib(build_clib):
     def initialize_options(self):
         super().initialize_options()
         build_py = self.get_finalized_command('build_py')
-        self.build_clib =  build_py.get_package_dir("rat")
+        self.build_clib =  f'{build_py.build_lib}/rat'
 
     def build_libraries(self, libraries):
         # bug in distutils: flag not valid for c++
