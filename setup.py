@@ -1,10 +1,12 @@
 from glob import glob
+from pathlib import Path
 import platform
+import sys
+import pybind11
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 from setuptools.command.build_clib import build_clib
-import sys
-import pybind11
+
 
 __version__ = '0.0.0'
 
@@ -86,14 +88,17 @@ class BuildExt(build_ext):
     
     def run(self):
         super().run()
+        build_py = self.get_finalized_command('build_py')
+        package_dir = f'{build_py.build_lib}/rat/'
+        for p in Path(package_dir).glob("**/*"):
+            if p.suffix in {".exp", ".a", ".lib"}:
+                p.unlink() 
+                
         if self.inplace:
-            build_py = self.get_finalized_command('build_py')
             obj_name = get_shared_object_name(libevent[0])
-            dest = f'{build_py.get_package_dir("rat")}/{obj_name}'
             src = f'{build_py.build_lib}/rat/{obj_name}'
+            dest = f'{build_py.get_package_dir("rat")}/{obj_name}'
             build_py.copy_file(src, dest)
-            
-
 
 
 class BuildClib(build_clib):
@@ -111,7 +116,7 @@ class BuildClib(build_clib):
 
         compiler_type = self.compiler.compiler_type
         if compiler_type == 'msvc':
-            compile_args = ['/std:c++11', '/EHsc', '/LD']
+            compile_args = ['/EHsc', '/LD']
         else:
             compile_args = ['-std=c++11', '-fPIC']
 
@@ -153,7 +158,7 @@ setup(
     package_data={'': [get_shared_object_name(libevent[0])]},
     libraries=[libevent],
     ext_modules=ext_modules,
-    install_requires=['pybind11>=2.4', 'numpy'],
+    install_requires=['numpy'],
     python_requires='>=3.9',
     # setup_requires=['pybind11>=2.4'],
     cmdclass={'build_clib': BuildClib, 'build_ext': BuildExt},
