@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
-      - name: Install (MacOS) 
+      - name: Install OMP (MacOS) 
         if: runner.os == 'macOS'
         run: |
           brew install llvm libomp
@@ -40,16 +40,12 @@ jobs:
           export CFLAGS="$CFLAGS -I/usr/local/opt/libomp/include"
           export CXXFLAGS="$CXXFLAGS -I/usr/local/opt/libomp/include"
           export LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/local/opt/libomp/lib -L/usr/local/opt/libomp/lib -lomp"
-          python -m pip install cibuildwheel==2.16.5
-          python -m cibuildwheel --output-dir wheelhouse
-      - name: Install (Linux)
+      - name: Install OMP (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt install libomp-dev
-          python -m pip install cibuildwheel==2.16.5
-          python -m cibuildwheel --output-dir wheelhouse
-      - name: Install (Windows)
+      - name: Build Wheel
         if: runner.os == 'Windows'
         run: |
           python -m pip install cibuildwheel==2.16.5
