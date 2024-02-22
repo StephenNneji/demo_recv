@@ -21,7 +21,7 @@ jobs:
       CIBW_ARCHS: 'auto64'
     defaults:
       run:
-        shell: bash -l {0}
+        shell: bash -leo pipefail {0}
      
     runs-on: ${{ matrix.platform }}
 
