@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // sortrows.cpp
 //
@@ -37,11 +37,12 @@ namespace RAT
       m = y.size(0) - 1;
       ycol.set_size(y.size(0));
       for (int32_T j{0}; j < 2; j++) {
-        for (int32_T i{0}; i <= m; i++) {
+        int32_T i;
+        for (i = 0; i <= m; i++) {
           ycol[i] = y[(idx[i] + y.size(0) * j) - 1];
         }
 
-        for (int32_T i{0}; i <= m; i++) {
+        for (i = 0; i <= m; i++) {
           y[i + y.size(0) * j] = ycol[i];
         }
       }

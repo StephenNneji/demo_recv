@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xzgeqp3.cpp
 //
@@ -18,6 +18,7 @@
 #include "xzlarfg.h"
 #include "coder_array.h"
 #include <cmath>
+#include <cstring>
 
 // Function Declarations
 namespace RAT
@@ -28,8 +29,8 @@ namespace RAT
     {
       namespace reflapack
       {
-        static int32_T qrpf(::coder::array<real_T, 1U> &A, int32_T m, real_T
-                            tau_data[]);
+        static void qrpf(::coder::array<real_T, 1U> &A, int32_T m, real_T
+                         tau_data[], int32_T *jpvt);
       }
     }
   }
@@ -44,22 +45,20 @@ namespace RAT
     {
       namespace reflapack
       {
-        static int32_T qrpf(::coder::array<real_T, 1U> &A, int32_T m, real_T
-                            tau_data[])
+        static void qrpf(::coder::array<real_T, 1U> &A, int32_T m, real_T
+                         tau_data[], int32_T *jpvt)
         {
           real_T atmp;
-          int32_T jpvt;
-          int32_T y;
-          jpvt = 1;
-          if (m <= 1) {
-            y = m;
+          int32_T minmn;
+          *jpvt = 1;
+          if (m < 1) {
+            minmn = m;
           } else {
-            y = 1;
+            minmn = 1;
           }
 
-          y = static_cast<uint8_T>(y);
-          for (int32_T i{0}; i < y; i++) {
-            if (m > 1) {
+          for (int32_T i{0}; i < minmn; i++) {
+            if (1 < m) {
               atmp = A[0];
               tau_data[0] = xzlarfg(m, &atmp, A);
               A[0] = atmp;
@@ -67,8 +66,6 @@ namespace RAT
               tau_data[0] = 0.0;
             }
           }
-
-          return jpvt;
         }
 
         void qrpf(::coder::array<real_T, 2U> &A, int32_T m, int32_T n, ::coder::
@@ -77,14 +74,13 @@ namespace RAT
           ::coder::array<real_T, 1U> vn1;
           ::coder::array<real_T, 1U> vn2;
           ::coder::array<real_T, 1U> work;
-          real_T d;
-          real_T temp1;
+          real_T atmp;
           int32_T itemp;
           int32_T j;
           int32_T ma;
           int32_T minmn;
           ma = A.size(0);
-          if (m <= n) {
+          if (m < n) {
             minmn = m;
           } else {
             minmn = n;
@@ -109,9 +105,9 @@ namespace RAT
           }
 
           for (j = 0; j < n; j++) {
-            d = blas::xnrm2(m, A, j * ma + 1);
-            vn1[j] = d;
-            vn2[j] = d;
+            atmp = blas::xnrm2(m, A, j * ma + 1);
+            vn1[j] = atmp;
+            vn2[j] = atmp;
           }
 
           for (int32_T i{0}; i < minmn; i++) {
@@ -136,46 +132,45 @@ namespace RAT
             }
 
             if (i + 1 < m) {
-              temp1 = A[ii];
-              d = xzlarfg(mmi, &temp1, A, ii + 2);
-              tau[i] = d;
-              A[ii] = temp1;
+              atmp = A[ii];
+              tau[i] = xzlarfg(mmi, &atmp, A, ii + 2);
+              A[ii] = atmp;
             } else {
-              d = 0.0;
               tau[i] = 0.0;
             }
 
             if (i + 1 < n) {
-              temp1 = A[ii];
+              atmp = A[ii];
               A[ii] = 1.0;
-              xzlarf(mmi, nmi - 1, ii + 1, d, A, (ii + ma) + 1, ma, work);
-              A[ii] = temp1;
+              xzlarf(mmi, nmi - 1, ii + 1, tau[i], A, (ii + ma) + 1, ma, work);
+              A[ii] = atmp;
             }
 
             for (j = ip1; j <= n; j++) {
               itemp = i + (j - 1) * ma;
-              d = vn1[j - 1];
-              if (d != 0.0) {
+              atmp = vn1[j - 1];
+              if (atmp != 0.0) {
+                real_T temp1;
                 real_T temp2;
-                temp1 = std::abs(A[itemp]) / d;
+                temp1 = std::abs(A[itemp]) / atmp;
                 temp1 = 1.0 - temp1 * temp1;
                 if (temp1 < 0.0) {
                   temp1 = 0.0;
                 }
 
-                temp2 = d / vn2[j - 1];
+                temp2 = atmp / vn2[j - 1];
                 temp2 = temp1 * (temp2 * temp2);
                 if (temp2 <= 1.4901161193847656E-8) {
                   if (i + 1 < m) {
-                    d = blas::xnrm2(mmi - 1, A, itemp + 2);
-                    vn1[j - 1] = d;
-                    vn2[j - 1] = d;
+                    atmp = blas::xnrm2(mmi - 1, A, itemp + 2);
+                    vn1[j - 1] = atmp;
+                    vn2[j - 1] = atmp;
                   } else {
                     vn1[j - 1] = 0.0;
                     vn2[j - 1] = 0.0;
                   }
                 } else {
-                  vn1[j - 1] = d * std::sqrt(temp1);
+                  vn1[j - 1] = atmp * std::sqrt(temp1);
                 }
               }
             }
@@ -186,19 +181,19 @@ namespace RAT
                      int32_T *tau_size, int32_T *jpvt)
         {
           *tau_size = A.size(0);
-          if (*tau_size > 1) {
+          if (*tau_size >= 1) {
             *tau_size = 1;
           }
 
-          if (*tau_size - 1 >= 0) {
-            tau_data[0] = 0.0;
+          if (0 <= *tau_size - 1) {
+            std::memset(&tau_data[0], 0, *tau_size * sizeof(real_T));
           }
 
           if (A.size(0) == 0) {
             *jpvt = 1;
           } else {
             int32_T y;
-            if (m <= 1) {
+            if (m < 1) {
               y = m;
             } else {
               y = 1;
@@ -207,7 +202,8 @@ namespace RAT
             if (y < 1) {
               *jpvt = 1;
             } else {
-              qrpf(A, m, tau_data);
+              *jpvt = 1;
+              qrpf(A, m, tau_data, jpvt);
               *jpvt = 1;
             }
           }

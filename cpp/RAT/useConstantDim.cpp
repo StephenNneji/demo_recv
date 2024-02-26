@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // useConstantDim.cpp
 //
@@ -24,14 +24,14 @@ namespace RAT
                           varargin_3)
       {
         int32_T subsb_idx_1;
-        if (varargin_3 == 1) {
+        if (1 == varargin_3) {
           if ((varargin_2.size(0) != 0) && (varargin_2.size(1) != 0)) {
             int32_T i;
             i = varargin_2.size(1);
             for (int32_T k{0}; k < i; k++) {
               int32_T i1;
               i1 = varargin_2.size(0);
-              if (i1 - 2 >= 0) {
+              if (0 <= i1 - 2) {
                 subsb_idx_1 = k + 1;
               }
 

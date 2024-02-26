@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // find.h
 //
@@ -13,18 +13,13 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Function Declarations
 namespace RAT
 {
-  void binary_expand_op(::coder::array<int32_T, 1U> &in1, const ::coder::array<
-                        real_T, 1U> &in2, const ::coder::array<real_T, 1U> &in3);
-  void binary_expand_op(::coder::array<int32_T, 1U> &in1, const ::coder::array<
-                        real_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3);
-  void c_binary_expand_op(::coder::array<int32_T, 1U> &in1, const ::coder::array<
-    real_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3);
   namespace coder
   {
     void b_eml_find(const boolean_T x[2], int32_T i_data[], int32_T i_size[2]);

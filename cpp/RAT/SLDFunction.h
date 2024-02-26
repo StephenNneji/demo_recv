@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // SLDFunction.h
 //
@@ -13,14 +13,15 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Function Declarations
 namespace RAT
 {
-  void b_SLDFunction(real_T x, const ::coder::array<real_T, 2U> &SLD, ::coder::
-                     array<real_T, 1U> &sldVal);
+  void SLDFunction(real_T x, const ::coder::array<real_T, 2U> &SLD, ::coder::
+                   array<real_T, 1U> &sldVal);
 }
 
 #endif

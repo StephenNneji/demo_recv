@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // parallelContrasts2.cpp
 //
@@ -22,7 +22,6 @@
 #include "rt_nonfinite.h"
 #include "shiftData.h"
 #include "coder_array.h"
-#include "omp.h"
 
 // Function Definitions
 namespace RAT
@@ -31,7 +30,7 @@ namespace RAT
   {
     namespace customXY
     {
-      void c_parallelContrasts(const c_struct_T *problemStruct, const cell_11
+      void parallelContrasts(const d_struct_T *problemStruct, const cell_11
         *problemCells, const struct2_T *controls, ::coder::array<real_T, 1U>
         &outSsubs, ::coder::array<real_T, 1U> &backgroundParams, ::coder::array<
         real_T, 1U> &qzshifts, ::coder::array<real_T, 1U> &scalefactors, ::coder::
@@ -46,18 +45,19 @@ namespace RAT
         ::coder::array<real_T, 2U> b_problemCells;
         ::coder::array<real_T, 2U> b_sldProfiles;
         ::coder::array<real_T, 2U> layerSld;
+        ::coder::array<real_T, 2U> r;
+        ::coder::array<real_T, 2U> r1;
         ::coder::array<real_T, 2U> reSLD;
         ::coder::array<real_T, 2U> reflect;
         ::coder::array<real_T, 2U> shiftedDat;
         ::coder::array<real_T, 2U> simul;
-        real_T b_dv[2];
-        real_T b_dv1[2];
         real_T d;
         real_T d1;
         real_T d2;
         real_T d3;
         real_T d4;
         real_T d5;
+        int32_T b_i;
         int32_T b_loop_ub;
         int32_T i1;
         int32_T i2;
@@ -117,9 +117,9 @@ namespace RAT
 
 #pragma omp parallel for \
  num_threads(omp_get_max_threads()) \
- private(b_sldProfiles,b_problemCells,reSLD,layerSld,reflect,simul,shiftedDat,d,d1,d2,d3,d4,d5,loop_ub,b_loop_ub,i1,i2,b_dv,b_dv1)
+ private(r,b_sldProfiles,b_problemCells,r1,reSLD,layerSld,reflect,simul,shiftedDat,d,d1,d2,d3,d4,d5,b_i,loop_ub,i1,i2,b_loop_ub)
 
-        for (int32_T b_i = 0; b_i <= loop_ub_tmp; b_i++) {
+        for (b_i = 0; b_i <= loop_ub_tmp; b_i++) {
           backSort(problemStruct->contrastBackgrounds[b_i],
                    problemStruct->contrastQzshifts[b_i],
                    problemStruct->contrastScalefactors[b_i],
@@ -139,7 +139,14 @@ namespace RAT
 
           //  Resample the layers
           if (!useImaginary) {
-            resampleLayers(sldProfiles[b_i].f1, controls->resamPars, layerSld);
+            resampleLayers(sldProfiles[b_i].f1, controls->resamPars, r1);
+            layerSld.set_size(r1.size(0), 3);
+            loop_ub = r1.size(0);
+            for (i1 = 0; i1 < 3; i1++) {
+              for (i2 = 0; i2 < loop_ub; i2++) {
+                layerSld[i2 + layerSld.size(0) * i1] = r1[i2 + r1.size(0) * i1];
+              }
+            }
           } else {
             loop_ub = sldProfiles[b_i].f1.size(0);
             reSLD.set_size(sldProfiles[b_i].f1.size(0), 2);
@@ -158,18 +165,31 @@ namespace RAT
                 + sldProfiles[b_i].f1.size(0) * 2];
             }
 
-            b_resampleLayersReIm(reSLD, b_sldProfiles, controls->resamPars,
-                                 layerSld);
+            b_resampleLayersReIm(reSLD, b_sldProfiles, controls->resamPars, r);
+            layerSld.set_size(r.size(0), 4);
+            loop_ub = r.size(0);
+            for (i1 = 0; i1 < 4; i1++) {
+              for (i2 = 0; i2 < loop_ub; i2++) {
+                layerSld[i2 + layerSld.size(0) * i1] = r[i2 + r.size(0) * i1];
+              }
+            }
           }
 
           layerSlds[b_i].f1.set_size(layerSld.size(0), layerSld.size(1));
           loop_ub = layerSld.size(1);
-          allLayers[b_i].f1.set_size(layerSld.size(0), layerSld.size(1));
-          b_loop_ub = layerSld.size(0);
           for (i1 = 0; i1 < loop_ub; i1++) {
+            b_loop_ub = layerSld.size(0);
             for (i2 = 0; i2 < b_loop_ub; i2++) {
               layerSlds[b_i].f1[i2 + layerSlds[b_i].f1.size(0) * i1] =
                 layerSld[i2 + layerSld.size(0) * i1];
+            }
+          }
+
+          allLayers[b_i].f1.set_size(layerSld.size(0), layerSld.size(1));
+          loop_ub = layerSld.size(1);
+          for (i1 = 0; i1 < loop_ub; i1++) {
+            b_loop_ub = layerSld.size(0);
+            for (i2 = 0; i2 < b_loop_ub; i2++) {
               allLayers[b_i].f1[i2 + allLayers[b_i].f1.size(0) * i1] =
                 layerSld[i2 + layerSld.size(0) * i1];
             }
@@ -188,12 +208,9 @@ namespace RAT
             }
           }
 
-          b_dv[0] = problemCells->f3[b_i].f1[0];
-          b_dv[1] = problemCells->f3[b_i].f1[1];
-          b_dv1[0] = problemCells->f4[b_i].f1[0];
-          b_dv1[1] = problemCells->f4[b_i].f1[1];
           shiftData(scalefactors[b_i], qzshifts[b_i], problemStruct->
-                    dataPresent[b_i], b_problemCells, b_dv, b_dv1, shiftedDat);
+                    dataPresent[b_i], b_problemCells, problemCells->f3[b_i].f1,
+                    problemCells->f4[b_i].f1, shiftedDat);
           shiftedData[b_i].f1.set_size(shiftedDat.size(0), shiftedDat.size(1));
           loop_ub = shiftedDat.size(1);
           for (i1 = 0; i1 < loop_ub; i1++) {
@@ -204,13 +221,9 @@ namespace RAT
             }
           }
 
-          b_dv[0] = problemCells->f4[b_i].f1[0];
-          b_dv[1] = problemCells->f4[b_i].f1[1];
-          b_dv1[0] = problemCells->f1[b_i].f1[0];
-          b_dv1[1] = problemCells->f1[b_i].f1[1];
-          callReflectivity(bulkIns[b_i], bulkOuts[b_i], b_dv, b_dv1, shiftedDat,
-                           layerSld, 0.0, resolutionParams[b_i], useImaginary,
-                           reflect, simul);
+          callReflectivity(bulkIns[b_i], bulkOuts[b_i], problemCells->f4[b_i].f1,
+                           problemCells->f1[b_i].f1, shiftedDat, layerSld, 0.0,
+                           resolutionParams[b_i], useImaginary, reflect, simul);
           applyBackgroundCorrection(reflect, simul, shiftedDat,
             backgroundParams[b_i], problemStruct->contrastBackgroundsType[b_i]);
           loop_ub = reflect.size(0);

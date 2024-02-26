@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // processBayes.cpp
 //
@@ -25,19 +25,19 @@ namespace RAT
 {
   void processBayes(const real_T bayesOutputs_bestPars_data[], const int32_T
                     bayesOutputs_bestPars_size[2], const ::coder::array<real_T,
-                    2U> &bayesOutputs_chain, const c_struct_T *allProblem_f1,
+                    2U> &bayesOutputs_chain, const d_struct_T *allProblem_f1,
                     const struct2_T *allProblem_f2, const cell_11 *allProblem_f4,
-                    c_struct_T *problemStruct, d_struct_T *contrastParams,
-                    cell_wrap_9 result[6], e_struct_T *bayesResults_bestFitsMean,
-                    f_struct_T *bayesResults_predlims, struct10_T
+                    d_struct_T *problemStruct, e_struct_T *contrastParams,
+                    cell_wrap_9 result[6], f_struct_T *bayesResults_bestFitsMean,
+                    g_struct_T *bayesResults_predlims, struct10_T
                     *bayesResults_parConfInts)
   {
     static struct2_T controlsStruct;
     ::coder::array<cell_wrap_8, 2U> b_expl_temp;
     ::coder::array<cell_wrap_8, 2U> c_expl_temp;
     ::coder::array<cell_wrap_8, 2U> expl_temp;
-    c_struct_T b_problemStruct;
-    d_struct_T d_expl_temp;
+    d_struct_T b_problemStruct;
+    e_struct_T d_expl_temp;
     real_T p_calculationResults_sumChi;
     int32_T loop_ub;
 
@@ -56,14 +56,14 @@ namespace RAT
         bayesOutputs_bestPars_data[i];
     }
 
-    unpackParams(problemStruct, allProblem_f2->checks.fitParam,
-                 allProblem_f2->checks.fitBackgroundParam,
-                 allProblem_f2->checks.fitQzshift,
-                 allProblem_f2->checks.fitScalefactor,
-                 allProblem_f2->checks.fitBulkIn,
-                 allProblem_f2->checks.fitBulkOut,
-                 allProblem_f2->checks.fitResolutionParam,
-                 allProblem_f2->checks.fitDomainRatio);
+    unpackParams(problemStruct, controlsStruct.checks.fitParam,
+                 controlsStruct.checks.fitBackgroundParam,
+                 controlsStruct.checks.fitQzshift,
+                 controlsStruct.checks.fitScalefactor,
+                 controlsStruct.checks.fitBulkIn,
+                 controlsStruct.checks.fitBulkOut,
+                 controlsStruct.checks.fitResolutionParam,
+                 controlsStruct.checks.fitDomainRatio);
     prctileConfInts(bayesOutputs_chain, bayesResults_parConfInts->par95,
                     bayesResults_parConfInts->par65,
                     bayesResults_parConfInts->mean);
@@ -96,18 +96,18 @@ namespace RAT
 
   void processBayes(const ::coder::array<real_T, 2U> &bayesOutputs_bestPars,
                     const ::coder::array<real_T, 2U> &bayesOutputs_chain, const
-                    c_struct_T *allProblem_f1, const struct2_T *allProblem_f2,
-                    const cell_11 *allProblem_f4, c_struct_T *problemStruct,
-                    d_struct_T *contrastParams, cell_wrap_9 result[6],
-                    e_struct_T *bayesResults_bestFitsMean, f_struct_T
+                    d_struct_T *allProblem_f1, const struct2_T *allProblem_f2,
+                    const cell_11 *allProblem_f4, d_struct_T *problemStruct,
+                    e_struct_T *contrastParams, cell_wrap_9 result[6],
+                    f_struct_T *bayesResults_bestFitsMean, g_struct_T
                     *bayesResults_predlims, struct10_T *bayesResults_parConfInts)
   {
-    static struct2_T controlsStruct;
     ::coder::array<cell_wrap_8, 2U> b_expl_temp;
     ::coder::array<cell_wrap_8, 2U> c_expl_temp;
     ::coder::array<cell_wrap_8, 2U> expl_temp;
-    c_struct_T b_problemStruct;
-    d_struct_T d_expl_temp;
+    d_struct_T b_problemStruct;
+    e_struct_T d_expl_temp;
+    struct2_T controlsStruct;
     real_T p_calculationResults_sumChi;
     int32_T loop_ub;
 
@@ -126,14 +126,14 @@ namespace RAT
         bayesOutputs_bestPars[i];
     }
 
-    unpackParams(problemStruct, allProblem_f2->checks.fitParam,
-                 allProblem_f2->checks.fitBackgroundParam,
-                 allProblem_f2->checks.fitQzshift,
-                 allProblem_f2->checks.fitScalefactor,
-                 allProblem_f2->checks.fitBulkIn,
-                 allProblem_f2->checks.fitBulkOut,
-                 allProblem_f2->checks.fitResolutionParam,
-                 allProblem_f2->checks.fitDomainRatio);
+    unpackParams(problemStruct, controlsStruct.checks.fitParam,
+                 controlsStruct.checks.fitBackgroundParam,
+                 controlsStruct.checks.fitQzshift,
+                 controlsStruct.checks.fitScalefactor,
+                 controlsStruct.checks.fitBulkIn,
+                 controlsStruct.checks.fitBulkOut,
+                 controlsStruct.checks.fitResolutionParam,
+                 controlsStruct.checks.fitDomainRatio);
     prctileConfInts(bayesOutputs_chain, bayesResults_parConfInts->par95,
                     bayesResults_parConfInts->par65,
                     bayesResults_parConfInts->mean);

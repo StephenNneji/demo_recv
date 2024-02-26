@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // setupDREAM.h
 //
@@ -13,14 +13,15 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Type Declarations
 namespace RAT
 {
-  struct struct13_T;
   struct struct14_T;
+  struct struct13_T;
   struct struct12_T;
 }
 
@@ -29,8 +30,8 @@ namespace RAT
 {
   void setupDREAM(real_T DREAMPar_d, real_T DREAMPar_N, real_T DREAMPar_T,
                   real_T DREAMPar_lambda, real_T DREAMPar_pUnitGamma, boolean_T
-                  DREAMPar_adaptPCR, struct13_T *outDREAMPar, struct14_T
-                  *Meas_info, ::coder::array<real_T, 3U> &chain, struct12_T
+                  DREAMPar_adaptPCR, struct14_T *Meas_info, struct13_T
+                  *outDREAMPar, ::coder::array<real_T, 3U> &chain, struct12_T
                   *output, ::coder::array<real_T, 2U> &log_L, ::coder::array<
                   real_T, 2U> &Table_gamma);
 }

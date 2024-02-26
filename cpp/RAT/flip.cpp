@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // flip.cpp
 //
@@ -20,16 +20,16 @@ namespace RAT
   {
     void flip(::coder::array<real_T, 1U> &x)
     {
-      if (x.size(0) > 1) {
-        int32_T i;
-        i = x.size(0) >> 1;
-        for (int32_T k{0}; k < i; k++) {
+      if ((x.size(0) != 0) && (x.size(0) > 1)) {
+        int32_T lup;
+        lup = x.size(0) >> 1;
+        for (int32_T k{0}; k < lup; k++) {
           real_T tmp;
-          int16_T i1;
-          i1 = static_cast<int16_T>(x.size(0) - k);
+          int16_T subs2_idx_0;
+          subs2_idx_0 = static_cast<int16_T>(x.size(0) - k);
           tmp = x[k];
-          x[k] = x[i1 - 1];
-          x[i1 - 1] = tmp;
+          x[k] = x[subs2_idx_0 - 1];
+          x[subs2_idx_0 - 1] = tmp;
         }
       }
     }

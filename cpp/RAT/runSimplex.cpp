@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // runSimplex.cpp
 //
@@ -26,9 +26,9 @@
 // Function Definitions
 namespace RAT
 {
-  void runSimplex(c_struct_T *problemStruct, const cell_11 *problemCells, const
+  void runSimplex(d_struct_T *problemStruct, const cell_11 *problemCells, const
                   struct1_T *problemLimits, const struct2_T *controls,
-                  d_struct_T *contrastParams, cell_wrap_9 result[6])
+                  e_struct_T *contrastParams, cell_wrap_9 result[6])
   {
     static const char_T b_cv1[6]{ 'n', 'o', 't', 'i', 'f', 'y' };
 
@@ -37,11 +37,12 @@ namespace RAT
     ::coder::array<cell_wrap_1, 1U> b_problemStruct;
     ::coder::array<real_T, 1U> x;
     ::coder::array<real_T, 1U> x0u;
-    i_struct_T a__4;
-    k_struct_T expl_temp;
+    j_struct_T a__4;
+    l_struct_T expl_temp;
     real_T a__2;
     real_T a__3;
     int32_T dis_size[2];
+    int32_T b_i;
     int32_T i;
     int32_T outsize_idx_0;
     char_T dis_data[6];
@@ -109,14 +110,14 @@ namespace RAT
       break;
     }
 
-    expl_temp.LB.set_size(problemStruct->fitLimits.size(0));
     outsize_idx_0 = problemStruct->fitLimits.size(0);
+    expl_temp.LB.set_size(outsize_idx_0);
     for (i = 0; i < outsize_idx_0; i++) {
       expl_temp.LB[i] = problemStruct->fitLimits[i];
     }
 
-    expl_temp.UB.set_size(problemStruct->fitLimits.size(0));
     outsize_idx_0 = problemStruct->fitLimits.size(0);
+    expl_temp.UB.set_size(outsize_idx_0);
     for (i = 0; i < outsize_idx_0; i++) {
       expl_temp.UB[i] = problemStruct->fitLimits[i +
         problemStruct->fitLimits.size(0)];
@@ -156,7 +157,7 @@ namespace RAT
     }
 
     i = problemStruct->fitParams.size(0) * problemStruct->fitParams.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       expl_temp.BoundClass[b_i] = static_cast<real_T>((!std::isinf
         (expl_temp.LB[b_i])) && (!std::isnan(expl_temp.LB[b_i]))) + static_cast<
         real_T>(((!std::isinf(expl_temp.UB[b_i])) && (!std::isnan
@@ -173,7 +174,7 @@ namespace RAT
     }
 
     i = problemStruct->fitParams.size(0) * problemStruct->fitParams.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       switch (static_cast<int32_T>(expl_temp.BoundClass[b_i])) {
        case 1:
         //  lower bound only
@@ -204,9 +205,9 @@ namespace RAT
           //  infeasible starting value
           x0u[b_i] = 1.5707963267948966;
         } else {
-          x0u[b_i] = std::asin(std::fmax(-1.0, std::fmin(1.0, 2.0 *
-            (problemStruct->fitParams[b_i] - expl_temp.LB[b_i]) /
-            (expl_temp.UB[b_i] - expl_temp.LB[b_i]) - 1.0)));
+          x0u[b_i] = 2.0 * (problemStruct->fitParams[b_i] - expl_temp.LB[b_i]) /
+            (expl_temp.UB[b_i] - expl_temp.LB[b_i]) - 1.0;
+          x0u[b_i] = std::asin(std::fmax(-1.0, std::fmin(1.0, x0u[b_i])));
         }
         break;
 
@@ -233,8 +234,10 @@ namespace RAT
     // x = reshape(x,xsize);
     outsize_idx_0 = x.size(0);
     problemStruct->fitParams.set_size(x.size(0), 1);
-    for (i = 0; i < outsize_idx_0; i++) {
-      problemStruct->fitParams[i] = x[i];
+    for (i = 0; i < 1; i++) {
+      for (int32_T i1{0}; i1 < outsize_idx_0; i1++) {
+        problemStruct->fitParams[i1] = x[i1];
+      }
     }
 
     unpackParams(problemStruct, controls->checks.fitParam,

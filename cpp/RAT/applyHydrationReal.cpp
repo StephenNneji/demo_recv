@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // applyHydrationReal.cpp
 //
@@ -31,13 +31,14 @@ namespace RAT
     //  [nlayers x nCols]
     if (static_cast<int16_T>(thisContrastLayers.size(1)) == 5) {
       int32_T i;
+      int32_T i1;
       int32_T loop_ub;
 
       //  we need to calculate the hydrated SLD
       newOutLayers.set_size(static_cast<int32_T>(outSize_idx_0), 3);
       loop_ub = outSize_idx_0;
       for (i = 0; i < 3; i++) {
-        for (int32_T i1{0}; i1 < loop_ub; i1++) {
+        for (i1 = 0; i1 < loop_ub; i1++) {
           newOutLayers[i1 + newOutLayers.size(0) * i] = 0.0;
         }
       }
@@ -57,20 +58,21 @@ namespace RAT
       //  Roughness
       i = outSize_idx_0;
       for (int32_T n{0}; n < i; n++) {
-        real_T d;
+        real_T thisBulkHydr;
         real_T thisHydration;
         thisHydration = thisContrastLayers[n + thisContrastLayers.size(0) * 3] /
           100.0;
 
         //  Assume percent for backwards compatability
         if (thisContrastLayers[n + thisContrastLayers.size(0) * 4] == 0.0) {
-          d = bulkIn;
+          thisBulkHydr = bulkIn;
         } else {
-          d = bulkOut;
+          thisBulkHydr = bulkOut;
         }
 
-        newOutLayers[n + newOutLayers.size(0)] = thisHydration * d + (1.0 -
-          thisHydration) * thisContrastLayers[n + thisContrastLayers.size(0)];
+        newOutLayers[n + newOutLayers.size(0)] = thisHydration * thisBulkHydr +
+          (1.0 - thisHydration) * thisContrastLayers[n + thisContrastLayers.size
+          (0)];
 
         //  Reassignment to keep codegen happy
       }
@@ -78,7 +80,7 @@ namespace RAT
       thisContrastLayers.set_size(newOutLayers.size(0), 3);
       loop_ub = newOutLayers.size(0);
       for (i = 0; i < 3; i++) {
-        for (int32_T i1{0}; i1 < loop_ub; i1++) {
+        for (i1 = 0; i1 < loop_ub; i1++) {
           thisContrastLayers[i1 + thisContrastLayers.size(0) * i] =
             newOutLayers[i1 + newOutLayers.size(0) * i];
         }

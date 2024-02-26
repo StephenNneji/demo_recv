@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // removeOutlier.cpp
 //
@@ -37,6 +37,7 @@ namespace RAT
     ::coder::array<boolean_T, 2U> b_log_L;
     real_T Q[2];
     real_T b_Q;
+    int32_T i;
     int32_T loop_ub;
 
     //  Secondary functions used by this function
@@ -51,14 +52,14 @@ namespace RAT
     b_Q = Q[1] - 2.0 * (Q[0] - Q[1]);
     b_log_L.set_size(1, log_L.size(1));
     loop_ub = log_L.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       b_log_L[i] = (log_L[i] < b_Q);
     }
 
     coder::d_eml_find(b_log_L, r);
     idx_outlier.set_size(1, r.size(1));
     loop_ub = r.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       idx_outlier[i] = r[i];
     }
   }
@@ -81,10 +82,12 @@ namespace RAT
     int32_T i;
     int32_T i1;
     int32_T loop_ub;
+    int32_T t;
     int32_T t_half;
 
     //  Finds outlier chains and removes them when needed
     //  Determine the number of elements of L_density
+    t = log_L.size(0);
     t_half = static_cast<int32_T>(std::floor(static_cast<real_T>(log_L.size(0)) /
       2.0));
 
@@ -97,7 +100,7 @@ namespace RAT
       i1 = log_L.size(0);
     }
 
-    if (DREAMPar->N < 1.0) {
+    if (1.0 > DREAMPar->N) {
       loop_ub = 0;
     } else {
       loop_ub = static_cast<int32_T>(DREAMPar->N);
@@ -152,9 +155,12 @@ namespace RAT
         b_chain_select[0] = rtNaN;
       } else if (DREAMPar->N < 1.0) {
         b_chain_select.set_size(1, 0);
+      } else if (std::isinf(DREAMPar->N) && (1.0 == DREAMPar->N)) {
+        b_chain_select.set_size(1, 1);
+        b_chain_select[0] = rtNaN;
       } else {
-        b_chain_select.set_size(1, static_cast<int32_T>(DREAMPar->N - 1.0) + 1);
-        loop_ub = static_cast<int32_T>(DREAMPar->N - 1.0);
+        loop_ub = static_cast<int32_T>(std::floor(DREAMPar->N - 1.0));
+        b_chain_select.set_size(1, loop_ub + 1);
         for (i = 0; i <= loop_ub; i++) {
           b_chain_select[i] = static_cast<real_T>(i) + 1.0;
         }
@@ -190,11 +196,11 @@ namespace RAT
         int16_T i2;
 
         //  Added -- update log_L -- chain will not be considered as an outlier chain then
+        b_loop_ub = log_L.size(0) - 1;
         chain_select_tmp = static_cast<int32_T>(b_chain_select[j]);
         chain_id_tmp = static_cast<int32_T>(chain_id[j]);
-        b_loop_ub = log_L.size(0);
-        c_log_L.set_size(b_loop_ub);
-        for (i1 = 0; i1 < b_loop_ub; i1++) {
+        c_log_L.set_size(b_loop_ub + 1);
+        for (i1 = 0; i1 <= b_loop_ub; i1++) {
           c_log_L[i1] = log_L[i1 + log_L.size(0) * (chain_select_tmp - 1)];
         }
 
@@ -236,8 +242,8 @@ namespace RAT
           }
         }
 
-        b_outputOutlier[static_cast<int32_T>(i2)] = log_L.size(0);
-        b_outputOutlier[i2 + b_outputOutlier.size(0)] = chain_id[j];
+        b_outputOutlier[b_loop_ub] = t;
+        b_outputOutlier[b_loop_ub + b_outputOutlier.size(0)] = chain_id[j];
         outputOutlier.set_size(b_outputOutlier.size(0), 2);
         b_loop_ub = b_outputOutlier.size(0);
         for (i1 = 0; i1 < 2; i1++) {

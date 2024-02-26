@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // acos.cpp
 //
@@ -10,58 +10,16 @@
 
 // Include files
 #include "acos.h"
+#include "RATMain_rtwutil.h"
 #include "asinh.h"
 #include "complexTimes.h"
 #include "rt_nonfinite.h"
 #include "sqrt.h"
-#include "rt_defines.h"
 #include <cmath>
-
-// Function Declarations
-namespace RAT
-{
-  static real_T rt_atan2d_snf(real_T u0, real_T u1);
-}
 
 // Function Definitions
 namespace RAT
 {
-  static real_T rt_atan2d_snf(real_T u0, real_T u1)
-  {
-    real_T y;
-    if (std::isnan(u0) || std::isnan(u1)) {
-      y = rtNaN;
-    } else if (std::isinf(u0) && std::isinf(u1)) {
-      int32_T i;
-      int32_T i1;
-      if (u0 > 0.0) {
-        i = 1;
-      } else {
-        i = -1;
-      }
-
-      if (u1 > 0.0) {
-        i1 = 1;
-      } else {
-        i1 = -1;
-      }
-
-      y = std::atan2(static_cast<real_T>(i), static_cast<real_T>(i1));
-    } else if (u1 == 0.0) {
-      if (u0 > 0.0) {
-        y = RT_PI / 2.0;
-      } else if (u0 < 0.0) {
-        y = -(RT_PI / 2.0);
-      } else {
-        y = 0.0;
-      }
-    } else {
-      y = std::atan2(u0, u1);
-    }
-
-    return y;
-  }
-
   namespace coder
   {
     namespace internal

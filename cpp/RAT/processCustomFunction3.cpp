@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // processCustomFunction3.cpp
 //
@@ -21,29 +21,29 @@
 // Function Declarations
 namespace RAT
 {
-  static void cast(const ::coder::array<cell_wrap_34, 2U> &r, ::coder::array<
-                   cell_wrap_8, 2U> &r1);
+  static void cast(const ::coder::array<cell_wrap_33, 2U> &b, ::coder::array<
+                   cell_wrap_8, 2U> &c);
 }
 
 // Function Definitions
 namespace RAT
 {
-  static void cast(const ::coder::array<cell_wrap_34, 2U> &r, ::coder::array<
-                   cell_wrap_8, 2U> &r1)
+  static void cast(const ::coder::array<cell_wrap_33, 2U> &b, ::coder::array<
+                   cell_wrap_8, 2U> &c)
   {
     int32_T i;
-    r1.set_size(r.size(0), 2);
-    i = r.size(0) << 1;
+    c.set_size(b.size(0), 2);
+    i = b.size(0) << 1;
     for (int32_T i1{0}; i1 < i; i1++) {
       int32_T loop_ub;
-      loop_ub = r[i1].f1.size(1);
-      r1[i1].f1.set_size(r[i1].f1.size(0), r[i1].f1.size(1));
+      loop_ub = b[i1].f1.size(1);
+      c[i1].f1.set_size(b[i1].f1.size(0), b[i1].f1.size(1));
       for (int32_T i2{0}; i2 < loop_ub; i2++) {
         int32_T b_loop_ub;
-        b_loop_ub = r[i1].f1.size(0);
+        b_loop_ub = b[i1].f1.size(0);
         for (int32_T i3{0}; i3 < b_loop_ub; i3++) {
-          r1[i1].f1[i3 + r1[i1].f1.size(0) * i2] = r[i1].f1[i3 + r[i1].f1.size(0)
-            * i2];
+          c[i1].f1[i3 + c[i1].f1.size(0) * i2] = b[i1].f1[i3 + b[i1].f1.size(0) *
+            i2];
         }
       }
     }
@@ -61,13 +61,15 @@ namespace RAT
         const ::coder::array<real_T, 2U> &params, ::coder::array<cell_wrap_8, 2U>
         &allSLDs, ::coder::array<real_T, 1U> &allRoughs)
       {
-        ::coder::array<cell_wrap_34, 2U> tempAllSLDs;
+        ::coder::array<cell_wrap_33, 2U> tempAllSLDs;
         ::coder::array<real_T, 2U> allBulkOuts;
         ::coder::array<real_T, 2U> b_allBulkOuts;
         ::coder::array<real_T, 2U> b_params;
         ::coder::array<real_T, 2U> r;
         real_T a__2;
+        int32_T iv[2];
         int32_T i;
+        int32_T i1;
         int32_T loop_ub;
 
         //  Top-level function for processing custom XY profiles for all the
@@ -79,7 +81,7 @@ namespace RAT
         //  3 columns to allow for potential imaginary curve
         allBulkOuts.set_size(1, contrastBulkOuts.size(1));
         loop_ub = contrastBulkOuts.size(1);
-        for (int32_T i1{0}; i1 < loop_ub; i1++) {
+        for (i1 = 0; i1 < loop_ub; i1++) {
           allBulkOuts[i1] = bulkOut[static_cast<int32_T>(contrastBulkOuts[i1]) -
             1];
         }
@@ -88,7 +90,6 @@ namespace RAT
         for (int32_T b_i{0}; b_i < i; b_i++) {
           creal_T x;
           real_T d;
-          int32_T iv[2];
 
           //  TODO - the ambition is for parfor here, but would fail for Matlab and Python CM's..
           //  Choose which custom file is associated with this contrast
@@ -102,15 +103,16 @@ namespace RAT
             &customFiles[static_cast<int32_T>(d) - 1].f1)->data(), iv);
           if ((!std::isnan(x.re)) && (!std::isnan(x.im))) {
             int32_T b_loop_ub;
+            int32_T i2;
             b_params.set_size(1, params.size(1));
             loop_ub = params.size(1) - 1;
-            for (int32_T i1{0}; i1 <= loop_ub; i1++) {
+            for (i1 = 0; i1 <= loop_ub; i1++) {
               b_params[i1] = params[i1];
             }
 
             b_allBulkOuts.set_size(1, allBulkOuts.size(1));
             loop_ub = allBulkOuts.size(1) - 1;
-            for (int32_T i1{0}; i1 <= loop_ub; i1++) {
+            for (i1 = 0; i1 <= loop_ub; i1++) {
               b_allBulkOuts[i1] = allBulkOuts[i1];
             }
 
@@ -125,9 +127,9 @@ namespace RAT
               static_cast<real_T>(b_i) + 1.0) - 1.0, r, &allRoughs[b_i]);
             loop_ub = r.size(1);
             tempAllSLDs[b_i].f1.set_size(r.size(0), r.size(1));
-            for (int32_T i1{0}; i1 < loop_ub; i1++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
               b_loop_ub = r.size(0);
-              for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+              for (i2 = 0; i2 < b_loop_ub; i2++) {
                 tempAllSLDs[b_i].f1[i2 + tempAllSLDs[b_i].f1.size(0) * i1] =
                   r[i2 + r.size(0) * i1];
               }
@@ -135,13 +137,13 @@ namespace RAT
 
             b_params.set_size(1, params.size(1));
             loop_ub = params.size(1) - 1;
-            for (int32_T i1{0}; i1 <= loop_ub; i1++) {
+            for (i1 = 0; i1 <= loop_ub; i1++) {
               b_params[i1] = params[i1];
             }
 
             b_allBulkOuts.set_size(1, allBulkOuts.size(1));
             loop_ub = allBulkOuts.size(1) - 1;
-            for (int32_T i1{0}; i1 <= loop_ub; i1++) {
+            for (i1 = 0; i1 <= loop_ub; i1++) {
               b_allBulkOuts[i1] = allBulkOuts[i1];
             }
 
@@ -159,9 +161,9 @@ namespace RAT
             loop_ub = r.size(1);
             tempAllSLDs[b_i + tempAllSLDs.size(0)].f1.set_size(r.size(0), r.size
               (1));
-            for (int32_T i1{0}; i1 < loop_ub; i1++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
               b_loop_ub = r.size(0);
-              for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+              for (i2 = 0; i2 < b_loop_ub; i2++) {
                 tempAllSLDs[b_i + tempAllSLDs.size(0)].f1[i2 + tempAllSLDs[b_i +
                   tempAllSLDs.size(0)].f1.size(0) * i1] = r[i2 + r.size(0) * i1];
               }

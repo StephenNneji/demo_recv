@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // RATMain_types.h
 //
@@ -144,7 +144,7 @@ namespace RAT
     ::coder::array<real_T, 2U> f1;
   };
 
-  struct cell_wrap_48
+  struct cell_wrap_47
   {
     ::coder::array<real_T, 2U> f1;
   };
@@ -324,27 +324,21 @@ namespace RAT
     ::coder::array<real_T, 2U> chain;
   };
 
-  struct SLDFunction
-  {
-    int32_T belowVals_data[10000];
-  };
-
-  struct parallelContrasts
-  {
-    real_T thisContrastLayers2_data[6000];
-    real_T thisContrastLayers1_data[6000];
-  };
-
-  struct b_parallelContrasts
-  {
-    real_T thisContrastLayers_data[6000];
-  };
-
   struct RATMainTLS
   {
-    SLDFunction f0;
-    parallelContrasts f1;
-    b_parallelContrasts f2;
+    struct {
+      int32_T belowVals_data[10000];
+      int32_T aboveVals_data[10000];
+    } f0;
+
+    struct {
+      real_T thisContrastLayers2_data[6000];
+      real_T thisContrastLayers1_data[6000];
+    } f1;
+
+    struct {
+      real_T thisContrastLayers_data[6000];
+    } f2;
   };
 }
 

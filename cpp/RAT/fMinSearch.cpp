@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // fMinSearch.cpp
 //
@@ -25,188 +25,17 @@
 #include "triggerEvent.h"
 #include "coder_array.h"
 #include "coder_bounded_array.h"
+#include <algorithm>
 #include <cmath>
 #include <stdio.h>
-
-// Function Declarations
-namespace RAT
-{
-  static void binary_expand_op(::coder::array<real_T, 1U> &in1, const ::coder::
-    array<real_T, 1U> &in2, const ::coder::array<real_T, 2U> &in3);
-  static void c_binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, int32_T in3, int32_T in4, int32_T in5);
-  static void c_binary_expand_op(::coder::array<real_T, 1U> &in1, const ::coder::
-    array<real_T, 1U> &in2, const ::coder::array<real_T, 2U> &in3);
-  static void f_binary_expand_op(::coder::array<real_T, 1U> &in1, const ::coder::
-    array<real_T, 1U> &in2, const ::coder::array<real_T, 2U> &in3);
-  static void g_binary_expand_op(::coder::array<real_T, 1U> &in1, const ::coder::
-    array<real_T, 1U> &in2, const ::coder::array<real_T, 2U> &in3);
-}
 
 // Function Definitions
 namespace RAT
 {
-  static void binary_expand_op(::coder::array<real_T, 1U> &in1, const ::coder::
-    array<real_T, 1U> &in2, const ::coder::array<real_T, 2U> &in3)
-  {
-    int32_T b_in3;
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_0;
-    int32_T stride_1_0;
-    b_in3 = in3.size(1);
-    if (in3.size(0) == 1) {
-      i = in2.size(0);
-    } else {
-      i = in3.size(0);
-    }
-
-    in1.set_size(i);
-    stride_0_0 = (in2.size(0) != 1);
-    stride_1_0 = (in3.size(0) != 1);
-    if (in3.size(0) == 1) {
-      loop_ub = in2.size(0);
-    } else {
-      loop_ub = in3.size(0);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      in1[i] = 3.0 * in2[i * stride_0_0] - 2.0 * in3[i * stride_1_0 + in3.size(0)
-        * (b_in3 - 1)];
-    }
-  }
-
-  static void c_binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, int32_T in3, int32_T in4, int32_T in5)
-  {
-    ::coder::array<real_T, 2U> b_in2;
-    int32_T aux_0_1;
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_1;
-    if (in5 == 1) {
-      i = (in4 - in3) + 1;
-    } else {
-      i = in5;
-    }
-
-    b_in2.set_size(in2.size(0), i);
-    stride_0_1 = ((in4 - in3) + 1 != 1);
-    aux_0_1 = 0;
-    if (in5 == 1) {
-      loop_ub = (in4 - in3) + 1;
-    } else {
-      loop_ub = in5;
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      int32_T b_loop_ub;
-      b_loop_ub = in2.size(0);
-      for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
-        b_in2[i1 + b_in2.size(0) * i] = in2[i1 + in2.size(0) * (in3 + aux_0_1)]
-          - in2[i1];
-      }
-
-      aux_0_1 += stride_0_1;
-    }
-
-    coder::c_abs(b_in2, in1);
-  }
-
-  static void c_binary_expand_op(::coder::array<real_T, 1U> &in1, const ::coder::
-    array<real_T, 1U> &in2, const ::coder::array<real_T, 2U> &in3)
-  {
-    int32_T b_in3;
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_0;
-    int32_T stride_1_0;
-    b_in3 = in3.size(1);
-    if (in3.size(0) == 1) {
-      i = in2.size(0);
-    } else {
-      i = in3.size(0);
-    }
-
-    in1.set_size(i);
-    stride_0_0 = (in2.size(0) != 1);
-    stride_1_0 = (in3.size(0) != 1);
-    if (in3.size(0) == 1) {
-      loop_ub = in2.size(0);
-    } else {
-      loop_ub = in3.size(0);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      in1[i] = 1.5 * in2[i * stride_0_0] - 0.5 * in3[i * stride_1_0 + in3.size(0)
-        * (b_in3 - 1)];
-    }
-  }
-
-  static void f_binary_expand_op(::coder::array<real_T, 1U> &in1, const ::coder::
-    array<real_T, 1U> &in2, const ::coder::array<real_T, 2U> &in3)
-  {
-    int32_T b_in3;
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_0;
-    int32_T stride_1_0;
-    b_in3 = in3.size(1);
-    if (in3.size(0) == 1) {
-      i = in2.size(0);
-    } else {
-      i = in3.size(0);
-    }
-
-    in1.set_size(i);
-    stride_0_0 = (in2.size(0) != 1);
-    stride_1_0 = (in3.size(0) != 1);
-    if (in3.size(0) == 1) {
-      loop_ub = in2.size(0);
-    } else {
-      loop_ub = in3.size(0);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      in1[i] = 0.5 * in2[i * stride_0_0] + 0.5 * in3[i * stride_1_0 + in3.size(0)
-        * (b_in3 - 1)];
-    }
-  }
-
-  static void g_binary_expand_op(::coder::array<real_T, 1U> &in1, const ::coder::
-    array<real_T, 1U> &in2, const ::coder::array<real_T, 2U> &in3)
-  {
-    int32_T b_in3;
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_0;
-    int32_T stride_1_0;
-    b_in3 = in3.size(1);
-    if (in3.size(0) == 1) {
-      i = in2.size(0);
-    } else {
-      i = in3.size(0);
-    }
-
-    in1.set_size(i);
-    stride_0_0 = (in2.size(0) != 1);
-    stride_1_0 = (in3.size(0) != 1);
-    if (in3.size(0) == 1) {
-      loop_ub = in2.size(0);
-    } else {
-      loop_ub = in3.size(0);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      in1[i] = 2.0 * in2[i * stride_0_0] - in3[i * stride_1_0 + in3.size(0) *
-        (b_in3 - 1)];
-    }
-  }
-
   void fMinSearch(::coder::array<real_T, 1U> &x, real_T options_MaxIter, real_T
                   options_MaxFunEvals, real_T options_TolX, real_T
                   options_TolFun, const char_T dis_data[], const int32_T
-                  dis_size[2], const c_struct_T *varargin_1, const ::coder::
+                  dis_size[2], const d_struct_T *varargin_1, const ::coder::
                   array<cell_wrap_2, 2U> &varargin_2_f1, const ::coder::array<
                   cell_wrap_8, 2U> &varargin_2_f2, const ::coder::array<
                   cell_wrap_2, 2U> &varargin_2_f3, const ::coder::array<
@@ -215,8 +44,8 @@ namespace RAT
                   cell_wrap_8, 1U> &varargin_2_f6, const ::coder::array<
                   cell_wrap_1, 2U> &varargin_2_f14, const ::coder::array<
                   cell_wrap_8, 2U> &varargin_2_f19, const struct2_T *varargin_3,
-                  const k_struct_T *varargin_4, real_T *fval, real_T *exitflag,
-                  i_struct_T *output)
+                  const l_struct_T *varargin_4, real_T *fval, real_T *exitflag,
+                  j_struct_T *output)
   {
     static const char_T cv6[33]{ 'N', 'e', 'l', 'd', 'e', 'r', '-', 'M', 'e',
       'a', 'd', ' ', 's', 'i', 'm', 'p', 'l', 'e', 'x', ' ', 'd', 'i', 'r', 'e',
@@ -251,11 +80,11 @@ namespace RAT
     ::coder::array<real_T, 2U> c_fv;
     ::coder::array<real_T, 2U> fv;
     ::coder::array<real_T, 2U> r;
-    ::coder::array<real_T, 2U> r1;
+    ::coder::array<real_T, 2U> r2;
     ::coder::array<real_T, 2U> r3;
     ::coder::array<real_T, 2U> v;
     ::coder::array<real_T, 1U> c_v;
-    ::coder::array<real_T, 1U> r2;
+    ::coder::array<real_T, 1U> r1;
     ::coder::array<real_T, 1U> xbar;
     ::coder::array<real_T, 1U> xc;
     ::coder::array<real_T, 1U> xcc;
@@ -263,9 +92,10 @@ namespace RAT
     ::coder::array<real_T, 1U> xr;
     ::coder::array<real_T, 1U> y;
     ::coder::array<int32_T, 2U> iidx;
-    ::coder::array<char_T, 2U> b_varargin_4;
+    ::coder::array<char_T, 2U> b_varargin_1;
     cell_wrap_9 result[6];
-    d_struct_T problem;
+    e_struct_T b_problem;
+    e_struct_T problem;
     real_T func_evals;
     real_T fxc;
     real_T fxcc;
@@ -276,9 +106,12 @@ namespace RAT
     int32_T b_index;
     int32_T i;
     int32_T i1;
+    int32_T j;
     int32_T n;
     int32_T prnt;
     int32_T x_idx_1;
+    char_T varargin_4_data[17];
+    char_T how_data[16];
     boolean_T exitg1;
     boolean_T printMsg;
 
@@ -362,6 +195,7 @@ namespace RAT
     //      error('MATLAB:fminsearch:NotEnoughInputs',...
     //          sprintf('MATLAB:optimfun:fminsearch:NotEnoughInputs'));
     //  end
+    //
     //
     //  % Check for non-double inputs
     //  if ~isa(x,'double')
@@ -519,10 +353,9 @@ namespace RAT
     if (prnt == 3) {
       printf("\n%s\n", " Iteration   Func-count     min f(x)         Procedure");
       fflush(stdout);
-      b_varargin_4.set_size(1, 1);
-      b_varargin_4[0] = '\x00';
+      varargin_4_data[0] = '\x00';
       printf(" %5.0f        %5.0f     %12.6g         %s\n", 0.0, 1.0, fv[0],
-             &b_varargin_4[0]);
+             &varargin_4_data[0]);
       fflush(stdout);
 
       //  elseif prnt == 4
@@ -565,9 +398,9 @@ namespace RAT
     //  5 percent deltas for non-zero terms
     //  Even smaller delta for zero elements of x
     i = x.size(0);
-    for (int32_T j{0}; j < i; j++) {
+    for (j = 0; j < i; j++) {
+      y.set_size(x.size(0));
       x_idx_1 = x.size(0);
-      y.set_size(x_idx_1);
       for (i1 = 0; i1 < x_idx_1; i1++) {
         y[i1] = x[i1];
       }
@@ -586,16 +419,21 @@ namespace RAT
       simplexIntrafun(y, varargin_1, varargin_2_f1, varargin_2_f2, varargin_2_f3,
                       varargin_2_f4, varargin_2_f5, varargin_2_f6,
                       varargin_2_f14, varargin_2_f19, varargin_3, varargin_4,
-                      &fv[j + 1], &problem, result);
+                      &fv[j + 1], &b_problem, result);
+      x_idx_1 = b_problem.ssubs.size(0);
+      problem.ssubs.set_size(b_problem.ssubs.size(0));
+      for (i1 = 0; i1 < x_idx_1; i1++) {
+        problem.ssubs[i1] = b_problem.ssubs[i1];
+      }
     }
 
     //  sort so v(1,:) has the lowest function value
     coder::internal::sort(fv, iidx);
-    b_index = v.size(0);
+    b_index = v.size(0) - 1;
     b_v.set_size(v.size(0), iidx.size(1));
     x_idx_1 = iidx.size(1);
     for (i = 0; i < x_idx_1; i++) {
-      for (i1 = 0; i1 < b_index; i1++) {
+      for (i1 = 0; i1 <= b_index; i1++) {
         b_v[i1 + b_v.size(0) * i] = v[i1 + v.size(0) * (iidx[i] - 1)];
       }
     }
@@ -609,17 +447,20 @@ namespace RAT
       }
     }
 
+    for (i = 0; i < 15; i++) {
+      how_data[i] = cv5[i];
+    }
+
     itercount = 1.0;
     func_evals = static_cast<real_T>(x.size(0)) + 1.0;
     if (prnt == 3) {
-      b_varargin_4.set_size(1, 16);
       for (i = 0; i < 15; i++) {
-        b_varargin_4[i] = cv5[i];
+        varargin_4_data[i] = how_data[i];
       }
 
-      b_varargin_4[15] = '\x00';
+      varargin_4_data[15] = '\x00';
       printf(" %5.0f        %5.0f     %12.6g         %s\n", 1.0,
-             static_cast<real_T>(x.size(0)) + 1.0, fv[0], &b_varargin_4[0]);
+             static_cast<real_T>(x.size(0)) + 1.0, fv[0], &varargin_4_data[0]);
       fflush(stdout);
 
       //  elseif prnt == 4
@@ -667,8 +508,10 @@ namespace RAT
     while ((!exitg1) && ((func_evals < options_MaxFunEvals) && (itercount <
              options_MaxIter))) {
       real_T b_fv;
-      boolean_T guard1;
-      if (n + 1 < 2) {
+      real_T b_y;
+      boolean_T guard1{ false };
+
+      if (2 > n + 1) {
         i = 0;
         i1 = -1;
       } else {
@@ -676,6 +519,7 @@ namespace RAT
         i1 = n;
       }
 
+      b_y = 10.0 * coder::eps(fv[0]);
       b_fv = fv[0];
       x_idx_1 = i1 - i;
       c_fv.set_size(1, x_idx_1 + 1);
@@ -685,9 +529,9 @@ namespace RAT
 
       coder::b_abs(c_fv, r);
       guard1 = false;
-      if (coder::internal::maximum(r) <= std::fmax(options_TolFun, 10.0 * coder::
-           eps(fv[0]))) {
-        if (n + 1 < 2) {
+      if (coder::internal::maximum(r) <= std::fmax(options_TolFun, b_y)) {
+        int32_T i2;
+        if (2 > n + 1) {
           i = 0;
           i1 = -1;
         } else {
@@ -695,30 +539,25 @@ namespace RAT
           i1 = n;
         }
 
-        x_idx_1 = i1 - i;
-        if (x_idx_1 + 1 == n) {
-          b_v.set_size(v.size(0), x_idx_1 + 1);
-          for (i1 = 0; i1 <= x_idx_1; i1++) {
-            b_index = v.size(0);
-            for (int32_T i2{0}; i2 < b_index; i2++) {
-              b_v[i2 + b_v.size(0) * i1] = v[i2 + v.size(0) * (i + i1)] - v[i2];
-            }
-          }
-
-          coder::c_abs(b_v, r1);
-        } else {
-          c_binary_expand_op(r1, v, i, i1, n);
-        }
-
-        c_v.set_size(v.size(0));
         x_idx_1 = v.size(0);
-        for (i = 0; i < x_idx_1; i++) {
-          c_v[i] = v[i];
+        c_v.set_size(v.size(0));
+        for (i2 = 0; i2 < x_idx_1; i2++) {
+          c_v[i2] = v[i2];
         }
 
-        coder::internal::maximum(r1, r3);
-        if (coder::internal::maximum(r3) <= std::fmax(options_TolX, 10.0 * coder::
-             eps(coder::internal::maximum(c_v)))) {
+        b_y = 10.0 * coder::eps(coder::internal::maximum(c_v));
+        x_idx_1 = v.size(0);
+        b_index = i1 - i;
+        b_v.set_size(v.size(0), b_index + 1);
+        for (i1 = 0; i1 <= b_index; i1++) {
+          for (i2 = 0; i2 < x_idx_1; i2++) {
+            b_v[i2 + b_v.size(0) * i1] = v[i2 + v.size(0) * (i + i1)] - v[i2];
+          }
+        }
+
+        coder::c_abs(b_v, r2);
+        coder::internal::maximum(r2, r3);
+        if (coder::internal::maximum(r3) <= std::fmax(options_TolX, b_y)) {
           exitg1 = true;
         } else {
           guard1 = true;
@@ -728,67 +567,70 @@ namespace RAT
       }
 
       if (guard1) {
-        char_T how_data[16];
-
         //  Compute the reflection point
         //  xbar = average of the n (NOT n+1) best points
-        if (n < 1) {
+        if (1 > n) {
           x_idx_1 = 0;
         } else {
           x_idx_1 = n;
         }
 
+        b_index = v.size(0);
         b_v.set_size(v.size(0), x_idx_1);
         for (i = 0; i < x_idx_1; i++) {
-          b_index = v.size(0);
           for (i1 = 0; i1 < b_index; i1++) {
             b_v[i1 + b_v.size(0) * i] = v[i1 + v.size(0) * i];
           }
         }
 
-        coder::blockedSummation(b_v, x_idx_1, r2);
-        xbar.set_size(r2.size(0));
-        x_idx_1 = r2.size(0);
+        coder::blockedSummation(b_v, x_idx_1, r1);
+        xbar.set_size(r1.size(0));
+        x_idx_1 = r1.size(0);
         for (i = 0; i < x_idx_1; i++) {
-          xbar[i] = r2[i] / static_cast<real_T>(n);
+          xbar[i] = r1[i] / static_cast<real_T>(n);
         }
 
-        if (xbar.size(0) == v.size(0)) {
-          xr.set_size(xbar.size(0));
-          x_idx_1 = xbar.size(0);
-          for (i = 0; i < x_idx_1; i++) {
-            xr[i] = 2.0 * xbar[i] - v[i + v.size(0) * (v.size(1) - 1)];
-          }
-        } else {
-          g_binary_expand_op(xr, xbar, v);
+        xr.set_size(xbar.size(0));
+        x_idx_1 = xbar.size(0);
+        for (i = 0; i < x_idx_1; i++) {
+          xr[i] = 2.0 * xbar[i] - v[i + v.size(0) * (v.size(1) - 1)];
         }
 
         simplexIntrafun(xr, varargin_1, varargin_2_f1, varargin_2_f2,
                         varargin_2_f3, varargin_2_f4, varargin_2_f5,
                         varargin_2_f6, varargin_2_f14, varargin_2_f19,
-                        varargin_3, varargin_4, &fxr, &problem, result);
+                        varargin_3, varargin_4, &fxr, &b_problem, result);
+        problem.ssubs.set_size(b_problem.ssubs.size(0));
+        x_idx_1 = b_problem.ssubs.size(0);
+        for (i = 0; i < x_idx_1; i++) {
+          problem.ssubs[i] = b_problem.ssubs[i];
+        }
+
         func_evals++;
         if (fxr < fv[0]) {
           //  Calculate the expansion point
-          if (xbar.size(0) == v.size(0)) {
-            xe.set_size(xbar.size(0));
-            x_idx_1 = xbar.size(0);
-            for (i = 0; i < x_idx_1; i++) {
-              xe[i] = 3.0 * xbar[i] - 2.0 * v[i + v.size(0) * (v.size(1) - 1)];
-            }
-          } else {
-            binary_expand_op(xe, xbar, v);
+          xe.set_size(xbar.size(0));
+          x_idx_1 = xbar.size(0);
+          for (i = 0; i < x_idx_1; i++) {
+            xe[i] = 3.0 * xbar[i] - 2.0 * v[i + v.size(0) * (v.size(1) - 1)];
           }
 
           simplexIntrafun(xe, varargin_1, varargin_2_f1, varargin_2_f2,
                           varargin_2_f3, varargin_2_f4, varargin_2_f5,
                           varargin_2_f6, varargin_2_f14, varargin_2_f19,
-                          varargin_3, varargin_4, &fxe, &problem, result);
+                          varargin_3, varargin_4, &fxe, &b_problem, result);
+          problem.ssubs.set_size(b_problem.ssubs.size(0));
+          x_idx_1 = b_problem.ssubs.size(0);
+          for (i = 0; i < x_idx_1; i++) {
+            problem.ssubs[i] = b_problem.ssubs[i];
+          }
+
           func_evals++;
           if (fxe < fxr) {
+            b_index = v.size(1) - 1;
             x_idx_1 = xe.size(0);
             for (i = 0; i < x_idx_1; i++) {
-              v[i + v.size(0) * (v.size(1) - 1)] = xe[i];
+              v[i + v.size(0) * b_index] = xe[i];
             }
 
             fv[fv.size(1) - 1] = fxe;
@@ -797,9 +639,10 @@ namespace RAT
               how_data[i] = cv8[i];
             }
           } else {
+            b_index = v.size(1) - 1;
             x_idx_1 = xr.size(0);
             for (i = 0; i < x_idx_1; i++) {
-              v[i + v.size(0) * (v.size(1) - 1)] = xr[i];
+              v[i + v.size(0) * b_index] = xr[i];
             }
 
             fv[fv.size(1) - 1] = fxr;
@@ -811,9 +654,10 @@ namespace RAT
 
           //  fv(:,1) <= fxr
         } else if (fxr < fv[n - 1]) {
+          b_index = v.size(1) - 1;
           x_idx_1 = xr.size(0);
           for (i = 0; i < x_idx_1; i++) {
-            v[i + v.size(0) * (v.size(1) - 1)] = xr[i];
+            v[i + v.size(0) * b_index] = xr[i];
           }
 
           fv[fv.size(1) - 1] = fxr;
@@ -826,25 +670,28 @@ namespace RAT
           //  Perform contraction
           if (fxr < fv[fv.size(1) - 1]) {
             //  Perform an outside contraction
-            if (xbar.size(0) == v.size(0)) {
-              xc.set_size(xbar.size(0));
-              x_idx_1 = xbar.size(0);
-              for (i = 0; i < x_idx_1; i++) {
-                xc[i] = 1.5 * xbar[i] - 0.5 * v[i + v.size(0) * (v.size(1) - 1)];
-              }
-            } else {
-              c_binary_expand_op(xc, xbar, v);
+            xc.set_size(xbar.size(0));
+            x_idx_1 = xbar.size(0);
+            for (i = 0; i < x_idx_1; i++) {
+              xc[i] = 1.5 * xbar[i] - 0.5 * v[i + v.size(0) * (v.size(1) - 1)];
             }
 
             simplexIntrafun(xc, varargin_1, varargin_2_f1, varargin_2_f2,
                             varargin_2_f3, varargin_2_f4, varargin_2_f5,
                             varargin_2_f6, varargin_2_f14, varargin_2_f19,
-                            varargin_3, varargin_4, &fxc, &problem, result);
+                            varargin_3, varargin_4, &fxc, &b_problem, result);
+            problem.ssubs.set_size(b_problem.ssubs.size(0));
+            x_idx_1 = b_problem.ssubs.size(0);
+            for (i = 0; i < x_idx_1; i++) {
+              problem.ssubs[i] = b_problem.ssubs[i];
+            }
+
             func_evals++;
             if (fxc <= fxr) {
+              b_index = v.size(1) - 1;
               x_idx_1 = xc.size(0);
               for (i = 0; i < x_idx_1; i++) {
-                v[i + v.size(0) * (v.size(1) - 1)] = xc[i];
+                v[i + v.size(0) * b_index] = xc[i];
               }
 
               fv[fv.size(1) - 1] = fxc;
@@ -863,25 +710,28 @@ namespace RAT
             }
           } else {
             //  Perform an inside contraction
-            if (xbar.size(0) == v.size(0)) {
-              xcc.set_size(xbar.size(0));
-              x_idx_1 = xbar.size(0);
-              for (i = 0; i < x_idx_1; i++) {
-                xcc[i] = 0.5 * xbar[i] + 0.5 * v[i + v.size(0) * (v.size(1) - 1)];
-              }
-            } else {
-              f_binary_expand_op(xcc, xbar, v);
+            xcc.set_size(xbar.size(0));
+            x_idx_1 = xbar.size(0);
+            for (i = 0; i < x_idx_1; i++) {
+              xcc[i] = 0.5 * xbar[i] + 0.5 * v[i + v.size(0) * (v.size(1) - 1)];
             }
 
             simplexIntrafun(xcc, varargin_1, varargin_2_f1, varargin_2_f2,
                             varargin_2_f3, varargin_2_f4, varargin_2_f5,
                             varargin_2_f6, varargin_2_f14, varargin_2_f19,
-                            varargin_3, varargin_4, &fxcc, &problem, result);
+                            varargin_3, varargin_4, &fxcc, &b_problem, result);
+            problem.ssubs.set_size(b_problem.ssubs.size(0));
+            x_idx_1 = b_problem.ssubs.size(0);
+            for (i = 0; i < x_idx_1; i++) {
+              problem.ssubs[i] = b_problem.ssubs[i];
+            }
+
             func_evals++;
             if (fxcc < fv[fv.size(1) - 1]) {
+              b_index = v.size(1) - 1;
               x_idx_1 = xcc.size(0);
               for (i = 0; i < x_idx_1; i++) {
-                v[i + v.size(0) * (v.size(1) - 1)] = xcc[i];
+                v[i + v.size(0) * b_index] = xcc[i];
               }
 
               fv[fv.size(1) - 1] = fxcc;
@@ -901,12 +751,12 @@ namespace RAT
           }
 
           if (coder::internal::v_strcmp(how_data, how_size)) {
-            for (int32_T j{0}; j < n; j++) {
-              x_idx_1 = v.size(0);
+            for (j = 0; j < n; j++) {
+              b_index = v.size(0) - 1;
               c_v.set_size(v.size(0));
-              for (i = 0; i < x_idx_1; i++) {
-                b_fv = v[i];
-                c_v[i] = b_fv + 0.5 * (v[i + v.size(0) * (j + 1)] - b_fv);
+              for (i = 0; i <= b_index; i++) {
+                b_y = v[i];
+                c_v[i] = b_y + 0.5 * (v[i + v.size(0) * (j + 1)] - b_y);
               }
 
               x_idx_1 = c_v.size(0);
@@ -923,8 +773,13 @@ namespace RAT
               simplexIntrafun(c_v, varargin_1, varargin_2_f1, varargin_2_f2,
                               varargin_2_f3, varargin_2_f4, varargin_2_f5,
                               varargin_2_f6, varargin_2_f14, varargin_2_f19,
-                              varargin_3, varargin_4, &fv[j + 1], &problem,
+                              varargin_3, varargin_4, &fv[j + 1], &b_problem,
                               result);
+              x_idx_1 = b_problem.ssubs.size(0);
+              problem.ssubs.set_size(b_problem.ssubs.size(0));
+              for (i = 0; i < x_idx_1; i++) {
+                problem.ssubs[i] = b_problem.ssubs[i];
+              }
             }
 
             func_evals += static_cast<real_T>(n);
@@ -932,11 +787,11 @@ namespace RAT
         }
 
         coder::internal::sort(fv, iidx);
-        b_index = v.size(0);
+        b_index = v.size(0) - 1;
         b_v.set_size(v.size(0), iidx.size(1));
         x_idx_1 = iidx.size(1);
         for (i = 0; i < x_idx_1; i++) {
-          for (i1 = 0; i1 < b_index; i1++) {
+          for (i1 = 0; i1 <= b_index; i1++) {
             b_v[i1 + b_v.size(0) * i] = v[i1 + v.size(0) * (iidx[i] - 1)];
           }
         }
@@ -952,15 +807,14 @@ namespace RAT
 
         itercount++;
         if (prnt == 3) {
-          b_varargin_4.set_size(1, how_size[1] + 1);
           x_idx_1 = how_size[1];
-          for (i = 0; i < x_idx_1; i++) {
-            b_varargin_4[i] = how_data[i];
+          if (0 <= x_idx_1 - 1) {
+            std::copy(&how_data[0], &how_data[x_idx_1], &varargin_4_data[0]);
           }
 
-          b_varargin_4[how_size[1]] = '\x00';
+          varargin_4_data[how_size[1]] = '\x00';
           printf(" %5.0f        %5.0f     %12.6g         %s\n", itercount,
-                 func_evals, fv[0], &b_varargin_4[0]);
+                 func_evals, fv[0], &varargin_4_data[0]);
           fflush(stdout);
 
           //      elseif prnt == 4
@@ -997,8 +851,8 @@ namespace RAT
     }
 
     //  while
-    x.set_size(v.size(0));
     x_idx_1 = v.size(0);
+    x.set_size(v.size(0));
     for (i = 0; i < x_idx_1; i++) {
       x[i] = v[i];
     }
@@ -1032,14 +886,14 @@ namespace RAT
     }
 
     if (printMsg) {
-      b_varargin_4.set_size(1, output->message.size(1) + 1);
+      b_varargin_1.set_size(1, output->message.size(1) + 1);
       x_idx_1 = output->message.size(1);
       for (i = 0; i < x_idx_1; i++) {
-        b_varargin_4[i] = output->message[i];
+        b_varargin_1[i] = output->message[i];
       }
 
-      b_varargin_4[output->message.size(1)] = '\x00';
-      printf("\n%s\n", &b_varargin_4[0]);
+      b_varargin_1[output->message.size(1)] = '\x00';
+      printf("\n%s\n", &b_varargin_1[0]);
       fflush(stdout);
     }
 

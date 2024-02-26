@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // optimalEllipsoids.cpp
 //
@@ -13,105 +13,15 @@
 #include "RATMain_data.h"
 #include "all.h"
 #include "calcEllipsoid.h"
+#include "print_processing.h"
 #include "rt_nonfinite.h"
 #include "splitEllipsoid.h"
-#include "validate_print_arguments.h"
 #include "coder_array.h"
 #include <stdio.h>
-
-// Function Declarations
-namespace RAT
-{
-  static void d_binary_expand_op(boolean_T in1_data[], int32_T in1_size[2],
-    const real_T in2_data[], const int32_T in2_size[2], const real_T in3_data[],
-    const int32_T in3_size[2], const ::coder::array<real_T, 2U> &in4);
-}
 
 // Function Definitions
 namespace RAT
 {
-  static void d_binary_expand_op(boolean_T in1_data[], int32_T in1_size[2],
-    const real_T in2_data[], const int32_T in2_size[2], const real_T in3_data[],
-    const int32_T in3_size[2], const ::coder::array<real_T, 2U> &in4)
-  {
-    int32_T b_in2_size[2];
-    int32_T aux_0_1;
-    int32_T aux_1_1;
-    int32_T aux_2_1;
-    int32_T loop_ub;
-    int32_T stride_0_0;
-    int32_T stride_0_1;
-    int32_T stride_1_0;
-    int32_T stride_1_1;
-    int32_T stride_2_0;
-    int32_T stride_2_1;
-    boolean_T b_in2_data;
-    if (in4.size(0) == 1) {
-      if (in3_size[0] == 1) {
-        b_in2_size[0] = in2_size[0];
-      } else {
-        b_in2_size[0] = in3_size[0];
-      }
-    } else {
-      b_in2_size[0] = in4.size(0);
-    }
-
-    if (in4.size(1) == 1) {
-      if (in3_size[1] == 1) {
-        b_in2_size[1] = in2_size[1];
-      } else {
-        b_in2_size[1] = in3_size[1];
-      }
-    } else {
-      b_in2_size[1] = in4.size(1);
-    }
-
-    stride_0_0 = (in2_size[0] != 1);
-    stride_0_1 = (in2_size[1] != 1);
-    stride_1_0 = (in3_size[0] != 1);
-    stride_1_1 = (in3_size[1] != 1);
-    stride_2_0 = (in4.size(0) != 1);
-    stride_2_1 = (in4.size(1) != 1);
-    aux_0_1 = 0;
-    aux_1_1 = 0;
-    aux_2_1 = 0;
-    if (in4.size(1) == 1) {
-      if (in3_size[1] == 1) {
-        loop_ub = in2_size[1];
-      } else {
-        loop_ub = in3_size[1];
-      }
-    } else {
-      loop_ub = in4.size(1);
-    }
-
-    for (int32_T i{0}; i < loop_ub; i++) {
-      int32_T b_loop_ub;
-      int32_T i1;
-      i1 = in4.size(0);
-      b_loop_ub = in3_size[0];
-      if (i1 == 1) {
-        if (b_loop_ub == 1) {
-          b_loop_ub = in2_size[0];
-        }
-      } else {
-        b_loop_ub = i1;
-      }
-
-      for (i1 = 0; i1 < b_loop_ub; i1++) {
-        b_in2_data = (in2_data[i1 * stride_0_0 + in2_size[0] * aux_0_1] +
-                      in3_data[i1 * stride_1_0 + in3_size[0] * aux_1_1] < in4[i1
-                      * stride_2_0 + in4.size(0) * aux_2_1]);
-      }
-
-      aux_2_1 += stride_2_1;
-      aux_1_1 += stride_1_1;
-      aux_0_1 += stride_0_1;
-    }
-
-    coder::all((const boolean_T *)&b_in2_data, b_in2_size, in1_data, in1_size);
-  }
-
   void optimalEllipsoids(const ::coder::array<real_T, 2U> &u, real_T VS, ::coder::
     array<real_T, 2U> &Bs, ::coder::array<real_T, 2U> &mus, ::coder::array<
     real_T, 2U> &VEs, ::coder::array<real_T, 2U> &ns)
@@ -129,13 +39,16 @@ namespace RAT
     ::coder::array<real_T, 2U> u2;
     real_T VE1_data;
     real_T VE2_data;
+    real_T VE_data;
     real_T flag;
     real_T nosplit;
+    int32_T validatedHoleFilling[3];
     int32_T VE1_size[2];
     int32_T VE2_size[2];
+    int32_T VE_size[2];
     int32_T b_VE1_size[2];
-    int32_T tmp_size[2];
     boolean_T empty_non_axis_sizes;
+    boolean_T tmp_data;
 
     //  function [Bs, mus, VEs, ns] = optimalEllipsoids(u, VS)
     //
@@ -158,95 +71,83 @@ namespace RAT
     //  number of dimensions
     //  calculate bounding matrix, etc. for bounding ellipsoid associated
     //  with the original set of points u
-    VEs.reserve(1);
-    calcEllipsoid(u, VS, Bs, mu, (real_T *)VEs.data(), VEs.size(), &flag);
+    calcEllipsoid(u, VS, Bs, mu, (real_T *)&VE_data, VE_size, &flag);
 
     //  attempt to split u into two subclusters
     splitEllipsoid(u, VS, u1, u2, (real_T *)&VE1_data, VE1_size, (real_T *)
                    &VE2_data, VE2_size, &nosplit);
-    if ((nosplit != 0.0) || (static_cast<uint32_T>(u1.size(0)) <
-         static_cast<uint32_T>(u.size(1)) + 1U) || (static_cast<uint32_T>
-         (u2.size(0)) < static_cast<uint32_T>(u.size(1)) + 1U)) {
+    if ((nosplit != 0.0) || (static_cast<uint32_T>(u1.size(0)) < u.size(1) + 1U)
+        || (static_cast<uint32_T>(u2.size(0)) < u.size(1) + 1U)) {
+      int32_T i;
+      int32_T i1;
       int32_T input_sizes_idx_0;
+      int32_T loop_ub;
 
       //  couldn't split the cluster
       mus.set_size(mu.size(0), mu.size(1));
       input_sizes_idx_0 = mu.size(1);
-      for (int32_T i{0}; i < input_sizes_idx_0; i++) {
-        int32_T loop_ub;
+      for (i = 0; i < input_sizes_idx_0; i++) {
         loop_ub = mu.size(0);
-        for (int32_T i1{0}; i1 < loop_ub; i1++) {
+        for (i1 = 0; i1 < loop_ub; i1++) {
           mus[mus.size(0) * i] = mu[mu.size(0) * i];
+        }
+      }
+
+      VEs.set_size(VE_size[0], VE_size[1]);
+      input_sizes_idx_0 = VE_size[1];
+      for (i = 0; i < input_sizes_idx_0; i++) {
+        loop_ub = VE_size[0];
+        for (i1 = 0; i1 < loop_ub; i1++) {
+          VEs[0] = VE_data;
         }
       }
 
       ns.set_size(1, 1);
       ns[0] = u.size(0);
     } else {
-      int32_T validatedHoleFilling[3];
       int32_T i;
       int32_T i1;
       int32_T input_sizes_idx_0;
       int32_T loop_ub;
-      boolean_T b_VE1_data;
-      boolean_T guard1;
+      boolean_T guard1{ false };
 
       //  check if we should keep the partitioning of S
       // if (all(VE1 + VE2 < VE) || all(VE > 2*VS))
-      if (VE1_size[0] == 1) {
-        i = VE2_size[0];
-      } else {
-        i = VE1_size[0];
-      }
-
-      if (VE1_size[1] == 1) {
-        i1 = VE2_size[1];
-      } else {
-        i1 = VE1_size[1];
-      }
-
-      if ((VE1_size[0] == VE2_size[0]) && (VE1_size[1] == VE2_size[1]) && (i ==
-           VEs.size(0)) && (i1 == VEs.size(1))) {
-        b_VE1_size[0] = VE1_size[0];
-        b_VE1_size[1] = VE1_size[1];
-        input_sizes_idx_0 = VE1_size[1];
-        for (i = 0; i < input_sizes_idx_0; i++) {
-          loop_ub = VE1_size[0];
-          for (i1 = 0; i1 < loop_ub; i1++) {
-            b_VE1_data = (VE1_data + VE2_data < VEs[0]);
-          }
+      b_VE1_size[0] = VE1_size[0];
+      b_VE1_size[1] = VE1_size[1];
+      input_sizes_idx_0 = VE1_size[1];
+      for (i = 0; i < input_sizes_idx_0; i++) {
+        loop_ub = VE1_size[0];
+        for (i1 = 0; i1 < loop_ub; i1++) {
+          empty_non_axis_sizes = (VE1_data + VE2_data < VE_data);
         }
-
-        coder::all((const boolean_T *)&b_VE1_data, b_VE1_size, (boolean_T *)
-                   &empty_non_axis_sizes, tmp_size);
-      } else {
-        d_binary_expand_op((boolean_T *)&empty_non_axis_sizes, tmp_size, (const
-          real_T *)&VE1_data, VE1_size, (const real_T *)&VE2_data, VE2_size, VEs);
       }
 
+      coder::all((const boolean_T *)&empty_non_axis_sizes, b_VE1_size,
+                 (boolean_T *)&tmp_data, VE1_size);
       guard1 = false;
-      if (coder::b_all((const boolean_T *)&empty_non_axis_sizes, tmp_size)) {
+      if (coder::b_all((const boolean_T *)&tmp_data, VE1_size)) {
         guard1 = true;
       } else {
         flag = 2.0 * VS;
-        b_VE1_size[0] = VEs.size(0);
-        b_VE1_size[1] = VEs.size(1);
-        input_sizes_idx_0 = VEs.size(1);
+        b_VE1_size[0] = VE_size[0];
+        b_VE1_size[1] = VE_size[1];
+        input_sizes_idx_0 = VE_size[1];
         for (i = 0; i < input_sizes_idx_0; i++) {
-          loop_ub = VEs.size(0);
+          loop_ub = VE_size[0];
           for (i1 = 0; i1 < loop_ub; i1++) {
-            b_VE1_data = (VEs[i1 + VEs.size(0) * i] > flag);
+            empty_non_axis_sizes = (VE_data > flag);
           }
         }
 
-        coder::all((const boolean_T *)&b_VE1_data, b_VE1_size, (boolean_T *)
-                   &empty_non_axis_sizes, tmp_size);
-        if (coder::b_all((const boolean_T *)&empty_non_axis_sizes, tmp_size)) {
+        coder::all((const boolean_T *)&empty_non_axis_sizes, b_VE1_size,
+                   (boolean_T *)&tmp_data, VE1_size);
+        if (coder::b_all((const boolean_T *)&tmp_data, VE1_size)) {
           guard1 = true;
         } else {
           if (DEBUG != 0.0) {
-            coder::internal::validate_print_arguments(u.size(0), u1.size(0),
-              u2.size(0), validatedHoleFilling);
+            coder::internal::print_processing(u.size(0), u1.size(0), u2.size(0),
+              validatedHoleFilling);
             printf("PARTITION REJECTED: N=%d doesnt split into n1=%d and n2=%d\n",
                    validatedHoleFilling[0], validatedHoleFilling[1],
                    validatedHoleFilling[2]);
@@ -262,6 +163,15 @@ namespace RAT
             }
           }
 
+          VEs.set_size(VE_size[0], VE_size[1]);
+          input_sizes_idx_0 = VE_size[1];
+          for (i = 0; i < input_sizes_idx_0; i++) {
+            loop_ub = VE_size[0];
+            for (i1 = 0; i1 < loop_ub; i1++) {
+              VEs[0] = VE_data;
+            }
+          }
+
           ns.set_size(1, 1);
           ns[0] = u.size(0);
         }
@@ -272,8 +182,8 @@ namespace RAT
         int32_T sizes_idx_0;
         int16_T b_input_sizes_idx_0;
         if (DEBUG != 0.0) {
-          coder::internal::validate_print_arguments(u.size(0), u1.size(0),
-            u2.size(0), validatedHoleFilling);
+          coder::internal::print_processing(u.size(0), u1.size(0), u2.size(0),
+            validatedHoleFilling);
           printf("PARTITION ACCEPTED: N=%d splits to n1=%d, n2=%d\n",
                  validatedHoleFilling[0], validatedHoleFilling[1],
                  validatedHoleFilling[2]);
@@ -408,9 +318,9 @@ namespace RAT
         } else if ((n2.size(0) != 0) && (n2.size(1) != 0)) {
           result = n2.size(1);
         } else {
-          result = (n1.size(1) > 0);
-          if (n2.size(1) > result) {
-            result = 1;
+          result = n1.size(1);
+          if (n2.size(1) > n1.size(1)) {
+            result = n2.size(1);
           }
         }
 

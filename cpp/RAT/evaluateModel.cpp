@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // evaluateModel.cpp
 //
@@ -20,11 +20,12 @@
 namespace RAT
 {
   void evaluateModel(const ::coder::array<real_T, 2U> &x, const struct13_T
-                     *DREAMPar, const c_struct_T *ratInputs_problemStruct, const
+                     *DREAMPar, const d_struct_T *ratInputs_problemStruct, const
                      cell_11 *ratInputs_problemCells, const struct2_T
                      *ratInputs_controls, ::coder::array<real_T, 2U> &fx)
   {
     ::coder::array<real_T, 2U> b_x;
+    int32_T i;
     int32_T loop_ub_tmp;
 
     //  This function computes the likelihood and log-likelihood of each d-vector
@@ -43,7 +44,7 @@ namespace RAT
     //  Now evaluate the model
     loop_ub_tmp = static_cast<int32_T>(DREAMPar->N);
     fx.set_size(1, loop_ub_tmp);
-    for (int32_T i{0}; i < loop_ub_tmp; i++) {
+    for (i = 0; i < loop_ub_tmp; i++) {
       fx[i] = 0.0;
     }
 
@@ -56,7 +57,7 @@ namespace RAT
       // fx(:,ii) = f_handle(x(ii,:), ratInputs);
       loop_ub = x.size(1);
       b_x.set_size(1, x.size(1));
-      for (int32_T i{0}; i < loop_ub; i++) {
+      for (i = 0; i < loop_ub; i++) {
         b_x[i] = x[ii + x.size(0) * i];
       }
 

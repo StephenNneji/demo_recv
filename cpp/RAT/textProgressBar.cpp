@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // textProgressBar.cpp
 //
@@ -32,6 +32,7 @@ namespace RAT
     ::coder::array<char_T, 2U> varargin_1;
     ::coder::array<char_T, 2U> varargin_2;
     real_T nDots;
+    int32_T i;
     int32_T loop_ub;
     if (!lastNchar_not_empty) {
       lastNchar = 0.0;
@@ -45,12 +46,12 @@ namespace RAT
     progressmsg.set_size(1, (varargin_1.size(1) + varargin_2.size(1)) + 2);
     progressmsg[0] = '[';
     loop_ub = varargin_1.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       progressmsg[i + 1] = varargin_1[i];
     }
 
     loop_ub = varargin_2.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       progressmsg[(i + varargin_1.size(1)) + 1] = varargin_2[i];
     }
 
@@ -58,24 +59,23 @@ namespace RAT
 
     //  progressmsg=[183-uint16((1:40)<=(pct*40)).*(183-'*') ''];
     //  %curmtxt=sprintf('% 9.3g\n',curm(1:min(end,20),1));
-    varargin_1.set_size(1, progressmsg.size(1) + 1);
-    loop_ub = progressmsg.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    varargin_1.set_size(1, progressmsg.size(1));
+    loop_ub = progressmsg.size(1) - 1;
+    for (i = 0; i <= loop_ub; i++) {
       varargin_1[i] = progressmsg[i];
     }
 
-    varargin_1[progressmsg.size(1)] = '\x00';
-    coder::snPrint(pct * 100.0, varargin_1, progressmsg);
+    coder::b_sprintf(pct * 100.0, varargin_1, progressmsg);
     varargin_1.set_size(1, static_cast<int32_T>(lastNchar) + 1);
     loop_ub = static_cast<int32_T>(lastNchar);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       varargin_1[i] = '\x08';
     }
 
     varargin_1[static_cast<int32_T>(lastNchar)] = '\x00';
     varargin_2.set_size(1, progressmsg.size(1) + 1);
     loop_ub = progressmsg.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       varargin_2[i] = progressmsg[i];
     }
 

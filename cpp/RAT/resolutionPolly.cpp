@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // resolutionPolly.cpp
 //
@@ -33,12 +33,12 @@ namespace RAT
     }
 
     for (int32_T j{0}; j < loop_ub_tmp; j++) {
-      real_T a;
+      real_T b_j;
       real_T sumg;
       int32_T ilow;
       sumg = 0.0;
       out[j] = 0.0;
-      if (static_cast<uint32_T>(j) + 1U > 10U) {
+      if (j + 1U > 10U) {
         ilow = -10;
       } else {
         ilow = static_cast<int32_T>(-(static_cast<real_T>(j) + 1.0)) + 1;
@@ -46,19 +46,19 @@ namespace RAT
 
       //     try
       if (static_cast<real_T>(j) + 1.0 < points - 10.0) {
-        a = 10.0;
+        b_j = 10.0;
       } else {
-        a = points - (static_cast<real_T>(j) + 1.0);
+        b_j = points - (static_cast<real_T>(j) + 1.0);
       }
 
-      i = static_cast<int32_T>(a + (1.0 - static_cast<real_T>(ilow)));
+      i = static_cast<int32_T>(b_j + (1.0 - static_cast<real_T>(ilow)));
       for (int32_T b_i{0}; b_i < i; b_i++) {
         real_T g;
         int32_T a_tmp;
         a_tmp = static_cast<int32_T>((static_cast<real_T>(j) + 1.0) +
           static_cast<real_T>(ilow + b_i)) - 1;
-        a = (xdata[a_tmp] - xdata[j]) / (res * xdata[j]);
-        g = std::exp(-(a * a));
+        b_j = (xdata[a_tmp] - xdata[j]) / (res * xdata[j]);
+        g = std::exp(-(b_j * b_j));
         sumg += g;
         out[j] = out[j] + ydata[a_tmp] * g;
       }

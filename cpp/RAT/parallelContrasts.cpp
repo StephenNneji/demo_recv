@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // parallelContrasts.cpp
 //
@@ -20,7 +20,6 @@
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include "coder_bounded_array.h"
-#include "omp.h"
 
 // Function Definitions
 namespace RAT
@@ -29,7 +28,7 @@ namespace RAT
   {
     namespace standardLayers
     {
-      void c_parallelContrasts(const c_struct_T *problemStruct, const cell_11
+      void parallelContrasts(const d_struct_T *problemStruct, const cell_11
         *problemCells, const struct2_T *controls, ::coder::array<real_T, 1U>
         &outSsubs, ::coder::array<real_T, 1U> &backgroundParams, ::coder::array<
         real_T, 1U> &qzshifts, ::coder::array<real_T, 1U> &scalefactors, ::coder::
@@ -49,9 +48,6 @@ namespace RAT
         ::coder::array<real_T, 2U> sldProfile;
         ::coder::array<real_T, 2U> thisContrastLayers_data;
         RATMainTLS *RATMainTLSThread;
-        real_T b_dv[2];
-        real_T b_dv1[2];
-        real_T dv2[2];
         real_T thisBackground;
         real_T thisBulkIn;
         real_T thisBulkOut;
@@ -135,7 +131,7 @@ namespace RAT
 
 #pragma omp parallel \
  num_threads(omp_get_max_threads()) \
- private(RATMainTLSThread,sldProfile,reflect,simul,shiftedDat,resampledLayers,thisSsubs,thisChiSquared,thisContrastLayers_size,thisResol,thisBulkOut,thisBulkIn,thisScalefactor,thisQzshift,thisBackground,b_dv,b_dv1,dv2,loop_ub,b_i,b_loop_ub,i1) \
+ private(RATMainTLSThread,sldProfile,reflect,simul,shiftedDat,resampledLayers,thisSsubs,thisChiSquared,thisContrastLayers_size,thisResol,thisBulkOut,thisBulkIn,thisScalefactor,thisQzshift,thisBackground,i,loop_ub,b_i,b_loop_ub,i1) \
  firstprivate(thisContrastLayers_data)
 
         {
@@ -178,19 +174,14 @@ namespace RAT
             thisContrastLayers_data.set
               (&RATMainTLSThread->f2.thisContrastLayers_data[0],
                thisContrastLayers_size[0], thisContrastLayers_size[1]);
-            b_dv[0] = problemCells->f3[i].f1[0];
-            b_dv[1] = problemCells->f3[i].f1[1];
-            b_dv1[0] = problemCells->f4[i].f1[0];
-            b_dv1[1] = problemCells->f4[i].f1[1];
-            dv2[0] = problemCells->f1[i].f1[0];
-            dv2[1] = problemCells->f1[i].f1[1];
             coreLayersCalculation(thisContrastLayers_data, problemStruct->
                                   params[0], problemStruct->geometry.data,
                                   problemStruct->geometry.size, thisBulkIn,
                                   thisBulkOut, problemStruct->resample[i],
                                   calcSld, thisScalefactor, thisQzshift,
                                   problemStruct->dataPresent[i],
-                                  problemCells->f2[i].f1, b_dv, b_dv1, dv2,
+                                  problemCells->f2[i].f1, problemCells->f3[i].f1,
+                                  problemCells->f4[i].f1, problemCells->f1[i].f1,
                                   thisBackground, thisResol,
                                   problemStruct->contrastBackgroundsType[i],
                                   static_cast<real_T>(nParams),

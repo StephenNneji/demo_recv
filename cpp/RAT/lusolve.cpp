@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // lusolve.cpp
 //
@@ -27,43 +27,36 @@ namespace RAT
       {
         ::coder::array<real_T, 2U> b_A;
         ::coder::array<int32_T, 2U> ipiv;
-        int32_T b_i;
         int32_T i;
         int32_T i1;
         int32_T info;
-        int32_T nb;
         b_A.set_size(A.size(0), A.size(1));
         info = A.size(1);
         for (i = 0; i < info; i++) {
-          b_i = A.size(0);
-          for (i1 = 0; i1 < b_i; i1++) {
+          int32_T loop_ub;
+          loop_ub = A.size(0);
+          for (i1 = 0; i1 < loop_ub; i1++) {
             b_A[i1 + b_A.size(0) * i] = A[i1 + A.size(0) * i];
           }
         }
 
         lapack::xgetrf(A.size(1), A.size(1), b_A, A.size(1), ipiv, &info);
-        nb = B.size(0);
-        X.set_size(B.size(0), B.size(1));
+        X.set_size(1, B.size(1));
         info = B.size(1);
         for (i = 0; i < info; i++) {
-          b_i = B.size(0);
-          for (i1 = 0; i1 < b_i; i1++) {
-            X[X.size(0) * i] = B[B.size(0) * i];
-          }
+          X[i] = B[i];
         }
 
-        blas::xtrsm(B.size(0), A.size(1), b_A, A.size(1), X, B.size(0));
-        blas::b_xtrsm(B.size(0), A.size(1), b_A, A.size(1), X, B.size(0));
+        blas::xtrsm(A.size(1), b_A, A.size(1), X);
+        blas::b_xtrsm(A.size(1), b_A, A.size(1), X);
         i = A.size(1) - 1;
         for (info = i; info >= 1; info--) {
           i1 = ipiv[info - 1];
           if (i1 != info) {
-            for (b_i = 0; b_i < nb; b_i++) {
-              real_T temp;
-              temp = X[X.size(0) * (info - 1)];
-              X[X.size(0) * (info - 1)] = X[X.size(0) * (i1 - 1)];
-              X[X.size(0) * (i1 - 1)] = temp;
-            }
+            real_T temp;
+            temp = X[info - 1];
+            X[info - 1] = X[i1 - 1];
+            X[i1 - 1] = temp;
           }
         }
       }

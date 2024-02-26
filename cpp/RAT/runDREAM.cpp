@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // runDREAM.cpp
 //
@@ -29,10 +29,10 @@
 // Function Definitions
 namespace RAT
 {
-  void runDREAM(const c_struct_T *problemStruct, const cell_11 *problemCells,
+  void runDREAM(const d_struct_T *problemStruct, const cell_11 *problemCells,
                 const struct1_T *problemLimits, const struct2_T *controls, const
-                struct4_T *priors, c_struct_T *outProblemStruct, d_struct_T
-                *contrastParams, cell_wrap_9 result[6], g_struct_T *bayesResults)
+                struct4_T *priors, d_struct_T *outProblemStruct, e_struct_T
+                *contrastParams, cell_wrap_9 result[6], h_struct_T *bayesResults)
   {
     ::coder::array<cell_wrap_1, 1U> fitParamNames;
     ::coder::array<real_T, 2U> Par_info_max;
@@ -40,14 +40,17 @@ namespace RAT
     ::coder::array<real_T, 2U> a__1;
     ::coder::array<real_T, 2U> b_bayesResults;
     ::coder::array<real_T, 2U> c_bayesResults;
+    ::coder::array<real_T, 2U> d_bayesResults;
     ::coder::array<real_T, 2U> r;
-    c_struct_T b_problemStruct;
-    e_struct_T dreamResults_bestFitsMean;
-    f_struct_T dreamResults_predlims;
+    d_struct_T b_problemStruct;
+    f_struct_T dreamResults_bestFitsMean;
+    g_struct_T dreamResults_predlims;
     int32_T b_loop_ub;
     int32_T i;
     int32_T i1;
     int32_T i2;
+    int32_T i3;
+    int32_T i4;
     int32_T loop_ub;
 
     //  Make an empty struct for bayesResults to hold the outputs of the
@@ -84,14 +87,14 @@ namespace RAT
     //  Jump probabilities...
     //  This will change...
     //  Initial sampling and parameter range
-    Par_info_min.set_size(1, b_problemStruct.fitLimits.size(0));
     loop_ub = b_problemStruct.fitLimits.size(0);
+    Par_info_min.set_size(1, b_problemStruct.fitLimits.size(0));
     for (i = 0; i < loop_ub; i++) {
       Par_info_min[i] = b_problemStruct.fitLimits[i];
     }
 
-    Par_info_max.set_size(1, b_problemStruct.fitLimits.size(0));
     loop_ub = b_problemStruct.fitLimits.size(0);
+    Par_info_max.set_size(1, b_problemStruct.fitLimits.size(0));
     for (i = 0; i < loop_ub; i++) {
       Par_info_max[i] = b_problemStruct.fitLimits[i +
         b_problemStruct.fitLimits.size(0)];
@@ -115,28 +118,33 @@ namespace RAT
     //  Combine all chains....
     bayesResults->chain.set_size(0, 0);
     i = static_cast<int32_T>(controls->nChains);
-    if (i - 1 >= 0) {
+    if (0 <= i - 1) {
       int32_T cutoff;
-      if (fitParamNames.size(0) < 1) {
-        b_loop_ub = 0;
+      if (1 > fitParamNames.size(0)) {
+        i1 = 0;
       } else {
-        b_loop_ub = fitParamNames.size(0);
+        i1 = fitParamNames.size(0);
       }
 
       cutoff = static_cast<int32_T>(std::floor(static_cast<real_T>
         (bayesResults->bayesRes.allChains.size(0)) * 0.25));
       if (cutoff > bayesResults->bayesRes.allChains.size(0)) {
-        i1 = 0;
-        i2 = 0;
+        i2 = -1;
+        i3 = -1;
       } else {
-        i1 = cutoff - 1;
-        i2 = bayesResults->bayesRes.allChains.size(0);
+        i2 = cutoff - 2;
+        i3 = bayesResults->bayesRes.allChains.size(0) - 1;
       }
+
+      i4 = i1 - 1;
+      b_loop_ub = i1 - 1;
     }
 
     for (int32_T b_i{0}; b_i < i; b_i++) {
       int32_T b_result;
       int32_T c_loop_ub;
+      int32_T i5;
+      int32_T i6;
       int32_T sizes_idx_0;
       boolean_T empty_non_axis_sizes;
 
@@ -145,12 +153,12 @@ namespace RAT
       if ((bayesResults->chain.size(0) != 0) && (bayesResults->chain.size(1) !=
            0)) {
         b_result = bayesResults->chain.size(1);
-      } else if ((i2 - i1 != 0) && (b_loop_ub != 0)) {
-        b_result = b_loop_ub;
+      } else if ((i3 - i2 != 0) && (i1 != 0)) {
+        b_result = i1;
       } else {
         b_result = bayesResults->chain.size(1);
-        if (b_loop_ub > bayesResults->chain.size(1)) {
-          b_result = b_loop_ub;
+        if (i1 > bayesResults->chain.size(1)) {
+          b_result = i1;
         }
       }
 
@@ -162,54 +170,71 @@ namespace RAT
         loop_ub = 0;
       }
 
-      if (empty_non_axis_sizes || ((i2 - i1 != 0) && (b_loop_ub != 0))) {
-        sizes_idx_0 = i2 - i1;
+      if (empty_non_axis_sizes || ((i3 - i2 != 0) && (i1 != 0))) {
+        sizes_idx_0 = i3 - i2;
       } else {
         sizes_idx_0 = 0;
       }
 
-      c_loop_ub = i2 - i1;
-      b_bayesResults.set_size(c_loop_ub, b_loop_ub);
-      for (int32_T i3{0}; i3 < b_loop_ub; i3++) {
-        for (int32_T i4{0}; i4 < c_loop_ub; i4++) {
-          b_bayesResults[i4 + b_bayesResults.size(0) * i3] =
-            bayesResults->bayesRes.allChains[((i1 + i4) +
-            bayesResults->bayesRes.allChains.size(0) * i3) +
+      c_loop_ub = i3 - i2;
+      c_bayesResults.set_size(c_loop_ub, i4 + 1);
+      for (i5 = 0; i5 <= b_loop_ub; i5++) {
+        for (i6 = 0; i6 < c_loop_ub; i6++) {
+          c_bayesResults[i6 + c_bayesResults.size(0) * i5] =
+            bayesResults->bayesRes.allChains[(((i2 + i6) +
+            bayesResults->bayesRes.allChains.size(0) * i5) +
             bayesResults->bayesRes.allChains.size(0) *
-            bayesResults->bayesRes.allChains.size(1) * b_i];
+            bayesResults->bayesRes.allChains.size(1) * b_i) + 1];
         }
       }
 
-      c_bayesResults.set_size(loop_ub + sizes_idx_0, b_result);
-      for (int32_T i3{0}; i3 < b_result; i3++) {
-        for (int32_T i4{0}; i4 < loop_ub; i4++) {
-          c_bayesResults[i4 + c_bayesResults.size(0) * i3] = bayesResults->
-            chain[i4 + loop_ub * i3];
+      d_bayesResults.set_size(loop_ub + sizes_idx_0, b_result);
+      for (i5 = 0; i5 < b_result; i5++) {
+        for (i6 = 0; i6 < loop_ub; i6++) {
+          d_bayesResults[i6 + d_bayesResults.size(0) * i5] = bayesResults->
+            chain[i6 + loop_ub * i5];
         }
       }
 
-      for (int32_T i3{0}; i3 < b_result; i3++) {
-        for (int32_T i4{0}; i4 < sizes_idx_0; i4++) {
-          c_bayesResults[(i4 + loop_ub) + c_bayesResults.size(0) * i3] =
-            b_bayesResults[i4 + sizes_idx_0 * i3];
+      for (i5 = 0; i5 < b_result; i5++) {
+        for (i6 = 0; i6 < sizes_idx_0; i6++) {
+          d_bayesResults[(i6 + loop_ub) + d_bayesResults.size(0) * i5] =
+            c_bayesResults[i6 + sizes_idx_0 * i5];
         }
       }
 
-      bayesResults->chain.set_size(c_bayesResults.size(0), c_bayesResults.size(1));
-      loop_ub = c_bayesResults.size(1);
-      for (int32_T i3{0}; i3 < loop_ub; i3++) {
-        c_loop_ub = c_bayesResults.size(0);
-        for (int32_T i4{0}; i4 < c_loop_ub; i4++) {
-          bayesResults->chain[i4 + bayesResults->chain.size(0) * i3] =
-            c_bayesResults[i4 + c_bayesResults.size(0) * i3];
+      bayesResults->chain.set_size(d_bayesResults.size(0), d_bayesResults.size(1));
+      loop_ub = d_bayesResults.size(1);
+      for (i5 = 0; i5 < loop_ub; i5++) {
+        c_loop_ub = d_bayesResults.size(0);
+        for (i6 = 0; i6 < c_loop_ub; i6++) {
+          bayesResults->chain[i6 + bayesResults->chain.size(0) * i5] =
+            d_bayesResults[i6 + d_bayesResults.size(0) * i5];
         }
       }
     }
 
     coder::mean(bayesResults->chain, bayesResults->bestPars);
-    processBayes(bayesResults->bestPars, bayesResults->chain, &b_problemStruct,
-                 controls, problemCells, outProblemStruct, contrastParams,
-                 result, &dreamResults_bestFitsMean, &dreamResults_predlims,
+    b_bayesResults.set_size(1, bayesResults->bestPars.size(1));
+    loop_ub = bayesResults->bestPars.size(1) - 1;
+    for (i = 0; i <= loop_ub; i++) {
+      b_bayesResults[i] = bayesResults->bestPars[i];
+    }
+
+    c_bayesResults.set_size(bayesResults->chain.size(0),
+      bayesResults->chain.size(1));
+    loop_ub = bayesResults->chain.size(1) - 1;
+    for (i = 0; i <= loop_ub; i++) {
+      b_loop_ub = bayesResults->chain.size(0) - 1;
+      for (i1 = 0; i1 <= b_loop_ub; i1++) {
+        c_bayesResults[i1 + c_bayesResults.size(0) * i] = bayesResults->chain[i1
+          + bayesResults->chain.size(0) * i];
+      }
+    }
+
+    processBayes(b_bayesResults, c_bayesResults, &b_problemStruct, controls,
+                 problemCells, outProblemStruct, contrastParams, result,
+                 &dreamResults_bestFitsMean, &dreamResults_predlims,
                  &bayesResults->parConfInts);
 
     //  Populate the output struct

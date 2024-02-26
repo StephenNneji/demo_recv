@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // calcEllipsoid.cpp
 //
@@ -14,13 +14,11 @@
 #include "RATMain_rtwutil.h"
 #include "cov.h"
 #include "det.h"
-#include "eml_mtimes_helper.h"
 #include "gamma.h"
 #include "ifWhileCond.h"
 #include "matrix_to_integer_power.h"
 #include "mean.h"
 #include "mrdivide_helper.h"
-#include "mtimes.h"
 #include "rcond.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
@@ -38,13 +36,11 @@ namespace RAT
     ::coder::array<real_T, 2U> b_u;
     ::coder::array<real_T, 2U> r;
     ::coder::array<real_T, 2U> y;
-    ::coder::array<boolean_T, 2U> c_y_data;
-    ::coder::array<boolean_T, 2U> d_y_data;
+    ::coder::array<boolean_T, 2U> b_const_data;
     real_T b;
-    real_T y_data;
-    int32_T y_size[2];
+    int32_T fV_size[2];
     int32_T b_flag;
-    boolean_T b_y_data;
+    boolean_T const_data;
 
     //
     //  calculate properties of ellipsoid given a set of points u
@@ -72,8 +68,7 @@ namespace RAT
 
     //  extract number of points and number of dimensions
     //  check that total number of points is large enough
-    if (static_cast<uint32_T>(u.size(0)) < static_cast<uint32_T>(u.size(1)) + 1U)
-    {
+    if (static_cast<uint32_T>(u.size(0)) < u.size(1) + 1U) {
       if (DEBUG != 0.0) {
         printf("number of samples too small to calculate bounding matrix for ellipsoid\n");
         fflush(stdout);
@@ -82,6 +77,8 @@ namespace RAT
       b_flag = 1;
     } else {
       real_T x;
+      int32_T i;
+      int32_T loop_ub;
 
       //  constant factor for volume of ellipsoid
       b = static_cast<real_T>(u.size(1)) / 2.0 + 1.0;
@@ -89,7 +86,12 @@ namespace RAT
 
       //  calculate covariance matrix and centroid
       coder::cov(u, C);
-      coder::mean(u, mu);
+      coder::mean(u, r);
+      mu.set_size(1, r.size(1));
+      loop_ub = r.size(1);
+      for (i = 0; i < loop_ub; i++) {
+        mu[mu.size(0) * i] = r[i];
+      }
 
       //  check condition number of C (eps = 2.2204e-16)
       x = coder::rcond(C);
@@ -104,54 +106,29 @@ namespace RAT
         real_T fB;
         real_T fV_data;
         int32_T b_loop_ub;
-        int32_T i;
-        int32_T loop_ub;
+        int32_T i1;
 
         //  find scale factor for bounding ellipsoid E
         fB = 0.0;
 
         // coder.varsize('fB');
         i = u.size(0);
-        loop_ub = u.size(1);
-        b_loop_ub = u.size(1);
         for (int32_T b_i{0}; b_i < i; b_i++) {
-          int32_T c_loop_ub;
-          if (u.size(1) == mu.size(1)) {
-            b_u.set_size(1, u.size(1));
-            for (int32_T i1{0}; i1 < loop_ub; i1++) {
-              b_u[b_u.size(0) * i1] = u[b_i + u.size(0) * i1] - mu[mu.size(0) *
-                i1];
-            }
-
-            coder::internal::mrdiv(b_u, C, r);
-          } else {
-            binary_expand_op(r, u, b_i, mu, C);
+          loop_ub = u.size(1);
+          b_u.set_size(1, u.size(1));
+          for (i1 = 0; i1 < loop_ub; i1++) {
+            b_u[i1] = u[b_i + u.size(0) * i1] - mu[mu.size(0) * i1];
           }
 
-          if (u.size(1) == mu.size(1)) {
-            b_u.set_size(1, u.size(1));
-            for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
-              b_u[b_u.size(0) * i1] = u[b_i + u.size(0) * i1] - mu[mu.size(0) *
-                i1];
-            }
-
-            coder::internal::blas::mtimes(r, b_u, (real_T *)&y_data, y_size);
-          } else {
-            binary_expand_op((real_T *)&y_data, y_size, r, u, b_i, mu);
+          coder::internal::mrdiv(b_u, C, r);
+          x = 0.0;
+          loop_ub = r.size(1);
+          for (i1 = 0; i1 < loop_ub; i1++) {
+            x += r[i1] * (u[b_i + u.size(0) * i1] - mu[mu.size(0) * i1]);
           }
 
-          c_loop_ub = y_size[1];
-          for (int32_T i1{0}; i1 < c_loop_ub; i1++) {
-            int32_T d_loop_ub;
-            d_loop_ub = y_size[0];
-            for (int32_T i2{0}; i2 < d_loop_ub; i2++) {
-              b_y_data = (y_data > fB);
-            }
-          }
-
-          c_y_data.set(&b_y_data, y_size[0], y_size[1]);
-          if (coder::internal::ifWhileCond(c_y_data)) {
-            fB = y_data;
+          if (x > fB) {
+            fB = x;
           }
         }
 
@@ -160,7 +137,7 @@ namespace RAT
         loop_ub = C.size(1);
         for (i = 0; i < loop_ub; i++) {
           b_loop_ub = C.size(0);
-          for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
             y[i1 + y.size(0) * i] = fB * C[i1 + C.size(0) * i];
           }
         }
@@ -173,14 +150,14 @@ namespace RAT
 
         //  expand volume of bounding ellipsoid to VS if necessary
         fV_data = 1.0;
-        b_y_data = (x < VS);
-        d_y_data.set(&b_y_data, 1, 1);
-        if (coder::internal::ifWhileCond(d_y_data)) {
+        const_data = (x < VS);
+        b_const_data.set(&const_data, 1, 1);
+        if (coder::internal::ifWhileCond(b_const_data)) {
           b = 2.0 / static_cast<real_T>(u.size(1));
           if (std::floor(b) == b) {
             x = VS / x;
             coder::matrix_to_integer_power((const real_T *)&x, b, (real_T *)
-              &fV_data, y_size);
+              &fV_data, fV_size);
           }
 
           VE_size[0] = 1;
@@ -201,12 +178,13 @@ namespace RAT
         //
         //  Error in calcEllipsoid (line 73)
         //  B = fV * fB * C;
+        //  B = fV * fB * C;
         x = fV_data * fB;
         B.set_size(C.size(0), C.size(1));
         loop_ub = C.size(1);
         for (i = 0; i < loop_ub; i++) {
           b_loop_ub = C.size(0);
-          for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
             B[i1 + B.size(0) * i] = x * C[i1 + C.size(0) * i];
           }
         }

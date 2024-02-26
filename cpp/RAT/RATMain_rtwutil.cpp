@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // RATMain_rtwutil.cpp
 //
@@ -13,7 +13,7 @@
 #include "RATMain_types.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
-#include "omp.h"
+#include "rt_defines.h"
 #include <cfloat>
 #include <cmath>
 #include <cstddef>
@@ -30,74 +30,74 @@ namespace RAT
 // Function Definitions
 namespace RAT
 {
-  void cast(const ::coder::array<cell_wrap_48, 1U> &r, ::coder::array<
-            cell_wrap_8, 1U> &r1)
+  void cast(const ::coder::array<cell_wrap_47, 1U> &b, ::coder::array<
+            cell_wrap_8, 1U> &c)
   {
     int32_T i;
-    r1.set_size(r.size(0));
-    i = r.size(0);
+    c.set_size(b.size(0));
+    i = b.size(0);
     for (int32_T i1{0}; i1 < i; i1++) {
       int32_T loop_ub;
-      loop_ub = r[i1].f1.size(1);
-      r1[i1].f1.set_size(5, r[i1].f1.size(1));
+      loop_ub = b[i1].f1.size(1);
+      c[i1].f1.set_size(5, b[i1].f1.size(1));
       for (int32_T i2{0}; i2 < loop_ub; i2++) {
         for (int32_T i3{0}; i3 < 5; i3++) {
-          r1[i1].f1[i3 + r1[i1].f1.size(0) * i2] = r[i1].f1[i3 + 5 * i2];
+          c[i1].f1[i3 + c[i1].f1.size(0) * i2] = b[i1].f1[i3 + 5 * i2];
         }
       }
     }
   }
 
-  void cast(const ::coder::array<cell_wrap_48, 2U> &r, ::coder::array<
-            cell_wrap_8, 2U> &r1)
+  void cast(const ::coder::array<cell_wrap_47, 2U> &b, ::coder::array<
+            cell_wrap_8, 2U> &c)
   {
     int32_T i;
-    r1.set_size(r.size(0), r.size(1));
-    i = r.size(0) * r.size(1);
+    c.set_size(b.size(0), b.size(1));
+    i = b.size(0) * b.size(1);
     for (int32_T i1{0}; i1 < i; i1++) {
       int32_T loop_ub;
-      loop_ub = r[i1].f1.size(1);
-      r1[i1].f1.set_size(5, r[i1].f1.size(1));
+      loop_ub = b[i1].f1.size(1);
+      c[i1].f1.set_size(5, b[i1].f1.size(1));
       for (int32_T i2{0}; i2 < loop_ub; i2++) {
         for (int32_T i3{0}; i3 < 5; i3++) {
-          r1[i1].f1[i3 + r1[i1].f1.size(0) * i2] = r[i1].f1[i3 + 5 * i2];
+          c[i1].f1[i3 + c[i1].f1.size(0) * i2] = b[i1].f1[i3 + 5 * i2];
         }
       }
     }
   }
 
-  void cast(const ::coder::array<cell_wrap_22, 2U> &r, ::coder::array<
-            cell_wrap_8, 2U> &r1)
+  void cast(const ::coder::array<cell_wrap_22, 2U> &b, ::coder::array<
+            cell_wrap_8, 2U> &c)
   {
     int32_T i;
-    r1.set_size(r.size(0), r.size(1));
-    i = r.size(0) * r.size(1);
+    c.set_size(b.size(0), b.size(1));
+    i = b.size(0) * b.size(1);
     for (int32_T i1{0}; i1 < i; i1++) {
       int32_T loop_ub;
-      loop_ub = r[i1].f1.size(1);
-      r1[i1].f1.set_size(1, r[i1].f1.size(1));
+      loop_ub = b[i1].f1.size(1);
+      c[i1].f1.set_size(1, b[i1].f1.size(1));
       for (int32_T i2{0}; i2 < loop_ub; i2++) {
-        r1[i1].f1[r1[i1].f1.size(0) * i2] = r[i1].f1[i2];
+        c[i1].f1[c[i1].f1.size(0) * i2] = b[i1].f1[i2];
       }
     }
   }
 
-  void cast(const ::coder::array<cell_wrap_18, 2U> &r, ::coder::array<
-            cell_wrap_8, 2U> &r1)
+  void cast(const ::coder::array<cell_wrap_18, 2U> &b, ::coder::array<
+            cell_wrap_8, 2U> &c)
   {
     int32_T i;
-    r1.set_size(r.size(0), 2);
-    i = r.size(0) << 1;
+    c.set_size(b.size(0), 2);
+    i = b.size(0) << 1;
     for (int32_T i1{0}; i1 < i; i1++) {
       int32_T loop_ub;
-      loop_ub = r[i1].f1.size(1);
-      r1[i1].f1.set_size(r[i1].f1.size(0), r[i1].f1.size(1));
+      loop_ub = b[i1].f1.size(1);
+      c[i1].f1.set_size(b[i1].f1.size(0), b[i1].f1.size(1));
       for (int32_T i2{0}; i2 < loop_ub; i2++) {
         int32_T b_loop_ub;
-        b_loop_ub = r[i1].f1.size(0);
+        b_loop_ub = b[i1].f1.size(0);
         for (int32_T i3{0}; i3 < b_loop_ub; i3++) {
-          r1[i1].f1[i3 + r1[i1].f1.size(0) * i2] = r[i1].f1[i3 + r[i1].f1.size(0)
-            * i2];
+          c[i1].f1[i3 + c[i1].f1.size(0) * i2] = b[i1].f1[i3 + b[i1].f1.size(0) *
+            i2];
         }
       }
     }
@@ -130,26 +130,59 @@ namespace RAT
  num_threads(omp_get_max_threads())
 
     for (int32_T i = 1; i <= b; i++) {
-      RATMainTLSGlobal = static_cast<RATMainTLS *>(new RATMainTLS);
+      RATMainTLSGlobal = new RATMainTLS;
     }
+  }
+
+  real_T rt_atan2d_snf(real_T u0, real_T u1)
+  {
+    real_T y;
+    if (std::isnan(u0) || std::isnan(u1)) {
+      y = rtNaN;
+    } else if (std::isinf(u0) && std::isinf(u1)) {
+      int32_T b_u0;
+      int32_T b_u1;
+      if (u0 > 0.0) {
+        b_u0 = 1;
+      } else {
+        b_u0 = -1;
+      }
+
+      if (u1 > 0.0) {
+        b_u1 = 1;
+      } else {
+        b_u1 = -1;
+      }
+
+      y = std::atan2(static_cast<real_T>(b_u0), static_cast<real_T>(b_u1));
+    } else if (u1 == 0.0) {
+      if (u0 > 0.0) {
+        y = RT_PI / 2.0;
+      } else if (u0 < 0.0) {
+        y = -(RT_PI / 2.0);
+      } else {
+        y = 0.0;
+      }
+    } else {
+      y = std::atan2(u0, u1);
+    }
+
+    return y;
   }
 
   real_T rt_hypotd_snf(real_T u0, real_T u1)
   {
     real_T a;
-    real_T b;
     real_T y;
     a = std::abs(u0);
-    b = std::abs(u1);
-    if (a < b) {
-      a /= b;
-      y = b * std::sqrt(a * a + 1.0);
-    } else if (a > b) {
-      b /= a;
-      y = a * std::sqrt(b * b + 1.0);
-    } else if (std::isnan(b)) {
-      y = rtNaN;
-    } else {
+    y = std::abs(u1);
+    if (a < y) {
+      a /= y;
+      y *= std::sqrt(a * a + 1.0);
+    } else if (a > y) {
+      y /= a;
+      y = a * std::sqrt(y * y + 1.0);
+    } else if (!std::isnan(y)) {
       y = a * 1.4142135623730951;
     }
 

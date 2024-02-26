@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // interp1.cpp
 //
@@ -14,7 +14,6 @@
 #include "flip.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
-#include "omp.h"
 #include <cmath>
 
 // Function Declarations
@@ -48,6 +47,7 @@ namespace RAT
       real_T minx;
       real_T penx;
       real_T r;
+      int32_T k;
       int32_T n;
       int32_T ub_loop;
       minx = varargin_1[0];
@@ -57,9 +57,9 @@ namespace RAT
 
 #pragma omp parallel for \
  num_threads(omp_get_max_threads()) \
- private(d,r,n)
+ private(d,k,r,n)
 
-      for (int32_T k = 0; k <= ub_loop; k++) {
+      for (k = 0; k <= ub_loop; k++) {
         d = xi[k];
         if (std::isnan(d)) {
           yi[k] = rtNaN;
@@ -97,6 +97,7 @@ namespace RAT
       real_T maxx;
       real_T minx;
       real_T r;
+      int32_T k;
       int32_T n;
       int32_T ub_loop;
       minx = varargin_1[0];
@@ -105,9 +106,9 @@ namespace RAT
 
 #pragma omp parallel for \
  num_threads(omp_get_max_threads()) \
- private(d,n,r)
+ private(d,k,n,r)
 
-      for (int32_T k = 0; k <= ub_loop; k++) {
+      for (k = 0; k <= ub_loop; k++) {
         d = xi[k];
         if (std::isnan(d)) {
           yi[k] = rtNaN;
@@ -134,9 +135,11 @@ namespace RAT
       array<real_T, 1U> &xi, ::coder::array<real_T, 1U> &yi, const ::coder::
       array<real_T, 1U> &varargin_1)
     {
+      real_T d;
       real_T maxx;
       real_T minx;
       real_T r;
+      int32_T k;
       int32_T n;
       int32_T ub_loop;
       minx = varargin_1[0];
@@ -145,9 +148,9 @@ namespace RAT
 
 #pragma omp parallel for \
  num_threads(omp_get_max_threads()) \
- private(n,r)
+ private(k,n,r,d)
 
-      for (int32_T k = 0; k <= ub_loop; k++) {
+      for (k = 0; k <= ub_loop; k++) {
         if (std::isnan(xi[k])) {
           yi[k] = rtNaN;
         } else if ((!(xi[k] > maxx)) && (!(xi[k] < minx))) {
@@ -157,10 +160,13 @@ namespace RAT
             yi[k] = y[n];
           } else if (r == 1.0) {
             yi[k] = y[n + 1];
-          } else if (y[n] == y[n + 1]) {
-            yi[k] = y[n];
           } else {
-            yi[k] = (1.0 - r) * y[n] + r * y[n + 1];
+            d = y[n + 1];
+            if (y[n] == d) {
+              yi[k] = y[n];
+            } else {
+              yi[k] = (1.0 - r) * y[n] + r * d;
+            }
           }
         }
       }

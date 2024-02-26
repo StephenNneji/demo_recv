@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // reflectivityCalculation1.cpp
 //
@@ -26,8 +26,8 @@ namespace RAT
 {
   namespace nonPolarisedTF
   {
-    void b_reflectivityCalculation(const c_struct_T *problemStruct, const
-      cell_11 *problemCells, const struct2_T *controls, d_struct_T
+    void b_reflectivityCalculation(const d_struct_T *problemStruct, const
+      cell_11 *problemCells, const struct2_T *controls, e_struct_T
       *contrastParams, ::coder::array<cell_wrap_20, 1U> &reflectivity, ::coder::
       array<cell_wrap_20, 1U> &simulation, ::coder::array<cell_wrap_8, 1U>
       &shiftedData, ::coder::array<cell_wrap_8, 1U> &layerSlds, ::coder::array<
@@ -111,13 +111,13 @@ namespace RAT
 
       coder::lower(problemStruct->modelType.data, problemStruct->modelType.size,
                    switch_expression_data, switch_expression_size);
-      if (coder::internal::k_strcmp(switch_expression_data,
+      if (coder::internal::j_strcmp(switch_expression_data,
            switch_expression_size)) {
         loop_ub_tmp = 0;
-      } else if (coder::internal::l_strcmp(switch_expression_data,
+      } else if (coder::internal::k_strcmp(switch_expression_data,
                   switch_expression_size)) {
         loop_ub_tmp = 1;
-      } else if (coder::internal::m_strcmp(switch_expression_data,
+      } else if (coder::internal::l_strcmp(switch_expression_data,
                   switch_expression_size)) {
         loop_ub_tmp = 2;
       } else {

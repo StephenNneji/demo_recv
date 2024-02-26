@@ -7,7 +7,15 @@ __pycache__/
 .idea
 .vscode
 
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.cache/
+
 # Build
+_build
+docs/.buildinfo
+docs/*.inv
 *.rat.cpp
 *.so
 *.dll 
@@ -18,5 +26,5 @@ __pycache__/
 *.a
 *.egg-info/
 build/*
+dist/*
 *.whl
-*.tar.gz

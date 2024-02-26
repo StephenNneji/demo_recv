@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // reflectivityCalculation2.cpp
 //
@@ -26,8 +26,8 @@ namespace RAT
 {
   namespace domainsTF
   {
-    void b_reflectivityCalculation(const c_struct_T *problemStruct, const
-      cell_11 *problemCells, const struct2_T *controls, d_struct_T
+    void b_reflectivityCalculation(const d_struct_T *problemStruct, const
+      cell_11 *problemCells, const struct2_T *controls, e_struct_T
       *contrastParams, ::coder::array<cell_wrap_20, 1U> &reflectivity, ::coder::
       array<cell_wrap_20, 1U> &simulation, ::coder::array<cell_wrap_8, 1U>
       &shiftedData, ::coder::array<cell_wrap_8, 2U> &layerSlds, ::coder::array<
@@ -38,6 +38,7 @@ namespace RAT
       ::coder::array<cell_wrap_8, 2U> b_layerSlds;
       ::coder::array<cell_wrap_8, 2U> r;
       int32_T switch_expression_size[2];
+      int32_T b_i;
       int32_T loop_ub_tmp;
       char_T switch_expression_data[10000];
 
@@ -112,7 +113,7 @@ namespace RAT
           + domainSldProfiles.size(0)].f1.size(0) + 1] = 1.0;
         allLayers[i].f1.set_size(2, 3);
         allLayers[i + allLayers.size(0)].f1.set_size(2, 3);
-        for (int32_T b_i{0}; b_i < 3; b_i++) {
+        for (b_i = 0; b_i < 3; b_i++) {
           shiftedData[i].f1[shiftedData[i].f1.size(0) * b_i] = 1.0;
           shiftedData[i].f1[shiftedData[i].f1.size(0) * b_i + 1] = 1.0;
           layerSlds[i].f1[layerSlds[i].f1.size(0) * b_i] = 1.0;
@@ -132,13 +133,13 @@ namespace RAT
 
       coder::lower(problemStruct->modelType.data, problemStruct->modelType.size,
                    switch_expression_data, switch_expression_size);
-      if (coder::internal::k_strcmp(switch_expression_data,
+      if (coder::internal::j_strcmp(switch_expression_data,
            switch_expression_size)) {
         loop_ub_tmp = 0;
-      } else if (coder::internal::l_strcmp(switch_expression_data,
+      } else if (coder::internal::k_strcmp(switch_expression_data,
                   switch_expression_size)) {
         loop_ub_tmp = 1;
-      } else if (coder::internal::m_strcmp(switch_expression_data,
+      } else if (coder::internal::l_strcmp(switch_expression_data,
                   switch_expression_size)) {
         loop_ub_tmp = 2;
       } else {
@@ -155,6 +156,7 @@ namespace RAT
 
        case 1:
         {
+          int32_T i1;
           int32_T loop_ub;
 
           //  Custom layers with user supplied custom model file
@@ -165,13 +167,13 @@ namespace RAT
           domainSldProfiles.set_size(b_domainSldProfiles.size(0), 2);
           loop_ub_tmp = b_layerSlds.size(0);
           loop_ub = b_domainSldProfiles.size(0);
-          for (int32_T b_i{0}; b_i < 2; b_i++) {
-            for (int32_T i1{0}; i1 < loop_ub_tmp; i1++) {
+          for (b_i = 0; b_i < 2; b_i++) {
+            for (i1 = 0; i1 < loop_ub_tmp; i1++) {
               layerSlds[i1 + layerSlds.size(0) * b_i] = b_layerSlds[i1 +
                 b_layerSlds.size(0) * b_i];
             }
 
-            for (int32_T i1{0}; i1 < loop_ub; i1++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
               domainSldProfiles[i1 + domainSldProfiles.size(0) * b_i] =
                 b_domainSldProfiles[i1 + b_domainSldProfiles.size(0) * b_i];
             }
@@ -179,9 +181,9 @@ namespace RAT
 
           allLayers.set_size(r.size(0), r.size(1));
           loop_ub_tmp = r.size(1);
-          for (int32_T b_i{0}; b_i < loop_ub_tmp; b_i++) {
+          for (b_i = 0; b_i < loop_ub_tmp; b_i++) {
             loop_ub = r.size(0);
-            for (int32_T i1{0}; i1 < loop_ub; i1++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
               allLayers[i1 + allLayers.size(0) * b_i] = r[i1 + r.size(0) * b_i];
             }
           }
@@ -190,6 +192,7 @@ namespace RAT
 
        case 2:
         {
+          int32_T i1;
           int32_T loop_ub;
 
           //  Custom SLD profile with user defined model file
@@ -200,13 +203,13 @@ namespace RAT
           domainSldProfiles.set_size(b_domainSldProfiles.size(0), 2);
           loop_ub_tmp = b_layerSlds.size(0);
           loop_ub = b_domainSldProfiles.size(0);
-          for (int32_T b_i{0}; b_i < 2; b_i++) {
-            for (int32_T i1{0}; i1 < loop_ub_tmp; i1++) {
+          for (b_i = 0; b_i < 2; b_i++) {
+            for (i1 = 0; i1 < loop_ub_tmp; i1++) {
               layerSlds[i1 + layerSlds.size(0) * b_i] = b_layerSlds[i1 +
                 b_layerSlds.size(0) * b_i];
             }
 
-            for (int32_T i1{0}; i1 < loop_ub; i1++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
               domainSldProfiles[i1 + domainSldProfiles.size(0) * b_i] =
                 b_domainSldProfiles[i1 + b_domainSldProfiles.size(0) * b_i];
             }
@@ -214,9 +217,9 @@ namespace RAT
 
           allLayers.set_size(r.size(0), r.size(1));
           loop_ub_tmp = r.size(1);
-          for (int32_T b_i{0}; b_i < loop_ub_tmp; b_i++) {
+          for (b_i = 0; b_i < loop_ub_tmp; b_i++) {
             loop_ub = r.size(0);
-            for (int32_T i1{0}; i1 < loop_ub; i1++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
               allLayers[i1 + allLayers.size(0) * b_i] = r[i1 + r.size(0) * b_i];
             }
           }

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xnrm2.h
 //
@@ -13,6 +13,7 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -26,12 +27,11 @@ namespace RAT
       namespace blas
       {
         real_T b_xnrm2(int32_T n, const ::coder::array<real_T, 1U> &x);
-        real_T xnrm2(int32_T n, const ::coder::array<real_T, 2U> &x);
+        real_T xnrm2(int32_T n, const ::coder::array<real_T, 1U> &x);
         real_T xnrm2(int32_T n, const ::coder::array<creal_T, 2U> &x, int32_T
                      ix0);
         real_T xnrm2(int32_T n, const ::coder::array<real_T, 2U> &x, int32_T ix0);
         real_T xnrm2(int32_T n, const real_T x[3]);
-        real_T xnrm2(int32_T n, const ::coder::array<real_T, 1U> &x);
       }
     }
   }

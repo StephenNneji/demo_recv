@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // eml_setop.cpp
 //
@@ -10,9 +10,11 @@
 
 // Include files
 #include "eml_setop.h"
+#include "eps.h"
 #include "relop.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
+#include <cmath>
 
 // Function Declarations
 namespace RAT
@@ -34,7 +36,9 @@ namespace RAT
     {
       real_T xk;
       xk = x[*k - 1];
-      while ((*k < x.size(1)) && (x[*k] == xk)) {
+      while ((*k < x.size(1)) && ((std::abs(xk - x[*k]) < eps(xk / 2.0)) || (std::
+               isinf(x[*k]) && std::isinf(xk) && ((x[*k] > 0.0) == (xk > 0.0)))))
+      {
         (*k)++;
       }
 
@@ -66,7 +70,8 @@ namespace RAT
         b_ialast = ialast;
         ak = skip_to_last_equal_value(&b_ialast, a);
         ialast = b_ialast;
-        if (ak == b) {
+        if ((std::abs(b - ak) < eps(b / 2.0)) || (std::isinf(ak) && std::isinf(b)
+             && ((ak > 0.0) == (b > 0.0)))) {
           ialast = b_ialast + 1;
           iafirst = b_ialast;
           iblast = 2;
@@ -94,12 +99,12 @@ namespace RAT
       }
 
       if (a.size(1) > 0) {
-        if (nia < 1) {
+        if (1 > nia) {
           nia = 0;
         }
 
         ia.set_size(nia);
-        if (nc < 1) {
+        if (1 > nc) {
           nc = 0;
         }
 

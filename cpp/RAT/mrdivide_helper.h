@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // mrdivide_helper.h
 //
@@ -13,18 +13,13 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Function Declarations
 namespace RAT
 {
-  void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::array<
-                        real_T, 2U> &in2, int32_T in3, const ::coder::array<
-                        real_T, 2U> &in4, const ::coder::array<real_T, 2U> &in5);
-  void c_binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::array<
-    real_T, 2U> &in2, int32_T in3, const ::coder::array<real_T, 2U> &in4, const ::
-    coder::array<real_T, 2U> &in5);
   namespace coder
   {
     namespace internal

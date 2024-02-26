@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // getFittedPriors.cpp
 //
@@ -30,6 +30,7 @@ namespace RAT
     ::coder::array<boolean_T, 1U> r1;
     cell_wrap_1 r;
     int32_T i;
+    int32_T i1;
     int32_T loop_ub;
 
     //  Get the list of all the priors..
@@ -45,7 +46,7 @@ namespace RAT
     priorFitList.set_size(paramNames.size(0), 5);
     loop_ub = paramNames.size(0);
     for (i = 0; i < 5; i++) {
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         priorFitList[i1 + priorFitList.size(0) * i] = 0.0;
       }
     }
@@ -59,7 +60,7 @@ namespace RAT
     for (int32_T b_i{0}; b_i < i; b_i++) {
       loop_ub = paramNames[b_i].f1.size(1);
       f1.set_size(1, paramNames[b_i].f1.size(1));
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         f1[i1] = paramNames[b_i].f1[i1];
       }
 

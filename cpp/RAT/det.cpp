@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // det.cpp
 //
@@ -29,12 +29,12 @@ namespace RAT
       } else {
         int32_T i;
         int32_T k;
-        int32_T loop_ub;
         boolean_T isodd;
         b_x.set_size(x.size(0), x.size(1));
         k = x.size(1);
-        loop_ub = x.size(0);
         for (i = 0; i < k; i++) {
+          int32_T loop_ub;
+          loop_ub = x.size(0);
           for (int32_T i1{0}; i1 < loop_ub; i1++) {
             b_x[i1 + b_x.size(0) * i] = x[i1 + x.size(0) * i];
           }

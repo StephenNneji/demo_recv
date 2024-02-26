@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // combineVectorElements.h
 //
@@ -13,19 +13,13 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Function Declarations
 namespace RAT
 {
-  void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::array<
-                        real_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3,
-                        const ::coder::array<real_T, 1U> &in4, int32_T in5,
-                        int32_T in6, int32_T in7);
-  void c_binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::array<
-    real_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3, const ::coder::
-    array<real_T, 1U> &in4, int32_T in5, int32_T in6, int32_T in7);
   namespace coder
   {
     real_T b_combineVectorElements(const ::coder::array<real_T, 1U> &x, int32_T

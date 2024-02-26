@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // evaluateModel.h
 //
@@ -13,6 +13,7 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -20,7 +21,7 @@
 namespace RAT
 {
   struct struct13_T;
-  struct c_struct_T;
+  struct d_struct_T;
   struct cell_11;
   struct struct2_T;
 }
@@ -29,7 +30,7 @@ namespace RAT
 namespace RAT
 {
   void evaluateModel(const ::coder::array<real_T, 2U> &x, const struct13_T
-                     *DREAMPar, const c_struct_T *ratInputs_problemStruct, const
+                     *DREAMPar, const d_struct_T *ratInputs_problemStruct, const
                      cell_11 *ratInputs_problemCells, const struct2_T
                      *ratInputs_controls, ::coder::array<real_T, 2U> &fx);
 }

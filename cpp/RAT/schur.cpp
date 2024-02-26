@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // schur.cpp
 //
@@ -29,14 +29,16 @@ namespace RAT
       ::coder::array<real_T, 1U> tau;
       if (internal::anyNonFinite(A)) {
         int32_T b_loop_ub;
+        int32_T i;
+        int32_T i1;
         int32_T loop_ub;
         uint32_T unnamed_idx_0;
         unnamed_idx_0 = static_cast<uint32_T>(A.size(0));
         V.set_size(A.size(0), A.size(1));
         loop_ub = A.size(1);
-        for (int32_T i{0}; i < loop_ub; i++) {
+        for (i = 0; i < loop_ub; i++) {
           b_loop_ub = static_cast<int32_T>(unnamed_idx_0);
-          for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
             V[i1 + V.size(0) * i] = rtNaN;
           }
         }
@@ -45,20 +47,22 @@ namespace RAT
         unnamed_idx_0 = static_cast<uint32_T>(A.size(0));
         T.set_size(A.size(0), A.size(1));
         loop_ub = A.size(1);
-        for (int32_T i{0}; i < loop_ub; i++) {
+        for (i = 0; i < loop_ub; i++) {
           b_loop_ub = static_cast<int32_T>(unnamed_idx_0);
-          for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
             T[i1 + T.size(0) * i] = rtNaN;
           }
         }
       } else {
         int32_T b_loop_ub;
+        int32_T i;
+        int32_T i1;
         int32_T loop_ub;
         T.set_size(A.size(0), A.size(1));
         loop_ub = A.size(1);
-        for (int32_T i{0}; i < loop_ub; i++) {
+        for (i = 0; i < loop_ub; i++) {
           b_loop_ub = A.size(0);
-          for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
             T[i1 + T.size(0) * i] = A[i1 + A.size(0) * i];
           }
         }
@@ -66,9 +70,9 @@ namespace RAT
         internal::lapack::xgehrd(T, tau);
         V.set_size(T.size(0), T.size(1));
         loop_ub = T.size(1);
-        for (int32_T i{0}; i < loop_ub; i++) {
+        for (i = 0; i < loop_ub; i++) {
           b_loop_ub = T.size(0);
-          for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
             V[i1 + V.size(0) * i] = T[i1 + T.size(0) * i];
           }
         }

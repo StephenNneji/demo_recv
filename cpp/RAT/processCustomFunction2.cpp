@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // processCustomFunction2.cpp
 //
@@ -40,8 +40,11 @@ namespace RAT
         ::coder::array<real_T, 2U> b_params;
         ::coder::array<real_T, 2U> b_thisContrastLayers1;
         ::coder::array<real_T, 2U> thisContrastLayers1;
+        ::coder::array<real_T, 2U> thisContrastLayers2;
         real_T a__2;
+        int32_T iv[2];
         int32_T i;
+        int32_T i1;
         int32_T loop_ub;
 
         //  Top-level function for processing custom layers for all the
@@ -52,7 +55,7 @@ namespace RAT
         allRoughs.set_size(i);
         allBulkOuts.set_size(1, contrastBulkOuts.size(1));
         loop_ub = contrastBulkOuts.size(1);
-        for (int32_T i1{0}; i1 < loop_ub; i1++) {
+        for (i1 = 0; i1 < loop_ub; i1++) {
           allBulkOuts[i1] = bulkOut[static_cast<int32_T>(contrastBulkOuts[i1]) -
             1];
         }
@@ -61,12 +64,13 @@ namespace RAT
         for (int32_T b_i{0}; b_i < i; b_i++) {
           creal_T x;
           real_T d;
-          int32_T iv[2];
           int32_T b_loop_ub;
+          int32_T i2;
 
           //  Choose which custom file is associated with this contrast
           //  Find values of 'bulkIn' and 'bulkOut' for this
           //  contrast...
+          //  typeDef
           //  typeDef
           d = cCustFiles[b_i];
           iv[0] = (*(int32_T (*)[2])((::coder::array<char_T, 2U> *)&customFiles[
@@ -78,13 +82,13 @@ namespace RAT
           if ((!std::isnan(x.re)) && (!std::isnan(x.im))) {
             b_params.set_size(1, params.size(1));
             loop_ub = params.size(1) - 1;
-            for (int32_T i1{0}; i1 <= loop_ub; i1++) {
+            for (i1 = 0; i1 <= loop_ub; i1++) {
               b_params[i1] = params[i1];
             }
 
             b_allBulkOuts.set_size(1, allBulkOuts.size(1));
             loop_ub = allBulkOuts.size(1) - 1;
-            for (int32_T i1{0}; i1 <= loop_ub; i1++) {
+            for (i1 = 0; i1 <= loop_ub; i1++) {
               b_allBulkOuts[i1] = allBulkOuts[i1];
             }
 
@@ -101,9 +105,9 @@ namespace RAT
             loop_ub = b_thisContrastLayers1.size(1);
             thisContrastLayers1.set_size(b_thisContrastLayers1.size(0),
               b_thisContrastLayers1.size(1));
-            for (int32_T i1{0}; i1 < loop_ub; i1++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
               b_loop_ub = b_thisContrastLayers1.size(0);
-              for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+              for (i2 = 0; i2 < b_loop_ub; i2++) {
                 thisContrastLayers1[i2 + thisContrastLayers1.size(0) * i1] =
                   b_thisContrastLayers1[i2 + b_thisContrastLayers1.size(0) * i1];
               }
@@ -111,13 +115,13 @@ namespace RAT
 
             b_params.set_size(1, params.size(1));
             loop_ub = params.size(1) - 1;
-            for (int32_T i1{0}; i1 <= loop_ub; i1++) {
+            for (i1 = 0; i1 <= loop_ub; i1++) {
               b_params[i1] = params[i1];
             }
 
             b_allBulkOuts.set_size(1, allBulkOuts.size(1));
             loop_ub = allBulkOuts.size(1) - 1;
-            for (int32_T i1{0}; i1 <= loop_ub; i1++) {
+            for (i1 = 0; i1 <= loop_ub; i1++) {
               b_allBulkOuts[i1] = allBulkOuts[i1];
             }
 
@@ -133,6 +137,16 @@ namespace RAT
                               (contrastBulkIns[b_i]) - 1], b_allBulkOuts, (
               static_cast<real_T>(b_i) + 1.0) - 1.0, b_thisContrastLayers1,
                               &a__2);
+            loop_ub = b_thisContrastLayers1.size(1);
+            thisContrastLayers2.set_size(b_thisContrastLayers1.size(0),
+              b_thisContrastLayers1.size(1));
+            for (i1 = 0; i1 < loop_ub; i1++) {
+              b_loop_ub = b_thisContrastLayers1.size(0);
+              for (i2 = 0; i2 < b_loop_ub; i2++) {
+                thisContrastLayers2[i2 + thisContrastLayers2.size(0) * i1] =
+                  b_thisContrastLayers1[i2 + b_thisContrastLayers1.size(0) * i1];
+              }
+            }
           }
 
           //  If the output layers has 5 columns, then we need to do
@@ -142,36 +156,36 @@ namespace RAT
             d = contrastBulkIns[b_i];
             applyHydrationReal(thisContrastLayers1, bulkIn[static_cast<int32_T>
                                (d) - 1], allBulkOuts[b_i]);
-            applyHydrationReal(b_thisContrastLayers1, bulkIn[static_cast<int32_T>
+            applyHydrationReal(thisContrastLayers2, bulkIn[static_cast<int32_T>
                                (d) - 1], allBulkOuts[b_i]);
           } else {
             d = contrastBulkIns[b_i];
             applyHydrationImag(thisContrastLayers1, bulkIn[static_cast<int32_T>
                                (d) - 1], allBulkOuts[b_i]);
-            applyHydrationImag(b_thisContrastLayers1, bulkIn[static_cast<int32_T>
+            applyHydrationImag(thisContrastLayers2, bulkIn[static_cast<int32_T>
                                (d) - 1], allBulkOuts[b_i]);
           }
 
           allLayers[b_i].f1.set_size(thisContrastLayers1.size(0),
             thisContrastLayers1.size(1));
           loop_ub = thisContrastLayers1.size(1);
-          for (int32_T i1{0}; i1 < loop_ub; i1++) {
+          for (i1 = 0; i1 < loop_ub; i1++) {
             b_loop_ub = thisContrastLayers1.size(0);
-            for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+            for (i2 = 0; i2 < b_loop_ub; i2++) {
               allLayers[b_i].f1[i2 + allLayers[b_i].f1.size(0) * i1] =
                 thisContrastLayers1[i2 + thisContrastLayers1.size(0) * i1];
             }
           }
 
-          loop_ub = b_thisContrastLayers1.size(1);
           allLayers[b_i + allLayers.size(0)].f1.set_size
-            (b_thisContrastLayers1.size(0), b_thisContrastLayers1.size(1));
-          for (int32_T i1{0}; i1 < loop_ub; i1++) {
-            b_loop_ub = b_thisContrastLayers1.size(0);
-            for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+            (thisContrastLayers2.size(0), thisContrastLayers2.size(1));
+          loop_ub = thisContrastLayers2.size(1);
+          for (i1 = 0; i1 < loop_ub; i1++) {
+            b_loop_ub = thisContrastLayers2.size(0);
+            for (i2 = 0; i2 < b_loop_ub; i2++) {
               allLayers[b_i + allLayers.size(0)].f1[i2 + allLayers[b_i +
-                allLayers.size(0)].f1.size(0) * i1] = b_thisContrastLayers1[i2 +
-                b_thisContrastLayers1.size(0) * i1];
+                allLayers.size(0)].f1.size(0) * i1] = thisContrastLayers2[i2 +
+                thisContrastLayers2.size(0) * i1];
             }
           }
         }

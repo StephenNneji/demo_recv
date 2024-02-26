@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // SLDFunction.cpp
 //
@@ -20,21 +20,22 @@
 // Function Definitions
 namespace RAT
 {
-  void b_SLDFunction(real_T x, const ::coder::array<real_T, 2U> &SLD, ::coder::
-                     array<real_T, 1U> &sldVal)
+  void SLDFunction(real_T x, const ::coder::array<real_T, 2U> &SLD, ::coder::
+                   array<real_T, 1U> &sldVal)
   {
     ::coder::array<int32_T, 1U> b_i;
     ::coder::array<int32_T, 1U> c_i;
     ::coder::array<int32_T, 1U> r;
-    ::coder::array<boolean_T, 1U> b_SLD_data;
+    ::coder::array<boolean_T, 1U> SLD_data;
     ::coder::array<boolean_T, 1U> c_SLD_data;
     ::coder::array<boolean_T, 1U> d_SLD_data;
     ::coder::array<boolean_T, 1U> e_SLD_data;
     ::coder::array<boolean_T, 1U> f_SLD_data;
     RATMainTLS *RATMainTLSThread;
     int32_T SLD_size;
+    int32_T i;
     int32_T loop_ub;
-    boolean_T SLD_data[10000];
+    boolean_T b_SLD_data[10000];
     RATMainTLSThread = emlrtGetThreadStackData();
 
     //  sldVal = SLDFunction(x,SLD)
@@ -53,83 +54,89 @@ namespace RAT
     //
     //  SLD = sldProfile;
     // SLD = getappdata(0,'SLDFunctionSLD');
-    SLD_size = SLD.size(0);
     loop_ub = SLD.size(0);
-    for (int32_T i{0}; i < loop_ub; i++) {
-      SLD_data[i] = (SLD[i] == x);
+    SLD_size = SLD.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      b_SLD_data[i] = (SLD[i] == x);
     }
 
-    b_SLD_data.set(&SLD_data[0], SLD_size);
-    coder::eml_find(b_SLD_data, r);
+    SLD_data.set(&b_SLD_data[0], SLD_size);
+    coder::eml_find(SLD_data, r);
     b_i.set_size(r.size(0));
     loop_ub = r.size(0);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       b_i[i] = r[i];
     }
 
     if (b_i.size(0) != 0) {
       sldVal.set_size(b_i.size(0));
       loop_ub = b_i.size(0);
-      for (int32_T i{0}; i < loop_ub; i++) {
+      for (i = 0; i < loop_ub; i++) {
         sldVal[i] = SLD[(b_i[i] + SLD.size(0)) - 1];
       }
     } else {
       real_T deltaY;
       int32_T belowVals_size;
-      SLD_size = SLD.size(0);
       loop_ub = SLD.size(0);
-      for (int32_T i{0}; i < loop_ub; i++) {
-        SLD_data[i] = (x > SLD[i]);
+      SLD_size = SLD.size(0);
+      for (i = 0; i < loop_ub; i++) {
+        b_SLD_data[i] = (x > SLD[i]);
       }
 
-      c_SLD_data.set(&SLD_data[0], SLD_size);
+      c_SLD_data.set(&b_SLD_data[0], SLD_size);
       coder::eml_find(c_SLD_data, r);
       b_i.set_size(r.size(0));
       loop_ub = r.size(0);
-      for (int32_T i{0}; i < loop_ub; i++) {
+      for (i = 0; i < loop_ub; i++) {
         b_i[i] = r[i];
       }
 
-      SLD_size = SLD.size(0);
       loop_ub = SLD.size(0);
-      for (int32_T i{0}; i < loop_ub; i++) {
-        SLD_data[i] = (x > SLD[i]);
+      SLD_size = SLD.size(0);
+      for (i = 0; i < loop_ub; i++) {
+        b_SLD_data[i] = (x > SLD[i]);
       }
 
-      d_SLD_data.set(&SLD_data[0], SLD_size);
+      d_SLD_data.set(&b_SLD_data[0], SLD_size);
       coder::eml_find(d_SLD_data, r);
       belowVals_size = r.size(0);
       loop_ub = r.size(0);
-      for (int32_T i{0}; i < loop_ub; i++) {
+      for (i = 0; i < loop_ub; i++) {
         RATMainTLSThread->f0.belowVals_data[i] = r[i];
       }
 
-      SLD_size = SLD.size(0);
       loop_ub = SLD.size(0);
-      for (int32_T i{0}; i < loop_ub; i++) {
-        SLD_data[i] = (x < SLD[i]);
+      SLD_size = SLD.size(0);
+      for (i = 0; i < loop_ub; i++) {
+        b_SLD_data[i] = (x < SLD[i]);
       }
 
-      e_SLD_data.set(&SLD_data[0], SLD_size);
+      e_SLD_data.set(&b_SLD_data[0], SLD_size);
       coder::eml_find(e_SLD_data, r);
       c_i.set_size(r.size(0));
       loop_ub = r.size(0);
-      for (int32_T i{0}; i < loop_ub; i++) {
+      for (i = 0; i < loop_ub; i++) {
         c_i[i] = r[i];
       }
 
-      SLD_size = SLD.size(0);
       loop_ub = SLD.size(0);
-      for (int32_T i{0}; i < loop_ub; i++) {
-        SLD_data[i] = (x < SLD[i]);
+      SLD_size = SLD.size(0);
+      for (i = 0; i < loop_ub; i++) {
+        b_SLD_data[i] = (x < SLD[i]);
       }
 
-      f_SLD_data.set(&SLD_data[0], SLD_size);
+      f_SLD_data.set(&b_SLD_data[0], SLD_size);
       coder::eml_find(f_SLD_data, r);
-      deltaY = (x - SLD[b_i[b_i.size(0) - 1] - 1]) * (std::abs(SLD[(r[0] +
-        SLD.size(0)) - 1] - SLD[(RATMainTLSThread->
-        f0.belowVals_data[belowVals_size - 1] + SLD.size(0)) - 1]) / (SLD[r[0] -
-        1] - SLD[RATMainTLSThread->f0.belowVals_data[belowVals_size - 1] - 1]));
+      loop_ub = r.size(0);
+      for (i = 0; i < loop_ub; i++) {
+        RATMainTLSThread->f0.aboveVals_data[i] = r[i];
+      }
+
+      deltaY = (x - SLD[b_i[b_i.size(0) - 1] - 1]) * (std::abs(SLD
+        [(RATMainTLSThread->f0.aboveVals_data[0] + SLD.size(0)) - 1] - SLD
+        [(RATMainTLSThread->f0.belowVals_data[belowVals_size - 1] + SLD.size(0))
+        - 1]) / (SLD[RATMainTLSThread->f0.aboveVals_data[0] - 1] -
+                 SLD[RATMainTLSThread->f0.belowVals_data[belowVals_size - 1] - 1]));
       if (SLD[(b_i[b_i.size(0) - 1] + SLD.size(0)) - 1] < SLD[(c_i[0] + SLD.size
            (0)) - 1]) {
         sldVal.set_size(1);

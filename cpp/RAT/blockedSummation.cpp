@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // blockedSummation.cpp
 //
@@ -33,6 +33,7 @@ namespace RAT
     {
       real_T y;
       int32_T firstBlockLength;
+      int32_T k;
       int32_T lastBlockLength;
       int32_T nblocks;
       if (vlen <= 1024) {
@@ -51,7 +52,7 @@ namespace RAT
       }
 
       y = x[0];
-      for (int32_T k{2}; k <= firstBlockLength; k++) {
+      for (k = 2; k <= firstBlockLength; k++) {
         if (vlen >= 2) {
           y += x[k - 1];
         }
@@ -68,7 +69,7 @@ namespace RAT
           hi = 1024;
         }
 
-        for (int32_T k{2}; k <= hi; k++) {
+        for (k = 2; k <= hi; k++) {
           if (vlen >= 2) {
             bsum += x[(firstBlockLength + k) - 1];
           }
@@ -84,9 +85,11 @@ namespace RAT
       coder::array<real_T, 1U> &y)
     {
       ::coder::array<real_T, 1U> bsum;
+      int32_T b_k;
       int32_T bsubs_idx_1;
       int32_T firstBlockLength;
       int32_T i;
+      int32_T k;
       int32_T lastBlockLength;
       int32_T nblocks;
       y.set_size(x.size(0));
@@ -107,13 +110,13 @@ namespace RAT
       }
 
       i = x.size(0);
-      for (int32_T k{0}; k < i; k++) {
+      for (k = 0; k < i; k++) {
         y[k] = x[k];
       }
 
-      for (int32_T k{2}; k <= firstBlockLength; k++) {
+      for (k = 2; k <= firstBlockLength; k++) {
         i = x.size(0);
-        for (int32_T b_k{0}; b_k < i; b_k++) {
+        for (b_k = 0; b_k < i; b_k++) {
           if (vlen >= 2) {
             y[b_k] = y[b_k] + x[b_k + x.size(0) * (k - 1)];
           }
@@ -124,11 +127,11 @@ namespace RAT
         int32_T hi;
         firstBlockLength = (ib - 1) << 10;
         i = x.size(0);
-        if (x.size(0) - 1 >= 0) {
+        if (0 <= x.size(0) - 1) {
           bsubs_idx_1 = firstBlockLength + 1;
         }
 
-        for (int32_T k{0}; k < i; k++) {
+        for (k = 0; k < i; k++) {
           bsum[k] = x[k + x.size(0) * (bsubs_idx_1 - 1)];
         }
 
@@ -138,11 +141,11 @@ namespace RAT
           hi = 1024;
         }
 
-        for (int32_T k{2}; k <= hi; k++) {
+        for (k = 2; k <= hi; k++) {
           int32_T varargin_1;
           varargin_1 = firstBlockLength + k;
           i = x.size(0);
-          for (int32_T b_k{0}; b_k < i; b_k++) {
+          for (b_k = 0; b_k < i; b_k++) {
             if (vlen >= 2) {
               bsum[b_k] = bsum[b_k] + x[b_k + x.size(0) * (varargin_1 - 1)];
             }
@@ -150,7 +153,7 @@ namespace RAT
         }
 
         i = y.size(0);
-        for (int32_T k{0}; k < i; k++) {
+        for (k = 0; k < i; k++) {
           y[k] = y[k] + bsum[k];
         }
       }
@@ -202,6 +205,7 @@ namespace RAT
     {
       creal_T y;
       int32_T firstBlockLength;
+      int32_T k;
       int32_T lastBlockLength;
       int32_T nblocks;
       if (vlen <= 1024) {
@@ -220,7 +224,7 @@ namespace RAT
       }
 
       y = x[0];
-      for (int32_T k{2}; k <= firstBlockLength; k++) {
+      for (k = 2; k <= firstBlockLength; k++) {
         if (vlen >= 2) {
           y.re += x[k - 1].re;
           y.im += x[k - 1].im;
@@ -240,7 +244,7 @@ namespace RAT
           hi = 1024;
         }
 
-        for (int32_T k{2}; k <= hi; k++) {
+        for (k = 2; k <= hi; k++) {
           if (vlen >= 2) {
             int32_T xk_re_tmp;
             xk_re_tmp = (firstBlockLength + k) - 1;
@@ -260,6 +264,7 @@ namespace RAT
     {
       real_T y;
       int32_T firstBlockLength;
+      int32_T k;
       int32_T lastBlockLength;
       int32_T nblocks;
       if (vlen <= 1024) {
@@ -278,7 +283,7 @@ namespace RAT
       }
 
       y = x[0];
-      for (int32_T k{2}; k <= firstBlockLength; k++) {
+      for (k = 2; k <= firstBlockLength; k++) {
         if (vlen >= 2) {
           y += x[k - 1];
         }
@@ -295,7 +300,7 @@ namespace RAT
           hi = 1024;
         }
 
-        for (int32_T k{2}; k <= hi; k++) {
+        for (k = 2; k <= hi; k++) {
           if (vlen >= 2) {
             bsum += x[(firstBlockLength + k) - 1];
           }
@@ -317,9 +322,9 @@ namespace RAT
       int32_T nblocks;
       y.set_size(1, x.size(1), x.size(2));
       i = x.size(2);
-      if (x.size(2) - 1 >= 0) {
+      if (0 <= x.size(2) - 1) {
         i1 = x.size(1);
-        if (x.size(1) - 1 >= 0) {
+        if (0 <= x.size(1) - 1) {
           if (vlen <= 1024) {
             firstBlockLength = vlen;
             lastBlockLength = 0;
@@ -339,8 +344,9 @@ namespace RAT
 
       for (int32_T k{0}; k < i; k++) {
         for (int32_T b_k{0}; b_k < i1; b_k++) {
+          int32_T c_k;
           y[b_k + y.size(1) * k] = x[x.size(0) * b_k + x.size(0) * x.size(1) * k];
-          for (int32_T c_k{2}; c_k <= firstBlockLength; c_k++) {
+          for (c_k = 2; c_k <= firstBlockLength; c_k++) {
             if (vlen >= 2) {
               y[b_k + y.size(1) * k] = y[b_k + y.size(1) * k] + x[((c_k + x.size
                 (0) * b_k) + x.size(0) * x.size(1) * k) - 1];
@@ -359,7 +365,7 @@ namespace RAT
               hi = 1024;
             }
 
-            for (int32_T c_k{2}; c_k <= hi; c_k++) {
+            for (c_k = 2; c_k <= hi; c_k++) {
               if (vlen >= 2) {
                 bsum += x[(((offset + c_k) + x.size(0) * b_k) + x.size(0) *
                            x.size(1) * k) - 1];
@@ -381,7 +387,7 @@ namespace RAT
       int32_T nblocks;
       y.set_size(1, x.size(1));
       i = x.size(1);
-      if (x.size(1) - 1 >= 0) {
+      if (0 <= x.size(1) - 1) {
         if (vlen <= 1024) {
           firstBlockLength = vlen;
           lastBlockLength = 0;
@@ -399,8 +405,9 @@ namespace RAT
       }
 
       for (int32_T k{0}; k < i; k++) {
+        int32_T b_k;
         y[k] = x[x.size(0) * k];
-        for (int32_T b_k{2}; b_k <= firstBlockLength; b_k++) {
+        for (b_k = 2; b_k <= firstBlockLength; b_k++) {
           if (vlen >= 2) {
             y[k] = y[k] + x[(b_k + x.size(0) * k) - 1];
           }
@@ -418,7 +425,7 @@ namespace RAT
             hi = 1024;
           }
 
-          for (int32_T b_k{2}; b_k <= hi; b_k++) {
+          for (b_k = 2; b_k <= hi; b_k++) {
             if (vlen >= 2) {
               bsum += x[((offset + b_k) + x.size(0) * k) - 1];
             }
@@ -433,6 +440,7 @@ namespace RAT
     {
       real_T y;
       int32_T firstBlockLength;
+      int32_T k;
       int32_T lastBlockLength;
       int32_T nblocks;
       if (vlen <= 1024) {
@@ -451,7 +459,7 @@ namespace RAT
       }
 
       y = x[0];
-      for (int32_T k{2}; k <= firstBlockLength; k++) {
+      for (k = 2; k <= firstBlockLength; k++) {
         if (vlen >= 2) {
           y += x[k - 1];
         }
@@ -468,7 +476,7 @@ namespace RAT
           hi = 1024;
         }
 
-        for (int32_T k{2}; k <= hi; k++) {
+        for (k = 2; k <= hi; k++) {
           if (vlen >= 2) {
             bsum += x[(firstBlockLength + k) - 1];
           }

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xzlartg.cpp
 //
@@ -32,8 +32,8 @@ namespace RAT
           real_T gs_re;
           real_T scale;
           real_T scale_tmp;
-          int32_T count;
-          boolean_T guard1;
+          boolean_T guard1{ false };
+
           scale_tmp = std::abs(f.re);
           f2 = std::abs(f.im);
           if (f2 > scale_tmp) {
@@ -55,22 +55,19 @@ namespace RAT
           fs_im = f.im;
           gs_re = g.re;
           gs_im = g.im;
-          count = 0;
           guard1 = false;
           if (scale >= 7.4428285367870146E+137) {
             do {
-              count++;
               fs_re *= 1.3435752215134178E-138;
               fs_im *= 1.3435752215134178E-138;
               gs_re *= 1.3435752215134178E-138;
               gs_im *= 1.3435752215134178E-138;
               scale *= 1.3435752215134178E-138;
-            } while ((scale >= 7.4428285367870146E+137) && (count < 20));
+            } while (!(scale < 7.4428285367870146E+137));
 
             guard1 = true;
           } else if (scale <= 1.3435752215134178E-138) {
-            if (((g.re == 0.0) && (g.im == 0.0)) || (std::isnan(g.re) || std::
-                 isnan(g.im))) {
+            if ((g.re == 0.0) && (g.im == 0.0)) {
               *cs = 1.0;
               sn->re = 0.0;
               sn->im = 0.0;
@@ -81,7 +78,7 @@ namespace RAT
                 gs_re *= 7.4428285367870146E+137;
                 gs_im *= 7.4428285367870146E+137;
                 scale *= 7.4428285367870146E+137;
-              } while (!!(scale <= 1.3435752215134178E-138));
+              } while (!(scale > 1.3435752215134178E-138));
 
               guard1 = true;
             }
@@ -94,7 +91,7 @@ namespace RAT
             f2 = fs_re * fs_re + fs_im * fs_im;
             g2 = gs_re * gs_re + gs_im * gs_im;
             scale = g2;
-            if (g2 < 1.0) {
+            if (1.0 > g2) {
               scale = 1.0;
             }
 
@@ -148,8 +145,9 @@ namespace RAT
           real_T scale;
           real_T scale_tmp;
           int32_T count;
-          int8_T rescaledir;
-          boolean_T guard1;
+          int32_T rescaledir;
+          boolean_T guard1{ false };
+
           scale_tmp = std::abs(f.re);
           f2s = std::abs(f.im);
           if (f2s > scale_tmp) {
@@ -182,13 +180,12 @@ namespace RAT
               gs_re *= 1.3435752215134178E-138;
               gs_im *= 1.3435752215134178E-138;
               scale *= 1.3435752215134178E-138;
-            } while ((scale >= 7.4428285367870146E+137) && (count + 1 < 20));
+            } while (!(scale < 7.4428285367870146E+137));
 
             rescaledir = 1;
             guard1 = true;
           } else if (scale <= 1.3435752215134178E-138) {
-            if (((g.re == 0.0) && (g.im == 0.0)) || (std::isnan(g.re) || std::
-                 isnan(g.im))) {
+            if ((g.re == 0.0) && (g.im == 0.0)) {
               *cs = 1.0;
               sn->re = 0.0;
               sn->im = 0.0;
@@ -201,7 +198,7 @@ namespace RAT
                 gs_re *= 7.4428285367870146E+137;
                 gs_im *= 7.4428285367870146E+137;
                 scale *= 7.4428285367870146E+137;
-              } while (!!(scale <= 1.3435752215134178E-138));
+              } while (!(scale > 1.3435752215134178E-138));
 
               rescaledir = -1;
               guard1 = true;
@@ -216,7 +213,7 @@ namespace RAT
             f2 = fs_re * fs_re + fs_im * fs_im;
             g2 = gs_re * gs_re + gs_im * gs_im;
             scale = g2;
-            if (g2 < 1.0) {
+            if (1.0 > g2) {
               scale = 1.0;
             }
 
@@ -261,12 +258,12 @@ namespace RAT
               sn->re = f2s * gs_re - scale * -gs_im;
               sn->im = f2s * -gs_im + scale * gs_re;
               if (rescaledir > 0) {
-                for (int32_T i{0}; i <= count; i++) {
+                for (rescaledir = 0; rescaledir <= count; rescaledir++) {
                   r->re *= 7.4428285367870146E+137;
                   r->im *= 7.4428285367870146E+137;
                 }
               } else if (rescaledir < 0) {
-                for (int32_T i{0}; i <= count; i++) {
+                for (rescaledir = 0; rescaledir <= count; rescaledir++) {
                   r->re *= 1.3435752215134178E-138;
                   r->im *= 1.3435752215134178E-138;
                 }

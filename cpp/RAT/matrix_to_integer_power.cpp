@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // matrix_to_integer_power.cpp
 //
@@ -11,7 +11,6 @@
 // Include files
 #include "matrix_to_integer_power.h"
 #include "rt_nonfinite.h"
-#include "vAllOrAny.h"
 #include <cmath>
 
 // Function Declarations
@@ -79,14 +78,14 @@ namespace RAT
       c_data[], int32_T c_size[2])
     {
       real_T aBuffer_data;
+      real_T cBuffer_data;
       int32_T n;
       int32_T nb;
       int32_T nbitson;
-      boolean_T b_first;
-      aBuffer_data = std::abs(b);
-      n = static_cast<int32_T>(aBuffer_data);
-      nbits(static_cast<int32_T>(aBuffer_data), &nb, &nbitson);
-      if (static_cast<int32_T>(aBuffer_data) <= 2) {
+      cBuffer_data = std::abs(b);
+      n = static_cast<int32_T>(cBuffer_data);
+      nbits(static_cast<int32_T>(cBuffer_data), &nb, &nbitson);
+      if (static_cast<int32_T>(cBuffer_data) <= 2) {
         if (b == 2.0) {
           c_size[0] = 1;
           c_size[1] = 1;
@@ -96,21 +95,13 @@ namespace RAT
           c_size[1] = 1;
           c_data[0] = a_data[0];
         } else {
-          b_first = false;
-          internal::c_genloops(a_data, &b_first);
-          if (b_first) {
-            c_size[0] = 1;
-            c_size[1] = 1;
-            c_data[0] = rtNaN;
-          } else {
-            c_size[0] = 1;
-            c_size[1] = 1;
-            c_data[0] = 1.0;
-          }
+          c_size[0] = 1;
+          c_size[1] = 1;
+          c_data[0] = 1.0;
         }
       } else {
-        real_T cBuffer_data;
         boolean_T aBufferInUse;
+        boolean_T b_first;
         boolean_T cBufferInUse;
         b_first = true;
         aBufferInUse = false;
@@ -151,8 +142,7 @@ namespace RAT
           if (aBufferInUse) {
             a_data[0] = aBuffer_data * aBuffer_data;
           } else {
-            aBuffer_data = a_data[0];
-            aBuffer_data *= aBuffer_data;
+            aBuffer_data = a_data[0] * a_data[0];
           }
 
           aBufferInUse = !aBufferInUse;

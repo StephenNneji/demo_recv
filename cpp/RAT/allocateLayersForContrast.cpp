@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // allocateLayersForContrast.cpp
 //
@@ -25,6 +25,7 @@ namespace RAT
     thisContrastLayers_data[], int32_T thisContrastLayers_size[2])
   {
     int32_T i;
+    int32_T i1;
     int32_T n;
 
     //  Decide which layers are needed for a particular contrast.
@@ -41,7 +42,7 @@ namespace RAT
       thisContrastLayers_size[0] = n;
       thisContrastLayers_size[1] = 6;
       for (i = 0; i < 6; i++) {
-        for (int32_T i1{0}; i1 < n; i1++) {
+        for (i1 = 0; i1 < n; i1++) {
           thisContrastLayers_data[i1 + n * i] = 0.0;
         }
       }
@@ -51,7 +52,7 @@ namespace RAT
       thisContrastLayers_size[0] = n;
       thisContrastLayers_size[1] = 5;
       for (i = 0; i < 5; i++) {
-        for (int32_T i1{0}; i1 < n; i1++) {
+        for (i1 = 0; i1 < n; i1++) {
           thisContrastLayers_data[i1 + n * i] = 0.0;
         }
       }
@@ -69,7 +70,7 @@ namespace RAT
         //          end
         n = outParameterisedLayers[static_cast<int32_T>(contrastLayers[b_i]) - 1]
           .f1.size(1);
-        for (int32_T i1{0}; i1 < n; i1++) {
+        for (i1 = 0; i1 < n; i1++) {
           thisContrastLayers_data[b_i + thisContrastLayers_size[0] * i1] =
             outParameterisedLayers[static_cast<int32_T>(contrastLayers[b_i]) - 1]
             .f1[i1];

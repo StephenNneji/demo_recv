@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // strcmp.h
 //
@@ -11,11 +11,17 @@
 #define STRCMP_H
 
 // Include files
-#include "RATMain_types.h"
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
+
+// Type Declarations
+namespace RAT
+{
+  struct cell_wrap_1;
+}
 
 // Function Declarations
 namespace RAT
@@ -25,16 +31,16 @@ namespace RAT
     namespace internal
     {
       boolean_T ab_strcmp(const char_T a_data[], const int32_T a_size[2]);
+      boolean_T b_strcmp(const char_T a_data[], const int32_T a_size[2]);
       boolean_T b_strcmp(const char_T a_data[], const int32_T a_size[2], const
                          char_T b[6]);
-      boolean_T b_strcmp(const char_T a_data[], const int32_T a_size[2]);
       boolean_T bb_strcmp(const char_T a_data[], const int32_T a_size[2]);
       boolean_T c_strcmp(const char_T a_data[], const int32_T a_size[2]);
       boolean_T c_strcmp(const char_T a_data[], const int32_T a_size[2], const
                          char_T b[4]);
+      boolean_T d_strcmp(const char_T a_data[], const int32_T a_size[2]);
       boolean_T d_strcmp(const char_T a_data[], const int32_T a_size[2], const
                          char_T b[3]);
-      boolean_T d_strcmp(const char_T a_data[], const int32_T a_size[2]);
       boolean_T e_strcmp(const char_T a_data[], const int32_T a_size[2]);
       boolean_T e_strcmp(const char_T a_data[], const int32_T a_size[2], const
                          char_T b[5]);

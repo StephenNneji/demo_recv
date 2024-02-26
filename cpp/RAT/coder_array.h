@@ -1,4 +1,4 @@
-/* Copyright 2019-2021 The MathWorks, Inc. */
+/* Copyright 2019 The Mathworks, Inc. */
 /* Copied from
  * fullfile(matlabroot,'extern','include','coder','coder_array','coder_array_rtw_cpp11.h') */
 
@@ -58,10 +58,7 @@ namespace coder {
 #define CODER_DELETE(P) delete[](P)
 #endif
 
-#ifndef CODER_ARRAY_SIZE_TYPE_DEFINED
-using SizeType = int;
-#endif
-
+using SizeType = int32_T;
 namespace std = ::std;
 
 namespace detail {
@@ -498,8 +495,6 @@ class array_base {
         (void)std::copy(_sz, _sz + N, size_);
     }
 
-    array_base(array_base const&) = default;
-
     array_base& operator=(array_base const& _other) {
         data_.copy(_other.data_);
         (void)std::copy(_other.size_, _other.size_ + N, size_);
@@ -537,10 +532,6 @@ class array_base {
     }
 
   public:
-    void reserve(SZ _n) {
-        ensureCapacity(_n);
-    }
-
     template <typename... Dims>
     void set_size(Dims... dims) {
         coder::detail::match_dimensions<N == sizeof...(dims)>::check();
@@ -580,10 +571,6 @@ class array_base {
         return data_;
     }
 
-    SZ* size() {
-        return &size_[0];
-    }
-    
     SZ const* size() const {
         return &size_[0];
     }
@@ -615,17 +602,17 @@ class array_base {
         return data_[index(_i...)];
     }
 
-    array_iterator<array_base<T, SZ, N> > begin() {
-        return array_iterator<array_base<T, SZ, N> >(this, 0);
+    array_iterator<array_base<T, SZ, N>> begin() {
+        return array_iterator<array_base<T, SZ, N>>(this, 0);
     }
-    array_iterator<array_base<T, SZ, N> > end() {
-        return array_iterator<array_base<T, SZ, N> >(this, this->numel());
+    array_iterator<array_base<T, SZ, N>> end() {
+        return array_iterator<array_base<T, SZ, N>>(this, this->numel());
     }
-    const_array_iterator<array_base<T, SZ, N> > begin() const {
-        return const_array_iterator<array_base<T, SZ, N> >(this, 0);
+    const_array_iterator<array_base<T, SZ, N>> begin() const {
+        return const_array_iterator<array_base<T, SZ, N>>(this, 0);
     }
-    const_array_iterator<array_base<T, SZ, N> > end() const {
-        return const_array_iterator<array_base<T, SZ, N> >(this, this->numel());
+    const_array_iterator<array_base<T, SZ, N>> end() const {
+        return const_array_iterator<array_base<T, SZ, N>>(this, this->numel());
     }
 
   protected:

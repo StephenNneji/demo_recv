@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // triu.cpp
 //
@@ -22,7 +22,7 @@ namespace RAT
     {
       int32_T m;
       m = x.size(0);
-      if ((x.size(0) != 0) && (x.size(1) != 0) && (x.size(0) > 3)) {
+      if ((x.size(0) != 0) && (x.size(1) != 0) && (3 < x.size(0))) {
         int32_T istart;
         int32_T jend;
         istart = 4;
@@ -46,7 +46,7 @@ namespace RAT
     {
       int32_T m;
       m = x.size(0);
-      if ((x.size(0) != 0) && (x.size(1) != 0) && (x.size(0) > 1)) {
+      if ((x.size(0) != 0) && (x.size(1) != 0) && (1 < x.size(0))) {
         int32_T istart;
         int32_T jend;
         istart = 2;

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // norm.cpp
 //
@@ -11,7 +11,6 @@
 // Include files
 #include "norm.h"
 #include "rt_nonfinite.h"
-#include "xnrm2.h"
 #include "coder_array.h"
 #include <cmath>
 
@@ -20,8 +19,8 @@ namespace RAT
 {
   namespace coder
   {
+    static real_T genpnorm(const ::coder::array<real_T, 2U> &x);
     static real_T mat1norm(const ::coder::array<real_T, 2U> &x);
-    static real_T vecpnorm(const ::coder::array<real_T, 2U> &x);
   }
 }
 
@@ -30,6 +29,19 @@ namespace RAT
 {
   namespace coder
   {
+    static real_T genpnorm(const ::coder::array<real_T, 2U> &x)
+    {
+      real_T y;
+      int32_T i;
+      y = 0.0;
+      i = x.size(0) * x.size(1);
+      for (int32_T k{0}; k < i; k++) {
+        y += std::abs(x[k]);
+      }
+
+      return y;
+    }
+
     static real_T mat1norm(const ::coder::array<real_T, 2U> &x)
     {
       real_T y;
@@ -62,14 +74,35 @@ namespace RAT
       return y;
     }
 
-    static real_T vecpnorm(const ::coder::array<real_T, 2U> &x)
+    real_T b_genpnorm(const ::coder::array<real_T, 2U> &x)
     {
       real_T y;
-      int32_T i;
       y = 0.0;
-      i = x.size(0) * x.size(1);
-      for (int32_T k{0}; k < i; k++) {
-        y += std::abs(x[k]);
+      if (x.size(1) >= 1) {
+        if (x.size(1) == 1) {
+          y = std::abs(x[0]);
+        } else {
+          real_T scale;
+          int32_T kend;
+          scale = 3.3121686421112381E-170;
+          kend = x.size(1);
+          for (int32_T k{0}; k < kend; k++) {
+            real_T absxk;
+            absxk = std::abs(x[k]);
+            if (absxk > scale) {
+              real_T t;
+              t = scale / absxk;
+              y = y * t * t + 1.0;
+              scale = absxk;
+            } else {
+              real_T t;
+              t = absxk / scale;
+              y += t * t;
+            }
+          }
+
+          y = scale * std::sqrt(y);
+        }
       }
 
       return y;
@@ -78,24 +111,12 @@ namespace RAT
     real_T b_norm(const ::coder::array<real_T, 2U> &x)
     {
       real_T y;
-      boolean_T MATRIX_INPUT_AND_P_IS_ONE;
-      boolean_T VECTOR_INPUT_AND_P_IS_NUMERIC;
-      VECTOR_INPUT_AND_P_IS_NUMERIC = false;
-      MATRIX_INPUT_AND_P_IS_ONE = false;
-      if ((x.size(0) == 1) || (x.size(1) == 1)) {
-        VECTOR_INPUT_AND_P_IS_NUMERIC = true;
-      } else {
-        MATRIX_INPUT_AND_P_IS_ONE = true;
-      }
-
       if ((x.size(0) == 0) || (x.size(1) == 0)) {
         y = 0.0;
-      } else if (MATRIX_INPUT_AND_P_IS_ONE) {
-        y = mat1norm(x);
-      } else if (VECTOR_INPUT_AND_P_IS_NUMERIC) {
-        y = vecpnorm(x);
+      } else if ((x.size(0) == 1) || (x.size(1) == 1)) {
+        y = genpnorm(x);
       } else {
-        y = rtNaN;
+        y = mat1norm(x);
       }
 
       return y;
@@ -109,18 +130,6 @@ namespace RAT
       i = x.size(0);
       for (int32_T k{0}; k < i; k++) {
         y += std::abs(x[k]);
-      }
-
-      return y;
-    }
-
-    real_T c_norm(const ::coder::array<real_T, 2U> &x)
-    {
-      real_T y;
-      if (x.size(1) == 0) {
-        y = 0.0;
-      } else {
-        y = internal::blas::xnrm2(x.size(1), x);
       }
 
       return y;

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // triggerEvent.cpp
 //
@@ -49,6 +49,7 @@ namespace RAT
   {
     real_T rowSize;
     real_T start;
+    int32_T b_i;
     int32_T b_rowSize;
     int32_T i;
 
@@ -60,7 +61,7 @@ namespace RAT
     rowSize = 0.0;
     counts.set_size(cellArray.size(0));
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T d;
       d = static_cast<real_T>(cellArray[b_i].f1.size(0)) * 3.0;
       counts[b_i] = d;
@@ -75,7 +76,7 @@ namespace RAT
 
     start = 1.0;
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T stop;
       int32_T i1;
       stop = start + counts[b_i];
@@ -99,6 +100,7 @@ namespace RAT
   {
     real_T rowSize;
     real_T start;
+    int32_T b_i;
     int32_T b_rowSize;
     int32_T i;
 
@@ -110,7 +112,7 @@ namespace RAT
     rowSize = 0.0;
     counts.set_size(cellArray.size(0));
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T d;
       d = static_cast<real_T>(cellArray[b_i].f1.size(0)) * static_cast<real_T>
         (cellArray[b_i].f1.size(1));
@@ -126,7 +128,7 @@ namespace RAT
 
     start = 1.0;
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T stop;
       int32_T i1;
       stop = start + counts[b_i];
@@ -150,6 +152,7 @@ namespace RAT
   {
     real_T rowSize;
     real_T start;
+    int32_T b_i;
     int32_T b_rowSize;
     int32_T i;
 
@@ -161,7 +164,7 @@ namespace RAT
     rowSize = 0.0;
     counts.set_size(cellArray.size(0));
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T d;
       d = static_cast<real_T>(cellArray[b_i + cellArray.size(0)].f1.size(0)) *
         static_cast<real_T>(cellArray[b_i + cellArray.size(0)].f1.size(1));
@@ -177,7 +180,7 @@ namespace RAT
 
     start = 1.0;
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T stop;
       int32_T i1;
       stop = start + counts[b_i];
@@ -202,6 +205,7 @@ namespace RAT
   {
     real_T rowSize;
     real_T start;
+    int32_T b_i;
     int32_T b_rowSize;
     int32_T i;
 
@@ -213,7 +217,7 @@ namespace RAT
     rowSize = 0.0;
     counts.set_size(cellArray.size(0));
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T d;
       d = static_cast<real_T>(cellArray[b_i + cellArray.size(0)].f1.size(0)) *
         3.0;
@@ -229,7 +233,7 @@ namespace RAT
 
     start = 1.0;
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T stop;
       int32_T i1;
       stop = start + counts[b_i];
@@ -253,6 +257,7 @@ namespace RAT
   {
     real_T rowSize;
     real_T start;
+    int32_T b_i;
     int32_T b_rowSize;
     int32_T i;
 
@@ -264,7 +269,7 @@ namespace RAT
     rowSize = 0.0;
     counts.set_size(cellArray.size(0));
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T d;
       d = static_cast<real_T>(cellArray[b_i].f1.size(0)) * 2.0;
       counts[b_i] = d;
@@ -279,7 +284,7 @@ namespace RAT
 
     start = 1.0;
     i = cellArray.size(0);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T stop;
       int32_T i1;
       stop = start + counts[b_i];
@@ -369,43 +374,58 @@ namespace RAT
         b_packCellArray(data_f1[2].f1, shiftedData, nShiftedData);
         c_packCellArray(data_f1[4].f1, sldProfiles, nSldProfiles);
         b_packCellArray(data_f1[5].f1, layers, nLayers);
-        if (coder::internal::j_strcmp(data_f3_TF_data, data_f3_TF_size)) {
+        if (coder::internal::i_strcmp(data_f3_TF_data, data_f3_TF_size)) {
           i = 0;
         } else {
           i = -1;
         }
 
-        if (i == 0) {
-          d_packCellArray(data_f1[4].f1, b_sldProfiles2, nSldProfiles2);
-          loop_ub = b_sldProfiles2.size(0);
-          sldProfiles2.set_size(b_sldProfiles2.size(0), 1);
-          for (i = 0; i < loop_ub; i++) {
-            sldProfiles2[i] = b_sldProfiles2[i];
-          }
+        switch (i) {
+         case 0:
+          {
+            int32_T i1;
+            d_packCellArray(data_f1[4].f1, b_sldProfiles2, nSldProfiles2);
+            loop_ub = b_sldProfiles2.size(0);
+            sldProfiles2.set_size(b_sldProfiles2.size(0), 1);
+            for (i = 0; i < 1; i++) {
+              for (i1 = 0; i1 < loop_ub; i1++) {
+                sldProfiles2[i1] = b_sldProfiles2[i1];
+              }
+            }
 
-          loop_ub = nSldProfiles2.size(0);
-          b_nSldProfiles2.set_size(nSldProfiles2.size(0), 1);
-          for (i = 0; i < loop_ub; i++) {
-            b_nSldProfiles2[i] = nSldProfiles2[i];
-          }
+            loop_ub = nSldProfiles2.size(0);
+            b_nSldProfiles2.set_size(nSldProfiles2.size(0), 1);
+            for (i = 0; i < 1; i++) {
+              for (i1 = 0; i1 < loop_ub; i1++) {
+                b_nSldProfiles2[i1] = nSldProfiles2[i1];
+              }
+            }
 
-          e_packCellArray(data_f1[5].f1, b_sldProfiles2, nSldProfiles2);
-          loop_ub = b_sldProfiles2.size(0);
-          layers2.set_size(b_sldProfiles2.size(0), 1);
-          for (i = 0; i < loop_ub; i++) {
-            layers2[i] = b_sldProfiles2[i];
-          }
+            e_packCellArray(data_f1[5].f1, b_sldProfiles2, nSldProfiles2);
+            loop_ub = b_sldProfiles2.size(0);
+            layers2.set_size(b_sldProfiles2.size(0), 1);
+            for (i = 0; i < 1; i++) {
+              for (i1 = 0; i1 < loop_ub; i1++) {
+                layers2[i1] = b_sldProfiles2[i1];
+              }
+            }
 
-          loop_ub = nSldProfiles2.size(0);
-          nLayers2.set_size(nSldProfiles2.size(0), 1);
-          for (i = 0; i < loop_ub; i++) {
-            nLayers2[i] = nSldProfiles2[i];
+            loop_ub = nSldProfiles2.size(0);
+            nLayers2.set_size(nSldProfiles2.size(0), 1);
+            for (i = 0; i < 1; i++) {
+              for (i1 = 0; i1 < loop_ub; i1++) {
+                nLayers2[i1] = nSldProfiles2[i1];
+              }
+            }
           }
-        } else {
+          break;
+
+         default:
           sldProfiles2.set_size(0, 0);
           b_nSldProfiles2.set_size(0, 0);
           layers2.set_size(0, 0);
           nLayers2.set_size(0, 0);
+          break;
         }
 
         ssubs.set_size(data_f2.size(0));
@@ -416,7 +436,7 @@ namespace RAT
 
         //  ssubs
         loop_ub = data_f3_modelType_size[1];
-        if (loop_ub - 1 >= 0) {
+        if (0 <= loop_ub - 1) {
           std::copy(&data_f3_modelType_data[0], &data_f3_modelType_data[loop_ub],
                     &modelType_data[0]);
         }

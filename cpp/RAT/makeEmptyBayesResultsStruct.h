@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // makeEmptyBayesResultsStruct.h
 //
@@ -11,16 +11,17 @@
 #define MAKEEMPTYBAYESRESULTSSTRUCT_H
 
 // Include files
-#include "RATMain_types.h"
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Type Declarations
 namespace RAT
 {
-  struct b_struct_T;
+  struct cell_wrap_8;
+  struct c_struct_T;
 }
 
 // Function Declarations
@@ -40,7 +41,7 @@ namespace RAT
     &bayesResults_parConfInts_par95, ::coder::array<real_T, 2U>
     &bayesResults_parConfInts_par65, ::coder::array<real_T, 2U>
     &bayesResults_parConfInts_mean, ::coder::array<real_T, 2U>
-    &bayesResults_bestPars, b_struct_T *bayesResults_bayesRes, ::coder::array<
+    &bayesResults_bestPars, c_struct_T *bayesResults_bayesRes, ::coder::array<
     real_T, 2U> &bayesResults_chain);
   void makeEmptyBayesResultsStruct(real_T nContrasts, boolean_T isDomains,
     real_T nChains, ::coder::array<cell_wrap_8, 1U>
@@ -56,7 +57,7 @@ namespace RAT
     &bayesResults_parConfInts_par95, ::coder::array<real_T, 2U>
     &bayesResults_parConfInts_par65, ::coder::array<real_T, 2U>
     &bayesResults_parConfInts_mean, ::coder::array<real_T, 2U>
-    &bayesResults_bestPars, b_struct_T *bayesResults_bayesRes, ::coder::array<
+    &bayesResults_bestPars, c_struct_T *bayesResults_bayesRes, ::coder::array<
     real_T, 2U> &bayesResults_chain);
 }
 

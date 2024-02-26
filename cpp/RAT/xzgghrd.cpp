@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xzgghrd.cpp
 //
@@ -28,88 +28,110 @@ namespace RAT
                      coder::array<creal_T, 2U> &Z)
         {
           ::coder::array<creal_T, 2U> b_A;
+          ::coder::array<real_T, 2U> r;
           creal_T s;
           real_T c;
+          int32_T i;
+          int32_T i1;
+          int32_T j;
+          int32_T loop_ub;
           int32_T n;
           n = A.size(0);
-          eye(A.size(0), Z);
+          eye(A.size(0), r);
+          Z.set_size(r.size(0), r.size(1));
+          j = r.size(1);
+          for (i = 0; i < j; i++) {
+            loop_ub = r.size(0);
+            for (i1 = 0; i1 < loop_ub; i1++) {
+              Z[i1 + Z.size(0) * i].re = r[i1 + r.size(0) * i];
+              Z[i1 + Z.size(0) * i].im = 0.0;
+            }
+          }
+
           if ((A.size(0) > 1) && (ihi >= ilo + 2)) {
             for (int32_T jcol{ilo - 1}; jcol + 1 < ihi - 1; jcol++) {
               int32_T jcolp1;
               jcolp1 = jcol + 2;
               for (int32_T jrow{ihi - 1}; jrow + 1 > jcol + 2; jrow--) {
-                real_T b_s_re_tmp;
-                real_T s_re_tmp;
-                real_T stemp_im_tmp;
-                real_T stemp_re_tmp;
-                int32_T j;
-                int32_T loop_ub;
+                real_T d;
+                real_T d1;
+                real_T stemp_im;
+                real_T stemp_re;
                 xzlartg(A[(jrow + A.size(0) * jcol) - 1], A[jrow + A.size(0) *
                         jcol], &c, &s, &A[(jrow + A.size(0) * jcol) - 1]);
                 A[jrow + A.size(0) * jcol].re = 0.0;
                 A[jrow + A.size(0) * jcol].im = 0.0;
                 for (j = jcolp1; j <= n; j++) {
-                  s_re_tmp = A[jrow + A.size(0) * (j - 1)].im;
-                  b_s_re_tmp = A[jrow + A.size(0) * (j - 1)].re;
-                  stemp_re_tmp = A[(jrow + A.size(0) * (j - 1)) - 1].re;
-                  stemp_im_tmp = A[(jrow + A.size(0) * (j - 1)) - 1].im;
-                  A[jrow + A.size(0) * (j - 1)].re = c * b_s_re_tmp - (s.re *
-                    stemp_re_tmp + s.im * stemp_im_tmp);
+                  stemp_re = c * A[(jrow + A.size(0) * (j - 1)) - 1].re + (s.re *
+                    A[jrow + A.size(0) * (j - 1)].re - s.im * A[jrow + A.size(0)
+                    * (j - 1)].im);
+                  stemp_im = c * A[(jrow + A.size(0) * (j - 1)) - 1].im + (s.re *
+                    A[jrow + A.size(0) * (j - 1)].im + s.im * A[jrow + A.size(0)
+                    * (j - 1)].re);
+                  d = A[(jrow + A.size(0) * (j - 1)) - 1].im;
+                  d1 = A[(jrow + A.size(0) * (j - 1)) - 1].re;
+                  A[jrow + A.size(0) * (j - 1)].re = c * A[jrow + A.size(0) * (j
+                    - 1)].re - (s.re * A[(jrow + A.size(0) * (j - 1)) - 1].re +
+                                s.im * A[(jrow + A.size(0) * (j - 1)) - 1].im);
                   A[jrow + A.size(0) * (j - 1)].im = c * A[jrow + A.size(0) * (j
-                    - 1)].im - (s.re * stemp_im_tmp - s.im * stemp_re_tmp);
-                  A[(jrow + A.size(0) * (j - 1)) - 1].re = c * stemp_re_tmp +
-                    (s.re * b_s_re_tmp - s.im * s_re_tmp);
-                  A[(jrow + A.size(0) * (j - 1)) - 1].im = c * stemp_im_tmp +
-                    (s.re * s_re_tmp + s.im * b_s_re_tmp);
+                    - 1)].im - (s.re * d - s.im * d1);
+                  A[(jrow + A.size(0) * (j - 1)) - 1].re = stemp_re;
+                  A[(jrow + A.size(0) * (j - 1)) - 1].im = stemp_im;
                 }
 
                 s.re = -s.re;
                 s.im = -s.im;
                 for (j = 1; j <= ihi; j++) {
-                  s_re_tmp = A[(j + A.size(0) * (jrow - 1)) - 1].im;
-                  b_s_re_tmp = A[(j + A.size(0) * (jrow - 1)) - 1].re;
-                  stemp_re_tmp = A[(j + A.size(0) * jrow) - 1].re;
-                  stemp_im_tmp = A[(j + A.size(0) * jrow) - 1].im;
-                  A[(j + A.size(0) * (jrow - 1)) - 1].re = c * b_s_re_tmp -
-                    (s.re * stemp_re_tmp + s.im * stemp_im_tmp);
+                  stemp_re = c * A[(j + A.size(0) * jrow) - 1].re + (s.re * A[(j
+                    + A.size(0) * (jrow - 1)) - 1].re - s.im * A[(j + A.size(0) *
+                    (jrow - 1)) - 1].im);
+                  stemp_im = c * A[(j + A.size(0) * jrow) - 1].im + (s.re * A[(j
+                    + A.size(0) * (jrow - 1)) - 1].im + s.im * A[(j + A.size(0) *
+                    (jrow - 1)) - 1].re);
+                  d = A[(j + A.size(0) * jrow) - 1].im;
+                  d1 = A[(j + A.size(0) * jrow) - 1].re;
+                  A[(j + A.size(0) * (jrow - 1)) - 1].re = c * A[(j + A.size(0) *
+                    (jrow - 1)) - 1].re - (s.re * A[(j + A.size(0) * jrow) - 1].
+                    re + s.im * A[(j + A.size(0) * jrow) - 1].im);
                   A[(j + A.size(0) * (jrow - 1)) - 1].im = c * A[(j + A.size(0) *
-                    (jrow - 1)) - 1].im - (s.re * stemp_im_tmp - s.im *
-                    stemp_re_tmp);
-                  A[(j + A.size(0) * jrow) - 1].re = c * stemp_re_tmp + (s.re *
-                    b_s_re_tmp - s.im * s_re_tmp);
-                  A[(j + A.size(0) * jrow) - 1].im = c * stemp_im_tmp + (s.re *
-                    s_re_tmp + s.im * b_s_re_tmp);
+                    (jrow - 1)) - 1].im - (s.re * d - s.im * d1);
+                  A[(j + A.size(0) * jrow) - 1].re = stemp_re;
+                  A[(j + A.size(0) * jrow) - 1].im = stemp_im;
                 }
 
                 b_A.set_size(Z.size(0), Z.size(1));
                 j = Z.size(1);
-                for (int32_T i{0}; i < j; i++) {
+                for (i = 0; i < j; i++) {
                   loop_ub = Z.size(0);
-                  for (int32_T i1{0}; i1 < loop_ub; i1++) {
+                  for (i1 = 0; i1 < loop_ub; i1++) {
                     b_A[i1 + b_A.size(0) * i] = Z[i1 + Z.size(0) * i];
                   }
                 }
 
                 for (j = 1; j <= n; j++) {
-                  s_re_tmp = b_A[(j + b_A.size(0) * (jrow - 1)) - 1].im;
-                  b_s_re_tmp = b_A[(j + b_A.size(0) * (jrow - 1)) - 1].re;
-                  stemp_re_tmp = b_A[(j + b_A.size(0) * jrow) - 1].re;
-                  stemp_im_tmp = b_A[(j + b_A.size(0) * jrow) - 1].im;
-                  b_A[(j + b_A.size(0) * (jrow - 1)) - 1].re = c * b_s_re_tmp -
-                    (s.re * stemp_re_tmp + s.im * stemp_im_tmp);
-                  b_A[(j + b_A.size(0) * (jrow - 1)) - 1].im = c * s_re_tmp -
-                    (s.re * stemp_im_tmp - s.im * stemp_re_tmp);
-                  b_A[(j + b_A.size(0) * jrow) - 1].re = c * stemp_re_tmp +
-                    (s.re * b_s_re_tmp - s.im * s_re_tmp);
-                  b_A[(j + b_A.size(0) * jrow) - 1].im = c * stemp_im_tmp +
-                    (s.re * s_re_tmp + s.im * b_s_re_tmp);
+                  stemp_re = c * b_A[(j + b_A.size(0) * jrow) - 1].re + (s.re *
+                    b_A[(j + b_A.size(0) * (jrow - 1)) - 1].re - s.im * b_A[(j +
+                    b_A.size(0) * (jrow - 1)) - 1].im);
+                  stemp_im = c * b_A[(j + b_A.size(0) * jrow) - 1].im + (s.re *
+                    b_A[(j + b_A.size(0) * (jrow - 1)) - 1].im + s.im * b_A[(j +
+                    b_A.size(0) * (jrow - 1)) - 1].re);
+                  d = b_A[(j + b_A.size(0) * jrow) - 1].re;
+                  b_A[(j + b_A.size(0) * (jrow - 1)) - 1].re = c * b_A[(j +
+                    b_A.size(0) * (jrow - 1)) - 1].re - (s.re * b_A[(j +
+                    b_A.size(0) * jrow) - 1].re + s.im * b_A[(j + b_A.size(0) *
+                    jrow) - 1].im);
+                  b_A[(j + b_A.size(0) * (jrow - 1)) - 1].im = c * b_A[(j +
+                    b_A.size(0) * (jrow - 1)) - 1].im - (s.re * b_A[(j +
+                    b_A.size(0) * jrow) - 1].im - s.im * d);
+                  b_A[(j + b_A.size(0) * jrow) - 1].re = stemp_re;
+                  b_A[(j + b_A.size(0) * jrow) - 1].im = stemp_im;
                 }
 
                 Z.set_size(b_A.size(0), b_A.size(1));
                 j = b_A.size(1);
-                for (int32_T i{0}; i < j; i++) {
+                for (i = 0; i < j; i++) {
                   loop_ub = b_A.size(0);
-                  for (int32_T i1{0}; i1 < loop_ub; i1++) {
+                  for (i1 = 0; i1 < loop_ub; i1++) {
                     Z[i1 + Z.size(0) * i] = b_A[i1 + b_A.size(0) * i];
                   }
                 }

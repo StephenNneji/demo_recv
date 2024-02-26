@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // parallelContrasts1.cpp
 //
@@ -18,7 +18,6 @@
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include "coder_bounded_array.h"
-#include "omp.h"
 
 // Function Definitions
 namespace RAT
@@ -27,7 +26,7 @@ namespace RAT
   {
     namespace customLayers
     {
-      void c_parallelContrasts(const c_struct_T *problemStruct, const cell_11
+      void parallelContrasts(const d_struct_T *problemStruct, const cell_11
         *problemCells, const struct2_T *controls, ::coder::array<real_T, 1U>
         &outSsubs, ::coder::array<real_T, 1U> &backgroundParams, ::coder::array<
         real_T, 1U> &qzshifts, ::coder::array<real_T, 1U> &scalefactors, ::coder::
@@ -45,9 +44,6 @@ namespace RAT
         ::coder::array<real_T, 2U> shiftedDat;
         ::coder::array<real_T, 2U> simul;
         ::coder::array<real_T, 2U> sldProfile;
-        real_T b_dv[2];
-        real_T b_dv1[2];
-        real_T dv2[2];
         real_T thisBackground;
         real_T thisBulkIn;
         real_T thisBulkOut;
@@ -58,6 +54,7 @@ namespace RAT
         real_T thisSsubs;
         int32_T b_i;
         int32_T b_loop_ub;
+        int32_T i;
         int32_T i1;
         int32_T loop_ub;
         int32_T nParams;
@@ -128,9 +125,9 @@ namespace RAT
 
 #pragma omp parallel for \
  num_threads(omp_get_max_threads()) \
- private(sldProfile,reflect,simul,shiftedDat,layerSld,resamLayers,thisSsubs,thisChiSquared,thisResol,thisBulkOut,thisBulkIn,thisScalefactor,thisQzshift,thisBackground,b_dv,b_dv1,dv2,loop_ub,b_i,b_loop_ub,i1)
+ private(sldProfile,reflect,simul,shiftedDat,layerSld,resamLayers,thisSsubs,thisChiSquared,thisResol,thisBulkOut,thisBulkIn,thisScalefactor,thisQzshift,thisBackground,i,loop_ub,b_i,b_loop_ub,i1)
 
-        for (int32_T i = 0; i <= ub_loop; i++) {
+        for (i = 0; i <= ub_loop; i++) {
           //  Extract the relevant parameter values for this contrast
           //  from the input arrays.
           //  First need to decide which values of the backgrounds, scalefactors
@@ -154,20 +151,15 @@ namespace RAT
           //  In this case we are single cored, so we do not parallelise over
           //  points
           //  Call the reflectivity calculation
-          b_dv[0] = problemCells->f3[i].f1[0];
-          b_dv[1] = problemCells->f3[i].f1[1];
-          b_dv1[0] = problemCells->f4[i].f1[0];
-          b_dv1[1] = problemCells->f4[i].f1[1];
-          dv2[0] = problemCells->f1[i].f1[0];
-          dv2[1] = problemCells->f1[i].f1[1];
           coreLayersCalculation(allLayers[i].f1, allRoughs[i],
                                 problemStruct->geometry.data,
                                 problemStruct->geometry.size, thisBulkIn,
                                 thisBulkOut, problemStruct->resample[i], calcSld,
                                 thisScalefactor, thisQzshift,
                                 problemStruct->dataPresent[i], problemCells->
-                                f2[i].f1, b_dv, b_dv1, dv2, thisBackground,
-                                thisResol,
+                                f2[i].f1, problemCells->f3[i].f1,
+                                problemCells->f4[i].f1, problemCells->f1[i].f1,
+                                thisBackground, thisResol,
                                 problemStruct->contrastBackgroundsType[i],
                                 static_cast<real_T>(nParams),
                                 controls->resamPars, useImaginary, sldProfile,

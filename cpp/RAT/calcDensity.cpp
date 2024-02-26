@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // calcDensity.cpp
 //
@@ -26,7 +26,9 @@ namespace RAT
   {
     ::coder::array<real_T, 2U> PR;
     ::coder::array<real_T, 2U> b_x;
+    int32_T b_i;
     int32_T i;
+    int32_T i1;
     int32_T loop_ub;
     int32_T loop_ub_tmp;
 
@@ -80,15 +82,14 @@ namespace RAT
       PR[i] = 0.0;
     }
 
-    if (loop_ub_tmp - 1 >= 0) {
+    if (0 <= loop_ub_tmp - 1) {
+      i1 = x.size(1);
       loop_ub = x.size(1);
     }
 
-    //  Take log of any non-zero values..
-    log_PR.set_size(loop_ub_tmp);
-    for (int32_T b_i{0}; b_i < loop_ub_tmp; b_i++) {
+    for (b_i = 0; b_i < loop_ub_tmp; b_i++) {
       //  Loop over all the chains..
-      b_x.set_size(1, x.size(1));
+      b_x.set_size(1, i1);
       for (i = 0; i < loop_ub; i++) {
         b_x[i] = x[b_i + x.size(0) * i];
       }
@@ -97,11 +98,16 @@ namespace RAT
         ratInputs_priors);
 
       //  mvnpdf automatically goes over all pars
-      log_PR[b_i] = 0.0;
+    }
+
+    //  Take log of any non-zero values..
+    log_PR.set_size(loop_ub_tmp);
+    for (i = 0; i < loop_ub_tmp; i++) {
+      log_PR[i] = 0.0;
     }
 
     i = PR.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       real_T d;
       d = PR[b_i];
       if (d != 0.0) {

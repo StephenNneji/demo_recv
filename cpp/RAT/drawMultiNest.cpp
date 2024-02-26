@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // drawMultiNest.cpp
 //
@@ -28,16 +28,16 @@ namespace RAT
   void drawMultiNest(const ::coder::array<real_T, 1U> &fracvol, const ::coder::
                      array<real_T, 2U> &Bs, const ::coder::array<real_T, 2U>
                      &mus, real_T logLmin, const ::coder::array<real_T, 2U>
-                     &prior, const c_struct_T *data_f1, const struct2_T *data_f2,
+                     &prior, const d_struct_T *data_f1, const struct2_T *data_f2,
                      const cell_11 *data_f4, ::coder::array<real_T, 2U> &sample,
                      real_T *logL)
   {
-    ::coder::array<real_T, 2U> B;
-    ::coder::array<real_T, 2U> mu;
+    ::coder::array<real_T, 2U> b_Bs;
+    ::coder::array<real_T, 2U> b_mus;
+    ::coder::array<real_T, 2U> b_pnt;
     ::coder::array<real_T, 2U> pnt;
     ::coder::array<real_T, 1U> r;
-    int32_T b_loop_ub;
-    int32_T loop_ub;
+    ::coder::array<real_T, 1U> rescaledpnt;
     int32_T ndims;
 
     //  This function draws a multi-dimensional sample from the prior volume
@@ -55,15 +55,12 @@ namespace RAT
     pnt[0] = 1.0;
     pnt[1] = 1.0;
     sample.set_size(1, 0);
-    loop_ub = Bs.size(1);
-    b_loop_ub = mus.size(1);
     real_T inN;
     real_T rval;
     int32_T k;
     int32_T k0;
     boolean_T exitg1;
     do {
-      int32_T c_loop_ub;
       int32_T i;
       int32_T i1;
 
@@ -89,33 +86,43 @@ namespace RAT
         i1 = 0;
       }
 
-      c_loop_ub = i1 - i;
-      B.set_size(c_loop_ub, Bs.size(1));
-      for (i1 = 0; i1 < loop_ub; i1++) {
-        for (int32_T i2{0}; i2 < c_loop_ub; i2++) {
-          B[i2 + B.size(0) * i1] = Bs[(i + i2) + Bs.size(0) * i1];
-        }
-      }
-
-      mu.set_size(1, mus.size(1));
-      for (i = 0; i < b_loop_ub; i++) {
-        mu[i] = mus[k0 + mus.size(0) * i];
-      }
-
       //  draw points from that ellipsoid until logL >= logLmin
       *logL = rtMinusInf;
       while (*logL < logLmin) {
+        int32_T b_loop_ub;
+        int32_T i2;
         int32_T in_range;
+        int32_T loop_ub;
         in_range = 1;
 
         //  default value
         //  draw one point from the ellipsoid
-        drawEllipsoidPoints(B, mu, pnt);
+        loop_ub = Bs.size(1);
+        b_loop_ub = i1 - i;
+        b_Bs.set_size(b_loop_ub, Bs.size(1));
+        for (i2 = 0; i2 < loop_ub; i2++) {
+          for (int32_T i3{0}; i3 < b_loop_ub; i3++) {
+            b_Bs[i3 + b_Bs.size(0) * i2] = Bs[(i + i3) + Bs.size(0) * i2];
+          }
+        }
+
+        loop_ub = mus.size(1);
+        b_mus.set_size(1, mus.size(1));
+        for (i2 = 0; i2 < loop_ub; i2++) {
+          b_mus[i2] = mus[k0 + mus.size(0) * i2];
+        }
+
+        drawEllipsoidPoints(b_Bs, b_mus, b_pnt);
+        pnt.set_size(1, b_pnt.size(1));
+        loop_ub = b_pnt.size(1);
+        for (i2 = 0; i2 < loop_ub; i2++) {
+          pnt[i2] = b_pnt[i2];
+        }
 
         //  make sure that the point lies in unit hypercube
         for (int32_T ii{0}; ii < ndims; ii++) {
           real_T d;
-          d = pnt[ii];
+          d = b_pnt[ii];
           if ((d < 0.0) || (d > 1.0)) {
             in_range = 0;
             if (DEBUG != 0.0) {
@@ -127,17 +134,23 @@ namespace RAT
 
         if (in_range != 0) {
           //  assign as candidate replacement live point
-          sample.set_size(1, pnt.size(1));
-          c_loop_ub = pnt.size(1);
-          for (i = 0; i < c_loop_ub; i++) {
-            sample[sample.size(0) * i] = pnt[i];
+          sample.set_size(1, b_pnt.size(1));
+          loop_ub = b_pnt.size(1);
+          for (i2 = 0; i2 < loop_ub; i2++) {
+            sample[sample.size(0) * i2] = b_pnt[i2];
           }
 
           //  rescale point back to full range
+          rescaleParameters(prior, b_pnt, r);
+          rescaledpnt.set_size(r.size(0));
+          loop_ub = r.size(0);
+          for (i2 = 0; i2 < loop_ub; i2++) {
+            rescaledpnt[i2] = r[i2];
+          }
+
           //  get new likelihood
           //  logL = likelihood(data, model, parnames, loopCell(rescaledpnt));
-          rescaleParameters(prior, pnt, r);
-          *logL = nsIntraFun(data_f1, data_f2, data_f4, r);
+          *logL = nsIntraFun(data_f1, data_f2, data_f4, rescaledpnt);
         }
       }
 

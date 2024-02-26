@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // groupLayersModImaginary.cpp
 //
@@ -30,6 +30,7 @@ namespace RAT
     ::coder::array<real_T, 1U> roughs;
     int32_T b_loop_ub;
     int32_T i;
+    int32_T i1;
     int32_T loop_ub;
     uint32_T unnamed_idx_0;
 
@@ -62,18 +63,18 @@ namespace RAT
     loop_ub = allLayers.size(1);
     for (i = 0; i < loop_ub; i++) {
       b_loop_ub = static_cast<int32_T>(unnamed_idx_0);
-      for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
+      for (i1 = 0; i1 < b_loop_ub; i1++) {
         layers[i1 + layers.size(0) * i] = 0.0;
       }
     }
 
     if ((allLayers.size(0) != 0) && (allLayers.size(1) != 0)) {
-      if (coder::internal::q_strcmp(geometry_data, geometry_size)) {
+      if (coder::internal::p_strcmp(geometry_data, geometry_size)) {
         layers.set_size(allLayers.size(0), allLayers.size(1));
         loop_ub = allLayers.size(1);
-        b_loop_ub = allLayers.size(0);
         for (i = 0; i < loop_ub; i++) {
-          for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
+          b_loop_ub = allLayers.size(0);
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
             layers[i1 + layers.size(0) * i] = allLayers[i1 + allLayers.size(0) *
               i];
           }
@@ -81,10 +82,10 @@ namespace RAT
 
         // s_sub = rsub;
       } else {
-        sldss.set_size(allLayers.size(0), 2);
         loop_ub = allLayers.size(0);
+        sldss.set_size(allLayers.size(0), 2);
         for (i = 0; i < 2; i++) {
-          for (int32_T i1{0}; i1 < loop_ub; i1++) {
+          for (i1 = 0; i1 < loop_ub; i1++) {
             sldss[i1 + sldss.size(0) * i] = allLayers[i1 + allLayers.size(0) *
               (i + 1)];
           }
@@ -92,9 +93,9 @@ namespace RAT
 
         *outSsubs = allLayers[(allLayers.size(0) + allLayers.size(0) * 3) - 1];
         if (allLayers.size(0) > 1) {
+          loop_ub = allLayers.size(0);
           roughs.set_size(allLayers.size(0));
           roughs[0] = allRoughs;
-          loop_ub = allLayers.size(0);
           for (i = 0; i <= loop_ub - 2; i++) {
             roughs[i + 1] = allLayers[i + allLayers.size(0) * 3];
           }
@@ -104,67 +105,74 @@ namespace RAT
         }
 
         if (allLayers.size(1) == 5) {
-          int32_T b_sizes_idx_0;
-          int32_T sizes_idx_0;
-          b_allLayers.set_size(allLayers.size(0));
+          int32_T result_idx_0;
+          b_loop_ub = allLayers.size(0);
           loop_ub = allLayers.size(0);
+          b_allLayers.set_size(allLayers.size(0));
           for (i = 0; i < loop_ub; i++) {
             b_allLayers[i] = allLayers[i];
           }
 
-          b_loop_ub = allLayers.size(0);
-          sizes_idx_0 = allLayers.size(0);
-          b_sizes_idx_0 = allLayers.size(0);
-          c_allLayers.set_size(allLayers.size(0));
+          result_idx_0 = allLayers.size(0);
           loop_ub = allLayers.size(0);
+          c_allLayers.set_size(allLayers.size(0));
           for (i = 0; i < loop_ub; i++) {
             c_allLayers[i] = allLayers[i + allLayers.size(0) * 4];
           }
 
-          loop_ub = allLayers.size(0);
           layers.set_size(allLayers.size(0), 5);
-          for (i = 0; i < b_loop_ub; i++) {
-            layers[i] = b_allLayers[i];
-          }
-
-          for (i = 0; i < 2; i++) {
-            for (int32_T i1{0}; i1 < sizes_idx_0; i1++) {
-              layers[i1 + layers.size(0) * (i + 1)] = sldss[i1 + sizes_idx_0 * i];
+          for (i = 0; i < 1; i++) {
+            for (i1 = 0; i1 < b_loop_ub; i1++) {
+              layers[i1] = b_allLayers[i1];
             }
           }
 
-          for (i = 0; i < b_sizes_idx_0; i++) {
-            layers[i + layers.size(0) * 3] = roughs[i];
+          for (i = 0; i < 2; i++) {
+            for (i1 = 0; i1 < b_loop_ub; i1++) {
+              layers[i1 + layers.size(0) * (i + 1)] = sldss[i1 + result_idx_0 *
+                i];
+            }
           }
 
-          for (i = 0; i < loop_ub; i++) {
-            layers[i + layers.size(0) * 4] = c_allLayers[i];
+          for (i = 0; i < 1; i++) {
+            for (i1 = 0; i1 < b_loop_ub; i1++) {
+              layers[i1 + layers.size(0) * 3] = roughs[i1];
+            }
+          }
+
+          for (i = 0; i < 1; i++) {
+            for (i1 = 0; i1 < b_loop_ub; i1++) {
+              layers[i1 + layers.size(0) * 4] = c_allLayers[i1];
+            }
           }
         } else {
-          int32_T b_sizes_idx_0;
-          int32_T sizes_idx_0;
-          b_allLayers.set_size(allLayers.size(0));
+          int32_T result_idx_0;
+          b_loop_ub = allLayers.size(0);
           loop_ub = allLayers.size(0);
+          b_allLayers.set_size(allLayers.size(0));
           for (i = 0; i < loop_ub; i++) {
             b_allLayers[i] = allLayers[i];
           }
 
-          b_loop_ub = allLayers.size(0);
-          sizes_idx_0 = allLayers.size(0);
-          b_sizes_idx_0 = allLayers.size(0);
+          result_idx_0 = allLayers.size(0);
           layers.set_size(allLayers.size(0), 4);
-          for (i = 0; i < b_loop_ub; i++) {
-            layers[i] = b_allLayers[i];
-          }
-
-          for (i = 0; i < 2; i++) {
-            for (int32_T i1{0}; i1 < sizes_idx_0; i1++) {
-              layers[i1 + layers.size(0) * (i + 1)] = sldss[i1 + sizes_idx_0 * i];
+          for (i = 0; i < 1; i++) {
+            for (i1 = 0; i1 < b_loop_ub; i1++) {
+              layers[i1] = b_allLayers[i1];
             }
           }
 
-          for (i = 0; i < b_sizes_idx_0; i++) {
-            layers[i + layers.size(0) * 3] = roughs[i];
+          for (i = 0; i < 2; i++) {
+            for (i1 = 0; i1 < b_loop_ub; i1++) {
+              layers[i1 + layers.size(0) * (i + 1)] = sldss[i1 + result_idx_0 *
+                i];
+            }
+          }
+
+          for (i = 0; i < 1; i++) {
+            for (i1 = 0; i1 < b_loop_ub; i1++) {
+              layers[i1 + layers.size(0) * 3] = roughs[i1];
+            }
           }
         }
       }
@@ -174,17 +182,17 @@ namespace RAT
         i = allLayers.size(0);
         for (int32_T j{0}; j < i; j++) {
           real_T d;
+          real_T pc_add;
           d = allLayers[j + allLayers.size(0) * 4];
-          if (!std::isnan(d)) {
-            real_T d1;
-            if (d == 1.0) {
-              d1 = bulkIns;
-            } else {
-              d1 = bulkOuts;
-            }
+          if (d == 1.0) {
+            pc_add = bulkIns;
+          } else {
+            pc_add = bulkOuts;
+          }
 
-            layers[j + layers.size(0)] = d1 * (d / 100.0) + (1.0 - d / 100.0) *
-              layers[j + layers.size(0)];
+          if (!std::isnan(d)) {
+            layers[j + layers.size(0)] = pc_add * (d / 100.0) + (1.0 - d / 100.0)
+              * layers[j + layers.size(0)];
 
             // layers(j,3) = pc_add*(this_pcw/100) + (1-(this_pcw/100))*layers(j,3);
           }
@@ -193,10 +201,10 @@ namespace RAT
     }
 
     if ((layers.size(0) != 0) && (layers.size(1) != 0)) {
-      outLayers.set_size(layers.size(0), 4);
       loop_ub = layers.size(0);
+      outLayers.set_size(layers.size(0), 4);
       for (i = 0; i < 4; i++) {
-        for (int32_T i1{0}; i1 < loop_ub; i1++) {
+        for (i1 = 0; i1 < loop_ub; i1++) {
           outLayers[i1 + outLayers.size(0) * i] = layers[i1 + layers.size(0) * i];
         }
       }

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // qrsolve.cpp
 //
@@ -42,22 +42,23 @@ namespace RAT
                             tau_data[], ::coder::array<real_T, 2U> &B, int32_T
                             rankA, ::coder::array<real_T, 2U> &Y)
       {
+        int32_T j;
         int32_T k;
         int32_T nb;
         nb = B.size(1);
         Y.set_size(1, B.size(1));
         k = B.size(1);
-        for (int32_T j{0}; j < k; j++) {
+        for (j = 0; j < k; j++) {
           Y[j] = 0.0;
         }
 
         lapack::xunormqr(A, B, tau_data);
         for (k = 0; k < nb; k++) {
-          if (static_cast<uint8_T>(rankA) - 1 >= 0) {
+          if (0 <= rankA - 1) {
             Y[k] = B[B.size(0) * k];
           }
 
-          for (int32_T j{rankA}; j >= 1; j--) {
+          for (j = rankA; j >= 1; j--) {
             Y[k] = Y[k] / A[0];
           }
         }
@@ -82,36 +83,28 @@ namespace RAT
 
       void LSQFromQR(const ::coder::array<real_T, 2U> &A, const ::coder::array<
                      real_T, 1U> &tau, const ::coder::array<int32_T, 2U> &jpvt, ::
-                     coder::array<real_T, 2U> &B, int32_T rankA, ::coder::array<
-                     real_T, 2U> &Y)
+                     coder::array<real_T, 1U> &B, int32_T rankA, ::coder::array<
+                     real_T, 1U> &Y)
       {
         int32_T b_i;
         int32_T i;
-        int32_T k;
-        int32_T nb;
-        nb = B.size(1);
-        Y.set_size(A.size(1), B.size(1));
-        i = B.size(1);
+        Y.set_size(A.size(1));
+        i = A.size(1);
         for (b_i = 0; b_i < i; b_i++) {
-          k = A.size(1);
-          for (int32_T j{0}; j < k; j++) {
-            Y[j] = 0.0;
-          }
+          Y[b_i] = 0.0;
         }
 
         lapack::xunormqr(A, B, tau);
-        for (k = 0; k < nb; k++) {
-          for (i = 0; i < rankA; i++) {
-            Y[jpvt[i] - 1] = B[i];
-          }
+        for (i = 0; i < rankA; i++) {
+          Y[jpvt[i] - 1] = B[i];
+        }
 
-          for (int32_T j{rankA}; j >= 1; j--) {
-            b_i = jpvt[j - 1];
-            Y[b_i - 1] = Y[b_i - 1] / A[(j + A.size(0) * (j - 1)) - 1];
-            for (i = 0; i <= j - 2; i++) {
-              Y[jpvt[i] - 1] = Y[jpvt[i] - 1] - Y[jpvt[j - 1] - 1] * A[i +
-                A.size(0) * (j - 1)];
-            }
+        for (int32_T j{rankA}; j >= 1; j--) {
+          b_i = jpvt[j - 1];
+          Y[b_i - 1] = Y[b_i - 1] / A[(j + A.size(0) * (j - 1)) - 1];
+          for (i = 0; i <= j - 2; i++) {
+            Y[jpvt[i] - 1] = Y[jpvt[i] - 1] - Y[jpvt[j - 1] - 1] * A[i + A.size
+              (0) * (j - 1)];
           }
         }
       }
@@ -122,18 +115,19 @@ namespace RAT
         ::coder::array<real_T, 2U> b_B;
         ::coder::array<real_T, 1U> b_A;
         real_T tau_data;
+        int32_T i;
         int32_T jpvt;
         int32_T loop_ub;
         b_A.set_size(A.size(0));
         loop_ub = A.size(0);
-        for (int32_T i{0}; i < loop_ub; i++) {
+        for (i = 0; i < loop_ub; i++) {
           b_A[i] = A[i];
         }
 
         reflapack::xzgeqp3(b_A, A.size(0), (real_T *)&tau_data, &loop_ub, &jpvt);
         b_B.set_size(B.size(0), B.size(1));
         loop_ub = B.size(1) - 1;
-        for (int32_T i{0}; i <= loop_ub; i++) {
+        for (i = 0; i <= loop_ub; i++) {
           jpvt = B.size(0) - 1;
           for (int32_T i1{0}; i1 <= jpvt; i1++) {
             b_B[i1 + b_B.size(0) * i] = B[i1 + B.size(0) * i];

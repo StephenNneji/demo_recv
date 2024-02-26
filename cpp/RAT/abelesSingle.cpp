@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // abelesSingle.cpp
 //
@@ -72,7 +72,7 @@ namespace RAT
       k0 = q[points] / 2.0;
       loop_ub = static_cast<int32_T>(N - 1.0);
       for (int32_T n{0}; n < loop_ub; n++) {
-        if (static_cast<uint32_T>(n) + 1U == 1U) {
+        if (n + 1U == 1U) {
           real_T ar;
           real_T br;
           real_T d;
@@ -196,7 +196,7 @@ namespace RAT
           real_T r_n_np1_re;
           real_T re;
 
-          //  Find kn and k_n+1 (ex. k1 and k2 for n=1): _/
+          //  Find kn and k_n+1 (ex. k1 and k2 for n=1): $/
           //  sqrt function with branch cut in zarg from 0 to infinity along a ray
           //  at angle theta (in radians) measured from the +x axis in the usual way,
           //  with -pi<=theta<=pi.  theta = pi is the usual square root.
@@ -303,7 +303,7 @@ namespace RAT
           beta_re = kn_ptr_re * 0.0 - kn_ptr_im;
           beta_im = kn_ptr_re + kn_ptr_im * 0.0;
 
-          //  Create the M_n matrix: _/
+          //  Create the M_n matrix: $/
           M_n_tmp.re = beta_re;
           M_n_tmp.im = beta_im;
           coder::b_exp(&M_n_tmp);

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // simplexXTransform.cpp
 //
@@ -47,8 +47,9 @@ namespace RAT
 
        case 3:
         //  lower and upper bounds
-        xtrans[b_i] = (std::sin(x[b_i]) + 1.0) / 2.0 * (params_UB[b_i] -
-          params_LB[b_i]) + params_LB[b_i];
+        xtrans[b_i] = (std::sin(x[b_i]) + 1.0) / 2.0;
+        xtrans[b_i] = xtrans[b_i] * (params_UB[b_i] - params_LB[b_i]) +
+          params_LB[b_i];
         break;
 
        default:

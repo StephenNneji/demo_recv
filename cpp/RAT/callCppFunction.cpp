@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // callCppFunction.cpp
 //
@@ -34,11 +34,12 @@ namespace RAT
     ::coder::array<real_T, 2U> tempOutput;
     real_T outputSize[2];
     real_T d;
+    int32_T i;
     int32_T loop_ub;
-    int32_T loop_ub_tmp;
+    int32_T num_tmp_tmp;
     char_T b_pointer_data[10000];
     loop_ub = pointer_size[1];
-    if (loop_ub - 1 >= 0) {
+    if (0 <= loop_ub - 1) {
       std::copy(&pointer_data[0], &pointer_data[loop_ub], &b_pointer_data[0]);
     }
 
@@ -71,17 +72,17 @@ namespace RAT
     }
 
     tempOutput.set_size(1, loop_ub);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       tempOutput[i] = 0.0;
     }
 
     convertVector2Ptr(outArray, &tempOutput[0]);
-    loop_ub_tmp = static_cast<int32_T>(outputSize[1]);
-    loop_ub = static_cast<int32_T>(outputSize[0]);
-    output.set_size(loop_ub, loop_ub_tmp);
-    for (int32_T i{0}; i < loop_ub_tmp; i++) {
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
-        output[i1 + output.size(0) * i] = tempOutput[i + loop_ub_tmp * i1];
+    loop_ub = static_cast<int32_T>(outputSize[1]);
+    num_tmp_tmp = static_cast<int32_T>(outputSize[0]);
+    output.set_size(num_tmp_tmp, loop_ub);
+    for (i = 0; i < loop_ub; i++) {
+      for (int32_T i1{0}; i1 < num_tmp_tmp; i1++) {
+        output[i1 + output.size(0) * i] = tempOutput[i + loop_ub * i1];
       }
     }
   }
@@ -100,11 +101,12 @@ namespace RAT
     ::coder::array<real_T, 2U> tempOutput;
     real_T outputSize[2];
     real_T d;
+    int32_T i;
     int32_T loop_ub;
-    int32_T loop_ub_tmp;
+    int32_T num_tmp_tmp;
     char_T b_pointer_data[10000];
     loop_ub = pointer_size[1];
-    if (loop_ub - 1 >= 0) {
+    if (0 <= loop_ub - 1) {
       std::copy(&pointer_data[0], &pointer_data[loop_ub], &b_pointer_data[0]);
     }
 
@@ -137,17 +139,17 @@ namespace RAT
     }
 
     tempOutput.set_size(1, loop_ub);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       tempOutput[i] = 0.0;
     }
 
     convertVector2Ptr(outArray, &tempOutput[0]);
-    loop_ub_tmp = static_cast<int32_T>(outputSize[1]);
-    loop_ub = static_cast<int32_T>(outputSize[0]);
-    output.set_size(loop_ub, loop_ub_tmp);
-    for (int32_T i{0}; i < loop_ub_tmp; i++) {
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
-        output[i1 + output.size(0) * i] = tempOutput[i + loop_ub_tmp * i1];
+    loop_ub = static_cast<int32_T>(outputSize[1]);
+    num_tmp_tmp = static_cast<int32_T>(outputSize[0]);
+    output.set_size(num_tmp_tmp, loop_ub);
+    for (i = 0; i < loop_ub; i++) {
+      for (int32_T i1{0}; i1 < num_tmp_tmp; i1++) {
+        output[i1 + output.size(0) * i] = tempOutput[i + loop_ub * i1];
       }
     }
   }
@@ -166,11 +168,12 @@ namespace RAT
     ::coder::array<real_T, 2U> tempOutput;
     real_T outputSize[2];
     real_T d;
+    int32_T i;
     int32_T loop_ub;
-    int32_T loop_ub_tmp;
+    int32_T num_tmp_tmp;
     char_T b_pointer_data[10000];
     loop_ub = pointer_size[1];
-    if (loop_ub - 1 >= 0) {
+    if (0 <= loop_ub - 1) {
       std::copy(&pointer_data[0], &pointer_data[loop_ub], &b_pointer_data[0]);
     }
 
@@ -203,17 +206,17 @@ namespace RAT
     }
 
     tempOutput.set_size(1, loop_ub);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       tempOutput[i] = 0.0;
     }
 
     convertVector2Ptr(outArray, &tempOutput[0]);
-    loop_ub_tmp = static_cast<int32_T>(outputSize[1]);
-    loop_ub = static_cast<int32_T>(outputSize[0]);
-    output.set_size(loop_ub, loop_ub_tmp);
-    for (int32_T i{0}; i < loop_ub_tmp; i++) {
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
-        output[i1 + output.size(0) * i] = tempOutput[i + loop_ub_tmp * i1];
+    loop_ub = static_cast<int32_T>(outputSize[1]);
+    num_tmp_tmp = static_cast<int32_T>(outputSize[0]);
+    output.set_size(num_tmp_tmp, loop_ub);
+    for (i = 0; i < loop_ub; i++) {
+      for (int32_T i1{0}; i1 < num_tmp_tmp; i1++) {
+        output[i1 + output.size(0) * i] = tempOutput[i + loop_ub * i1];
       }
     }
   }

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xzhgeqz.cpp
 //
@@ -39,11 +39,11 @@ namespace RAT
           real_T ascale;
           real_T b_atol;
           real_T bscale;
+          real_T c;
           real_T eshift_im;
           real_T eshift_re;
-          real_T temp;
-          real_T tempr;
           int32_T i;
+          int32_T i1;
           int32_T ilast;
           int32_T j;
           int32_T jm1;
@@ -51,8 +51,10 @@ namespace RAT
           int32_T n;
           boolean_T compz;
           boolean_T failed;
-          boolean_T guard1;
-          boolean_T guard2;
+          boolean_T guard1{ false };
+
+          boolean_T guard2{ false };
+
           *info = 0;
           compz = ((Z.size(0) != 0) && (Z.size(1) != 0));
           if ((A.size(0) == 1) && (A.size(1) == 1)) {
@@ -79,18 +81,18 @@ namespace RAT
           ctemp.re = 0.0;
           ctemp.im = 0.0;
           anorm = xzlanhs(A, ilo, ihi);
-          tempr = 2.2204460492503131E-16 * anorm;
+          c = 2.2204460492503131E-16 * anorm;
           b_atol = 2.2250738585072014E-308;
-          if (tempr > 2.2250738585072014E-308) {
-            b_atol = tempr;
+          if (c > 2.2250738585072014E-308) {
+            b_atol = c;
           }
 
-          tempr = 2.2250738585072014E-308;
+          c = 2.2250738585072014E-308;
           if (anorm > 2.2250738585072014E-308) {
-            tempr = anorm;
+            c = anorm;
           }
 
-          ascale = 1.0 / tempr;
+          ascale = 1.0 / c;
           bscale = 1.0 / std::sqrt(static_cast<real_T>(A.size(0)));
           failed = true;
           i = ihi + 1;
@@ -132,7 +134,8 @@ namespace RAT
             do {
               exitg1 = 0;
               if (jiter <= 30 * ((ihi - ilo) + 1) - 1) {
-                boolean_T b_guard1;
+                boolean_T b_guard1{ false };
+
                 boolean_T exitg2;
                 b_guard1 = false;
                 if (ilast + 1 == ilo) {
@@ -150,7 +153,8 @@ namespace RAT
                   goto60 = true;
                   b_guard1 = true;
                 } else {
-                  boolean_T guard3;
+                  boolean_T guard3{ false };
+
                   j = ilastm1;
                   guard3 = false;
                   exitg2 = false;
@@ -202,7 +206,7 @@ namespace RAT
                       jp1 = Z.size(1);
                       Z.set_size(jm1, jp1);
                       for (i = 0; i < jp1; i++) {
-                        for (int32_T i1{0}; i1 < jm1; i1++) {
+                        for (i1 = 0; i1 < jm1; i1++) {
                           Z[i1 + Z.size(0) * i].re = rtNaN;
                           Z[i1 + Z.size(0) * i].im = 0.0;
                         }
@@ -241,6 +245,7 @@ namespace RAT
                     if (goto70) {
                       real_T ad22_im;
                       real_T ad22_re;
+                      real_T temp;
                       real_T temp2;
                       real_T y_im_tmp;
                       goto70 = false;
@@ -250,44 +255,44 @@ namespace RAT
                       }
 
                       if (iiter - iiter / 10 * 10 != 0) {
-                        tempr = ascale * A[ilast + A.size(0) * ilast].re;
-                        anorm = ascale * A[ilast + A.size(0) * ilast].im;
-                        if (anorm == 0.0) {
-                          ad22_re = tempr / bscale;
+                        anorm = ascale * A[ilast + A.size(0) * ilast].re;
+                        c = ascale * A[ilast + A.size(0) * ilast].im;
+                        if (c == 0.0) {
+                          ad22_re = anorm / bscale;
                           ad22_im = 0.0;
-                        } else if (tempr == 0.0) {
+                        } else if (anorm == 0.0) {
                           ad22_re = 0.0;
-                          ad22_im = anorm / bscale;
+                          ad22_im = c / bscale;
                         } else {
-                          ad22_re = tempr / bscale;
-                          ad22_im = anorm / bscale;
+                          ad22_re = anorm / bscale;
+                          ad22_im = c / bscale;
                         }
 
-                        tempr = ascale * A[ilastm1 + A.size(0) * ilast].re;
-                        anorm = ascale * A[ilastm1 + A.size(0) * ilast].im;
-                        if (anorm == 0.0) {
-                          stemp.re = tempr / bscale;
+                        anorm = ascale * A[ilastm1 + A.size(0) * ilast].re;
+                        c = ascale * A[ilastm1 + A.size(0) * ilast].im;
+                        if (c == 0.0) {
+                          stemp.re = anorm / bscale;
                           stemp.im = 0.0;
-                        } else if (tempr == 0.0) {
+                        } else if (anorm == 0.0) {
                           stemp.re = 0.0;
-                          stemp.im = anorm / bscale;
+                          stemp.im = c / bscale;
                         } else {
-                          stemp.re = tempr / bscale;
-                          stemp.im = anorm / bscale;
+                          stemp.re = anorm / bscale;
+                          stemp.im = c / bscale;
                         }
 
                         scalar::d_sqrt(&stemp);
-                        tempr = ascale * A[ilast + A.size(0) * ilastm1].re;
-                        anorm = ascale * A[ilast + A.size(0) * ilastm1].im;
-                        if (anorm == 0.0) {
-                          y.re = tempr / bscale;
+                        anorm = ascale * A[ilast + A.size(0) * ilastm1].re;
+                        c = ascale * A[ilast + A.size(0) * ilastm1].im;
+                        if (c == 0.0) {
+                          y.re = anorm / bscale;
                           y.im = 0.0;
-                        } else if (tempr == 0.0) {
+                        } else if (anorm == 0.0) {
                           y.re = 0.0;
-                          y.im = anorm / bscale;
+                          y.im = c / bscale;
                         } else {
-                          y.re = tempr / bscale;
-                          y.im = anorm / bscale;
+                          y.re = anorm / bscale;
+                          y.im = c / bscale;
                         }
 
                         scalar::d_sqrt(&y);
@@ -296,21 +301,21 @@ namespace RAT
                         if ((ctemp.re != 0.0) || (ctemp.im != 0.0)) {
                           real_T x_im;
                           real_T x_re;
-                          tempr = ascale * A[ilastm1 + A.size(0) * ilastm1].re;
-                          anorm = ascale * A[ilastm1 + A.size(0) * ilastm1].im;
-                          if (anorm == 0.0) {
-                            tempr /= bscale;
+                          anorm = ascale * A[ilastm1 + A.size(0) * ilastm1].re;
+                          c = ascale * A[ilastm1 + A.size(0) * ilastm1].im;
+                          if (c == 0.0) {
+                            anorm /= bscale;
+                            c = 0.0;
+                          } else if (anorm == 0.0) {
                             anorm = 0.0;
-                          } else if (tempr == 0.0) {
-                            tempr = 0.0;
-                            anorm /= bscale;
+                            c /= bscale;
                           } else {
-                            tempr /= bscale;
                             anorm /= bscale;
+                            c /= bscale;
                           }
 
-                          x_re = 0.5 * (tempr - ad22_re);
-                          x_im = 0.5 * (anorm - ad22_im);
+                          x_re = 0.5 * (anorm - ad22_re);
+                          x_im = 0.5 * (c - ad22_im);
                           temp2 = std::abs(x_re) + std::abs(x_im);
                           temp = std::fmax(std::abs(ctemp.re) + std::abs
                                            (ctemp.im), temp2);
@@ -337,70 +342,70 @@ namespace RAT
                           }
 
                           anorm = stemp.re * stemp.re - stemp.im * stemp.im;
-                          tempr = stemp.re * stemp.im;
+                          c = stemp.re * stemp.im;
                           y_im_tmp = y.re * y.im;
                           stemp.re = anorm + (y.re * y.re - y.im * y.im);
-                          stemp.im = (tempr + tempr) + (y_im_tmp + y_im_tmp);
+                          stemp.im = (c + c) + (y_im_tmp + y_im_tmp);
                           scalar::d_sqrt(&stemp);
                           y.re = temp * stemp.re;
                           y.im = temp * stemp.im;
                           if (temp2 > 0.0) {
                             if (x_im == 0.0) {
-                              tempr = x_re / temp2;
+                              c = x_re / temp2;
                               anorm = 0.0;
                             } else {
                               if (x_re == 0.0) {
-                                tempr = 0.0;
+                                c = 0.0;
                               } else {
-                                tempr = x_re / temp2;
+                                c = x_re / temp2;
                               }
 
                               anorm = x_im / temp2;
                             }
 
-                            if (tempr * y.re + anorm * y.im < 0.0) {
+                            if (c * y.re + anorm * y.im < 0.0) {
                               y.re = -y.re;
                               y.im = -y.im;
                             }
                           }
 
-                          tempr = x_re + y.re;
+                          y_im_tmp = x_re + y.re;
                           temp = x_im + y.im;
                           if (temp == 0.0) {
                             if (ctemp.im == 0.0) {
-                              y_im_tmp = ctemp.re / tempr;
-                              tempr = 0.0;
+                              x_re = ctemp.re / y_im_tmp;
+                              anorm = 0.0;
                             } else if (ctemp.re == 0.0) {
-                              y_im_tmp = 0.0;
-                              tempr = ctemp.im / tempr;
+                              x_re = 0.0;
+                              anorm = ctemp.im / y_im_tmp;
                             } else {
-                              y_im_tmp = ctemp.re / tempr;
-                              tempr = ctemp.im / tempr;
+                              x_re = ctemp.re / y_im_tmp;
+                              anorm = ctemp.im / y_im_tmp;
                             }
-                          } else if (tempr == 0.0) {
+                          } else if (y_im_tmp == 0.0) {
                             if (ctemp.re == 0.0) {
-                              y_im_tmp = ctemp.im / temp;
-                              tempr = 0.0;
+                              x_re = ctemp.im / temp;
+                              anorm = 0.0;
                             } else if (ctemp.im == 0.0) {
-                              y_im_tmp = 0.0;
-                              tempr = -(ctemp.re / temp);
+                              x_re = 0.0;
+                              anorm = -(ctemp.re / temp);
                             } else {
-                              y_im_tmp = ctemp.im / temp;
-                              tempr = -(ctemp.re / temp);
+                              x_re = ctemp.im / temp;
+                              anorm = -(ctemp.re / temp);
                             }
                           } else {
-                            temp2 = std::abs(tempr);
+                            temp2 = std::abs(y_im_tmp);
                             anorm = std::abs(temp);
                             if (temp2 > anorm) {
-                              anorm = temp / tempr;
-                              tempr += anorm * temp;
-                              y_im_tmp = (ctemp.re + anorm * ctemp.im) / tempr;
-                              tempr = (ctemp.im - anorm * ctemp.re) / tempr;
+                              c = temp / y_im_tmp;
+                              anorm = y_im_tmp + c * temp;
+                              x_re = (ctemp.re + c * ctemp.im) / anorm;
+                              anorm = (ctemp.im - c * ctemp.re) / anorm;
                             } else if (anorm == temp2) {
-                              if (tempr > 0.0) {
-                                tempr = 0.5;
+                              if (y_im_tmp > 0.0) {
+                                c = 0.5;
                               } else {
-                                tempr = -0.5;
+                                c = -0.5;
                               }
 
                               if (temp > 0.0) {
@@ -409,54 +414,52 @@ namespace RAT
                                 anorm = -0.5;
                               }
 
-                              y_im_tmp = (ctemp.re * tempr + ctemp.im * anorm) /
-                                temp2;
-                              tempr = (ctemp.im * tempr - ctemp.re * anorm) /
-                                temp2;
+                              x_re = (ctemp.re * c + ctemp.im * anorm) / temp2;
+                              anorm = (ctemp.im * c - ctemp.re * anorm) / temp2;
                             } else {
-                              anorm = tempr / temp;
-                              tempr = temp + anorm * tempr;
-                              y_im_tmp = (anorm * ctemp.re + ctemp.im) / tempr;
-                              tempr = (anorm * ctemp.im - ctemp.re) / tempr;
+                              c = y_im_tmp / temp;
+                              anorm = temp + c * y_im_tmp;
+                              x_re = (c * ctemp.re + ctemp.im) / anorm;
+                              anorm = (c * ctemp.im - ctemp.re) / anorm;
                             }
                           }
 
-                          ad22_re -= ctemp.re * y_im_tmp - ctemp.im * tempr;
-                          ad22_im -= ctemp.re * tempr + ctemp.im * y_im_tmp;
+                          ad22_re -= ctemp.re * x_re - ctemp.im * anorm;
+                          ad22_im -= ctemp.re * anorm + ctemp.im * x_re;
                         }
                       } else {
                         if (iiter - iiter / 20 * 20 == 0) {
-                          tempr = ascale * A[ilast + A.size(0) * ilast].re;
-                          anorm = ascale * A[ilast + A.size(0) * ilast].im;
-                          if (anorm == 0.0) {
-                            tempr /= bscale;
+                          anorm = ascale * A[ilast + A.size(0) * ilast].re;
+                          c = ascale * A[ilast + A.size(0) * ilast].im;
+                          if (c == 0.0) {
+                            anorm /= bscale;
+                            c = 0.0;
+                          } else if (anorm == 0.0) {
                             anorm = 0.0;
-                          } else if (tempr == 0.0) {
-                            tempr = 0.0;
-                            anorm /= bscale;
+                            c /= bscale;
                           } else {
-                            tempr /= bscale;
                             anorm /= bscale;
+                            c /= bscale;
                           }
 
-                          eshift_re += tempr;
-                          eshift_im += anorm;
+                          eshift_re += anorm;
+                          eshift_im += c;
                         } else {
-                          tempr = ascale * A[ilast + A.size(0) * ilastm1].re;
-                          anorm = ascale * A[ilast + A.size(0) * ilastm1].im;
-                          if (anorm == 0.0) {
-                            tempr /= bscale;
+                          anorm = ascale * A[ilast + A.size(0) * ilastm1].re;
+                          c = ascale * A[ilast + A.size(0) * ilastm1].im;
+                          if (c == 0.0) {
+                            anorm /= bscale;
+                            c = 0.0;
+                          } else if (anorm == 0.0) {
                             anorm = 0.0;
-                          } else if (tempr == 0.0) {
-                            tempr = 0.0;
-                            anorm /= bscale;
+                            c /= bscale;
                           } else {
-                            tempr /= bscale;
                             anorm /= bscale;
+                            c /= bscale;
                           }
 
-                          eshift_re += tempr;
-                          eshift_im += anorm;
+                          eshift_re += anorm;
+                          eshift_im += c;
                         }
 
                         ad22_re = eshift_re;
@@ -475,14 +478,14 @@ namespace RAT
                         temp = std::abs(ctemp.re) + std::abs(ctemp.im);
                         temp2 = ascale * (std::abs(A[jp1 + A.size(0) * j].re) +
                                           std::abs(A[jp1 + A.size(0) * j].im));
-                        tempr = temp;
+                        anorm = temp;
                         if (temp2 > temp) {
-                          tempr = temp2;
+                          anorm = temp2;
                         }
 
-                        if ((tempr < 1.0) && (tempr != 0.0)) {
-                          temp /= tempr;
-                          temp2 /= tempr;
+                        if ((anorm < 1.0) && (anorm != 0.0)) {
+                          temp /= anorm;
+                          temp2 /= anorm;
                         }
 
                         if ((std::abs(A[j + A.size(0) * (j - 1)].re) + std::abs
@@ -509,30 +512,32 @@ namespace RAT
                         re;
                       stemp.im = ascale * A[istart + A.size(0) * (istart - 1)].
                         im;
-                      xzlartg(ctemp, stemp, &temp, &y);
+                      xzlartg(ctemp, stemp, &c, &y);
                       j = istart;
                       jm1 = istart - 2;
                       while (j < ilast + 1) {
                         if (j > istart) {
                           xzlartg(A[(j + A.size(0) * jm1) - 1], A[j + A.size(0) *
-                                  jm1], &temp, &y, &A[(j + A.size(0) * jm1) - 1]);
+                                  jm1], &c, &y, &A[(j + A.size(0) * jm1) - 1]);
                           A[j + A.size(0) * jm1].re = 0.0;
                           A[j + A.size(0) * jm1].im = 0.0;
                         }
 
                         for (jp1 = j; jp1 <= ilastm; jp1++) {
-                          anorm = A[j + A.size(0) * (jp1 - 1)].im;
-                          tempr = A[j + A.size(0) * (jp1 - 1)].re;
-                          temp2 = A[(j + A.size(0) * (jp1 - 1)) - 1].re;
-                          stemp.re = temp * temp2 + (y.re * tempr - y.im * anorm);
-                          y_im_tmp = A[(j + A.size(0) * (jp1 - 1)) - 1].im;
-                          stemp.im = temp * y_im_tmp + (y.re * anorm + y.im *
-                            tempr);
-                          A[j + A.size(0) * (jp1 - 1)].re = temp * tempr - (y.re
-                            * temp2 + y.im * y_im_tmp);
-                          A[j + A.size(0) * (jp1 - 1)].im = temp * A[j + A.size
-                            (0) * (jp1 - 1)].im - (y.re * y_im_tmp - y.im *
-                            temp2);
+                          stemp.re = c * A[(j + A.size(0) * (jp1 - 1)) - 1].re +
+                            (y.re * A[j + A.size(0) * (jp1 - 1)].re - y.im * A[j
+                             + A.size(0) * (jp1 - 1)].im);
+                          stemp.im = c * A[(j + A.size(0) * (jp1 - 1)) - 1].im +
+                            (y.re * A[j + A.size(0) * (jp1 - 1)].im + y.im * A[j
+                             + A.size(0) * (jp1 - 1)].re);
+                          anorm = A[(j + A.size(0) * (jp1 - 1)) - 1].im;
+                          y_im_tmp = A[(j + A.size(0) * (jp1 - 1)) - 1].re;
+                          A[j + A.size(0) * (jp1 - 1)].re = c * A[j + A.size(0) *
+                            (jp1 - 1)].re - (y.re * A[(j + A.size(0) * (jp1 - 1))
+                                             - 1].re + y.im * A[(j + A.size(0) *
+                            (jp1 - 1)) - 1].im);
+                          A[j + A.size(0) * (jp1 - 1)].im = c * A[j + A.size(0) *
+                            (jp1 - 1)].im - (y.re * anorm - y.im * y_im_tmp);
                           A[(j + A.size(0) * (jp1 - 1)) - 1] = stemp;
                         }
 
@@ -544,20 +549,20 @@ namespace RAT
                         }
 
                         for (jm1 = ifrstm; jm1 <= jp1 + 2; jm1++) {
-                          anorm = A[(jm1 + A.size(0) * (j - 1)) - 1].im;
-                          tempr = A[(jm1 + A.size(0) * (j - 1)) - 1].re;
-                          temp2 = A[(jm1 + A.size(0) * j) - 1].re;
-                          stemp.re = temp * temp2 + (y.re * tempr - y.im * anorm);
-                          stemp.im = temp * A[(jm1 + A.size(0) * j) - 1].im +
-                            (y.re * anorm + y.im * tempr);
-                          tempr = A[(jm1 + A.size(0) * j) - 1].im;
-                          anorm = A[(jm1 + A.size(0) * j) - 1].re;
-                          A[(jm1 + A.size(0) * (j - 1)) - 1].re = temp * A[(jm1
-                            + A.size(0) * (j - 1)) - 1].re - (y.re * temp2 +
-                            y.im * tempr);
-                          A[(jm1 + A.size(0) * (j - 1)) - 1].im = temp * A[(jm1
-                            + A.size(0) * (j - 1)) - 1].im - (y.re * tempr -
-                            y.im * anorm);
+                          stemp.re = c * A[(jm1 + A.size(0) * j) - 1].re + (y.re
+                            * A[(jm1 + A.size(0) * (j - 1)) - 1].re - y.im * A
+                            [(jm1 + A.size(0) * (j - 1)) - 1].im);
+                          stemp.im = c * A[(jm1 + A.size(0) * j) - 1].im + (y.re
+                            * A[(jm1 + A.size(0) * (j - 1)) - 1].im + y.im * A
+                            [(jm1 + A.size(0) * (j - 1)) - 1].re);
+                          anorm = A[(jm1 + A.size(0) * j) - 1].im;
+                          y_im_tmp = A[(jm1 + A.size(0) * j) - 1].re;
+                          A[(jm1 + A.size(0) * (j - 1)) - 1].re = c * A[(jm1 +
+                            A.size(0) * (j - 1)) - 1].re - (y.re * A[(jm1 +
+                            A.size(0) * j) - 1].re + y.im * anorm);
+                          A[(jm1 + A.size(0) * (j - 1)) - 1].im = c * A[(jm1 +
+                            A.size(0) * (j - 1)) - 1].im - (y.re * anorm - y.im *
+                            y_im_tmp);
                           A[(jm1 + A.size(0) * j) - 1] = stemp;
                         }
 
@@ -566,24 +571,28 @@ namespace RAT
                           jp1 = Z.size(1);
                           for (i = 0; i < jp1; i++) {
                             jm1 = Z.size(0);
-                            for (int32_T i1{0}; i1 < jm1; i1++) {
+                            for (i1 = 0; i1 < jm1; i1++) {
                               b_A[i1 + b_A.size(0) * i] = Z[i1 + Z.size(0) * i];
                             }
                           }
 
                           for (jm1 = 1; jm1 <= n; jm1++) {
-                            anorm = b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].im;
-                            tempr = b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].re;
-                            temp2 = b_A[(jm1 + b_A.size(0) * j) - 1].re;
-                            stemp.re = temp * temp2 + (y.re * tempr - y.im *
-                              anorm);
-                            y_im_tmp = b_A[(jm1 + b_A.size(0) * j) - 1].im;
-                            stemp.im = temp * y_im_tmp + (y.re * anorm + y.im *
-                              tempr);
-                            b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].re = temp *
-                              tempr - (y.re * temp2 + y.im * y_im_tmp);
-                            b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].im = temp *
-                              anorm - (y.re * y_im_tmp - y.im * temp2);
+                            stemp.re = c * b_A[(jm1 + b_A.size(0) * j) - 1].re +
+                              (y.re * b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].re
+                               - y.im * b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].
+                               im);
+                            stemp.im = c * b_A[(jm1 + b_A.size(0) * j) - 1].im +
+                              (y.re * b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].im
+                               + y.im * b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].
+                               re);
+                            anorm = b_A[(jm1 + b_A.size(0) * j) - 1].re;
+                            b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].re = c * b_A
+                              [(jm1 + b_A.size(0) * (j - 1)) - 1].re - (y.re *
+                              b_A[(jm1 + b_A.size(0) * j) - 1].re + y.im * b_A
+                              [(jm1 + b_A.size(0) * j) - 1].im);
+                            b_A[(jm1 + b_A.size(0) * (j - 1)) - 1].im = c * b_A
+                              [(jm1 + b_A.size(0) * (j - 1)) - 1].im - (y.re *
+                              b_A[(jm1 + b_A.size(0) * j) - 1].im - y.im * anorm);
                             b_A[(jm1 + b_A.size(0) * j) - 1] = stemp;
                           }
 
@@ -591,7 +600,7 @@ namespace RAT
                           jp1 = b_A.size(1);
                           for (i = 0; i < jp1; i++) {
                             jm1 = b_A.size(0);
-                            for (int32_T i1{0}; i1 < jm1; i1++) {
+                            for (i1 = 0; i1 < jm1; i1++) {
                               Z[i1 + Z.size(0) * i] = b_A[i1 + b_A.size(0) * i];
                             }
                           }
@@ -629,7 +638,7 @@ namespace RAT
                 jp1 = Z.size(1);
                 Z.set_size(jm1, jp1);
                 for (i = 0; i < jp1; i++) {
-                  for (int32_T i1{0}; i1 < jm1; i1++) {
+                  for (i1 = 0; i1 < jm1; i1++) {
                     Z[i1 + Z.size(0) * i].re = rtNaN;
                     Z[i1 + Z.size(0) * i].im = 0.0;
                   }

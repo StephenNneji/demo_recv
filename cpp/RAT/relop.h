@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // relop.h
 //
@@ -12,6 +12,7 @@
 
 // Include files
 #include "rtwtypes.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -24,6 +25,7 @@ namespace RAT
     {
       boolean_T b_relop(real_T a, real_T b);
       boolean_T c_relop(real_T a, real_T b);
+      boolean_T d_relop(real_T a, real_T b);
       boolean_T relop(real_T a, real_T b);
     }
   }

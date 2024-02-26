@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // str2double.cpp
 //
@@ -38,10 +38,14 @@ namespace RAT
       if (s_size[1] >= 1) {
         int32_T ntoread;
         ntoread = 0;
-        k = s_size[1] + 2;
-        std::memset(&s1_data[0], 0, static_cast<uint32_T>(k) * sizeof(char_T));
+        k = 1;
+        internal::skipspaces(s_data, &k, s_size[1]);
+        idx = static_cast<int16_T>(s_size[1] + 2);
+        if (0 <= idx - 1) {
+          std::memset(&s1_data[0], 0, idx * sizeof(char_T));
+        }
+
         idx = 1;
-        k = internal::skipspaces(s_data, s_size[1]);
         internal::readfloat(s1_data, &idx, s_data, &k, s_size[1], &isimag1,
                             &isfinite1, &v1, &a__1, &success);
         if (isfinite1) {
@@ -57,7 +61,7 @@ namespace RAT
             ntoread++;
           }
 
-          if (success && (k > s_size[1]) && (isimag1 ^ a__1) && foundsign) {
+          if (success && (k > s_size[1]) && (isimag1 != a__1) && foundsign) {
             success = true;
           } else {
             success = false;

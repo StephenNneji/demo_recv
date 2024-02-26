@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // bsxfun.cpp
 //
@@ -28,7 +28,7 @@ namespace RAT
       int32_T u0;
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -44,7 +44,7 @@ namespace RAT
 
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -63,8 +63,7 @@ namespace RAT
         bcoef = (b.size(0) != 1);
         u0 = csz_idx_0 - 1;
         for (csz_idx_0 = 0; csz_idx_0 <= u0; csz_idx_0++) {
-          c[csz_idx_0] = rescale_anonFcn2(a[acoef * csz_idx_0], b[bcoef *
-            csz_idx_0]);
+          c[csz_idx_0] = b_anon(a[acoef * csz_idx_0], b[bcoef * csz_idx_0]);
         }
       }
     }
@@ -98,7 +97,7 @@ namespace RAT
       int32_T u0;
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -114,7 +113,7 @@ namespace RAT
 
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -133,8 +132,7 @@ namespace RAT
         bcoef = (b.size(0) != 1);
         u0 = csz_idx_0 - 1;
         for (csz_idx_0 = 0; csz_idx_0 <= u0; csz_idx_0++) {
-          c[csz_idx_0] = rescale_anonFcn1(a[acoef * csz_idx_0], b[bcoef *
-            csz_idx_0]);
+          c[csz_idx_0] = anon(a[acoef * csz_idx_0], b[bcoef * csz_idx_0]);
         }
       }
     }
@@ -162,7 +160,7 @@ namespace RAT
       int32_T u0;
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -178,7 +176,7 @@ namespace RAT
 
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -231,7 +229,7 @@ namespace RAT
       int32_T u0;
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -247,7 +245,7 @@ namespace RAT
 
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -279,7 +277,7 @@ namespace RAT
       int32_T u0;
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -295,7 +293,7 @@ namespace RAT
 
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -327,7 +325,7 @@ namespace RAT
       int32_T u0;
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 
@@ -343,7 +341,7 @@ namespace RAT
 
       u0 = b.size(0);
       acoef = a.size(0);
-      if (u0 <= acoef) {
+      if (u0 < acoef) {
         acoef = u0;
       }
 

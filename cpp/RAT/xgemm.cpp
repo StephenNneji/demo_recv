@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xgemm.cpp
 //
@@ -29,27 +29,27 @@ namespace RAT
         {
           if ((m != 0) && (n != 0)) {
             int32_T br;
+            int32_T cr;
             int32_T i;
             int32_T i1;
+            int32_T ic;
             int32_T lastColC;
             lastColC = ldc * (n - 1);
-            for (int32_T cr{0}; ldc < 0 ? cr >= lastColC : cr <= lastColC; cr +=
-                 ldc) {
+            for (cr = 0; ldc < 0 ? cr >= lastColC : cr <= lastColC; cr += ldc) {
               i = cr + 1;
               i1 = cr + m;
-              for (int32_T ic{i}; ic <= i1; ic++) {
+              for (ic = i; ic <= i1; ic++) {
                 C[ic - 1] = 0.0;
               }
             }
 
             br = -1;
-            for (int32_T cr{0}; ldc < 0 ? cr >= lastColC : cr <= lastColC; cr +=
-                 ldc) {
+            for (cr = 0; ldc < 0 ? cr >= lastColC : cr <= lastColC; cr += ldc) {
               int32_T ar;
               ar = -1;
               i = cr + 1;
               i1 = cr + m;
-              for (int32_T ic{i}; ic <= i1; ic++) {
+              for (ic = i; ic <= i1; ic++) {
                 real_T temp;
                 temp = 0.0;
                 for (int32_T w{0}; w < k; w++) {
@@ -65,8 +65,8 @@ namespace RAT
           }
         }
 
-        real_T xgemm(int32_T k, real_T alpha1, const ::coder::array<real_T, 1U>
-                     &A, const ::coder::array<real_T, 1U> &B)
+        void xgemm(int32_T k, real_T alpha1, const ::coder::array<real_T, 1U> &A,
+                   const ::coder::array<real_T, 1U> &B, real_T *C)
         {
           real_T temp;
           temp = 0.0;
@@ -74,7 +74,7 @@ namespace RAT
             temp += A[w] * B[w];
           }
 
-          return alpha1 * temp;
+          *C = alpha1 * temp;
         }
       }
     }

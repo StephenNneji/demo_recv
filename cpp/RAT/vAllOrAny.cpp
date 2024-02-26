@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // vAllOrAny.cpp
 //
@@ -56,15 +56,6 @@ namespace RAT
           } else {
             *p = false;
           }
-        } else {
-          *p = false;
-        }
-      }
-
-      void c_genloops(const real_T x_data[], boolean_T *p)
-      {
-        if ((*p) || std::isnan(x_data[0])) {
-          *p = true;
         } else {
           *p = false;
         }

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xgeqp3.cpp
 //
@@ -29,11 +29,12 @@ namespace RAT
           int32_T k;
           int32_T minmana;
           int32_T n;
-          boolean_T guard1;
+          boolean_T guard1{ false };
+
           n = A.size(1) - 1;
           k = A.size(0);
           minmana = A.size(1);
-          if (k <= minmana) {
+          if (k < minmana) {
             minmana = k;
           }
 
@@ -48,7 +49,7 @@ namespace RAT
           } else {
             k = A.size(0);
             minmana = A.size(1);
-            if (k <= minmana) {
+            if (k < minmana) {
               minmana = k;
             }
 

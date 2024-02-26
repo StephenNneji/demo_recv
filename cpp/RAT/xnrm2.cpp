@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xnrm2.cpp
 //
@@ -26,6 +26,30 @@ namespace RAT
       {
         real_T b_xnrm2(int32_T n, const ::coder::array<real_T, 1U> &x)
         {
+          real_T scale;
+          real_T y;
+          y = 0.0;
+          scale = 3.3121686421112381E-170;
+          for (int32_T k{0}; k < n; k++) {
+            real_T absxk;
+            absxk = std::abs(x[k]);
+            if (absxk > scale) {
+              real_T t;
+              t = scale / absxk;
+              y = y * t * t + 1.0;
+              scale = absxk;
+            } else {
+              real_T t;
+              t = absxk / scale;
+              y += t * t;
+            }
+          }
+
+          return scale * std::sqrt(y);
+        }
+
+        real_T xnrm2(int32_T n, const ::coder::array<real_T, 1U> &x)
+        {
           real_T y;
           y = 0.0;
           if (n >= 1) {
@@ -39,38 +63,6 @@ namespace RAT
               for (int32_T k{2}; k <= kend; k++) {
                 real_T absxk;
                 absxk = std::abs(x[k - 1]);
-                if (absxk > scale) {
-                  real_T t;
-                  t = scale / absxk;
-                  y = y * t * t + 1.0;
-                  scale = absxk;
-                } else {
-                  real_T t;
-                  t = absxk / scale;
-                  y += t * t;
-                }
-              }
-
-              y = scale * std::sqrt(y);
-            }
-          }
-
-          return y;
-        }
-
-        real_T xnrm2(int32_T n, const ::coder::array<real_T, 2U> &x)
-        {
-          real_T y;
-          y = 0.0;
-          if (n >= 1) {
-            if (n == 1) {
-              y = std::abs(x[0]);
-            } else {
-              real_T scale;
-              scale = 3.3121686421112381E-170;
-              for (int32_T k{0}; k < n; k++) {
-                real_T absxk;
-                absxk = std::abs(x[k]);
                 if (absxk > scale) {
                   real_T t;
                   t = scale / absxk;
@@ -202,30 +194,6 @@ namespace RAT
           }
 
           return y;
-        }
-
-        real_T xnrm2(int32_T n, const ::coder::array<real_T, 1U> &x)
-        {
-          real_T scale;
-          real_T y;
-          y = 0.0;
-          scale = 3.3121686421112381E-170;
-          for (int32_T k{0}; k < n; k++) {
-            real_T absxk;
-            absxk = std::abs(x[k]);
-            if (absxk > scale) {
-              real_T t;
-              t = scale / absxk;
-              y = y * t * t + 1.0;
-              scale = absxk;
-            } else {
-              real_T t;
-              t = absxk / scale;
-              y += t * t;
-            }
-          }
-
-          return scale * std::sqrt(y);
         }
       }
     }

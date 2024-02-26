@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // all.cpp
 //
@@ -21,23 +21,23 @@ namespace RAT
     void all(const boolean_T x_data[], const int32_T x_size[2], boolean_T
              y_data[], int32_T y_size[2])
     {
-      int32_T loop_ub;
+      int32_T hi;
       y_size[0] = 1;
       y_size[1] = static_cast<int8_T>(x_size[1]);
-      loop_ub = static_cast<int8_T>(x_size[1]);
-      if (loop_ub - 1 >= 0) {
+      hi = static_cast<int8_T>(x_size[1]);
+      if (0 <= hi - 1) {
         y_data[0] = false;
       }
 
-      loop_ub = x_size[1];
-      for (int32_T k{0}; k < loop_ub; k++) {
-        internal::b_allOrAny_anonFcn2(x_size[0], x_data, y_data);
+      hi = x_size[1];
+      for (int32_T k{0}; k < hi; k++) {
+        internal::e_anon(x_size[0], x_data, y_data);
       }
     }
 
     boolean_T b_all(const boolean_T x_data[], const int32_T x_size[2])
     {
-      return internal::allOrAny_anonFcn2(x_size[1], x_data);
+      return internal::d_anon(x_size[1], x_data);
     }
   }
 }

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // RATMain_terminate.cpp
 //
@@ -13,7 +13,6 @@
 #include "RATMain_data.h"
 #include "RATMain_rtwutil.h"
 #include "rt_nonfinite.h"
-#include "omp.h"
 
 // Function Definitions
 namespace RAT
@@ -21,7 +20,7 @@ namespace RAT
   void RATMain_terminate()
   {
     emlrtFreeThreadStackData();
-    omp_destroy_nest_lock(&RATMain_nestLockGlobal);
+    omp_destroy_nest_lock(&emlrtNestLockGlobal);
   }
 }
 

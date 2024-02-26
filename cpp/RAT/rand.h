@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // rand.h
 //
@@ -13,6 +13,7 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -25,7 +26,7 @@ namespace RAT
     real_T b_rand();
     void b_rand(real_T varargin_1, real_T varargin_2, ::coder::array<real_T, 2U>
                 &r);
-    void b_rand(const real_T varargin_1[2], ::coder::array<real_T, 1U> &r);
+    void b_rand(const real_T varargin_1[2], ::coder::array<real_T, 2U> &r);
     void b_rand(real_T varargin_1, ::coder::array<real_T, 1U> &r);
     void b_rand(int32_T varargin_1, ::coder::array<real_T, 1U> &r);
     void b_rand(real_T varargin_2, ::coder::array<real_T, 2U> &r);

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // runNestedSampler.cpp
 //
@@ -29,34 +29,40 @@
 // Function Definitions
 namespace RAT
 {
-  void runNestedSampler(c_struct_T *problemStruct, const cell_11 *problemCells,
+  void runNestedSampler(d_struct_T *problemStruct, const cell_11 *problemCells,
                         const struct1_T *problemLimits, const struct2_T
-                        *controls, const struct4_T *inPriors, d_struct_T
+                        *controls, const struct4_T *inPriors, e_struct_T
                         *contrastParams, cell_wrap_9 result[6], struct7_T
                         *bayesResults)
   {
-    static b_struct_T t8_bayesRes;
     ::coder::array<cell_wrap_1, 1U> fitNames;
     ::coder::array<cell_wrap_8, 2U> t8_bestFitsMean_sld;
     ::coder::array<cell_wrap_8, 2U> t8_predlims_sldPredInts;
     ::coder::array<cell_wrap_8, 2U> t8_predlims_sldXdata;
     ::coder::array<cell_wrap_8, 1U> t8_predlims_refPredInts;
+    ::coder::array<real_T, 2U> b_bayesResults;
     ::coder::array<real_T, 2U> b_expl_temp;
     ::coder::array<real_T, 2U> bayesOutputs_chain;
-    ::coder::array<real_T, 2U> chain;
+    ::coder::array<real_T, 2U> c_bayesResults;
     ::coder::array<real_T, 2U> expl_temp;
     ::coder::array<real_T, 2U> expl_temp_mean;
     ::coder::array<real_T, 2U> expl_temp_par65;
     ::coder::array<real_T, 2U> expl_temp_par95;
     ::coder::array<real_T, 2U> r;
     ::coder::array<real_T, 2U> r1;
-    c_struct_T b_problemStruct;
-    e_struct_T nestResults_bestFitsMean;
-    f_struct_T nestResults_predlims;
+    c_struct_T t8_bayesRes;
+    d_struct_T b_problemStruct;
+    f_struct_T nestResults_bestFitsMean;
+    g_struct_T nestResults_predlims;
     real_T t8_predlims_sampleChi_data[1000];
+    real_T bayesOutputs_bestPars_data[51];
     real_T logZ;
     real_T t8_bestFitsMean_chi;
+    int32_T bayesOutputs_bestPars_size[2];
     int32_T b_loop_ub;
+    int32_T i;
+    int32_T i1;
+    int32_T i2;
     int32_T loop_ub;
     int32_T t8_predlims_sampleChi_size;
     packParams(problemStruct, problemCells->f7, problemCells->f8,
@@ -77,11 +83,11 @@ namespace RAT
     bayesResults->bayesRes.allChains.set_size(t8_bayesRes.allChains.size(0),
       t8_bayesRes.allChains.size(1), t8_bayesRes.allChains.size(2));
     t8_predlims_sampleChi_size = t8_bayesRes.allChains.size(2);
-    for (int32_T i{0}; i < t8_predlims_sampleChi_size; i++) {
+    for (i = 0; i < t8_predlims_sampleChi_size; i++) {
       loop_ub = t8_bayesRes.allChains.size(1);
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         b_loop_ub = t8_bayesRes.allChains.size(0);
-        for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+        for (i2 = 0; i2 < b_loop_ub; i2++) {
           bayesResults->bayesRes.allChains[(i2 +
             bayesResults->bayesRes.allChains.size(0) * i1) +
             bayesResults->bayesRes.allChains.size(0) *
@@ -106,51 +112,58 @@ namespace RAT
 
     //  Process the results...
     //  chain = nest_samples(:,1:end-1);
-    if (fitNames.size(0) < 1) {
+    if (1 > fitNames.size(0)) {
       t8_predlims_sampleChi_size = 0;
     } else {
       t8_predlims_sampleChi_size = fitNames.size(0);
     }
 
-    chain.set_size(bayesResults->bayesRes.nestOutput.postSamples.size(0),
-                   t8_predlims_sampleChi_size);
-    bayesOutputs_chain.set_size
-      (bayesResults->bayesRes.nestOutput.postSamples.size(0),
-       t8_predlims_sampleChi_size);
-    for (int32_T i{0}; i < t8_predlims_sampleChi_size; i++) {
-      loop_ub = bayesResults->bayesRes.nestOutput.postSamples.size(0);
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
-        chain[i1 + chain.size(0) * i] =
+    loop_ub = bayesResults->bayesRes.nestOutput.postSamples.size(0);
+    b_bayesResults.set_size(bayesResults->bayesRes.nestOutput.postSamples.size(0),
+      t8_predlims_sampleChi_size);
+    for (i = 0; i < t8_predlims_sampleChi_size; i++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b_bayesResults[i1 + b_bayesResults.size(0) * i] =
           bayesResults->bayesRes.nestOutput.postSamples[i1 +
           bayesResults->bayesRes.nestOutput.postSamples.size(0) * i];
       }
+    }
 
-      loop_ub = bayesResults->bayesRes.nestOutput.postSamples.size(0);
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+    coder::mean(b_bayesResults, r1);
+    bayesOutputs_bestPars_size[0] = 1;
+    bayesOutputs_bestPars_size[1] = r1.size(1);
+    loop_ub = r1.size(1);
+    for (i = 0; i < loop_ub; i++) {
+      bayesOutputs_bestPars_data[i] = r1[i];
+    }
+
+    loop_ub = bayesResults->bayesRes.nestOutput.postSamples.size(0);
+    bayesOutputs_chain.set_size
+      (bayesResults->bayesRes.nestOutput.postSamples.size(0),
+       t8_predlims_sampleChi_size);
+    for (i = 0; i < t8_predlims_sampleChi_size; i++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         bayesOutputs_chain[i1 + bayesOutputs_chain.size(0) * i] =
           bayesResults->bayesRes.nestOutput.postSamples[i1 +
           bayesResults->bayesRes.nestOutput.postSamples.size(0) * i];
       }
     }
 
-    int32_T iv[2];
-    coder::mean(chain, r1);
     b_problemStruct = *problemStruct;
-    iv[0] = (*(int32_T (*)[2])r1.size())[0];
-    iv[1] = (*(int32_T (*)[2])r1.size())[1];
-    processBayes((const real_T *)r1.data(), iv, bayesOutputs_chain,
-                 &b_problemStruct, controls, problemCells, problemStruct,
-                 contrastParams, result, &nestResults_bestFitsMean,
-                 &nestResults_predlims, &bayesResults->parConfInts);
+    processBayes(bayesOutputs_bestPars_data, bayesOutputs_bestPars_size,
+                 bayesOutputs_chain, &b_problemStruct, controls, problemCells,
+                 problemStruct, contrastParams, result,
+                 &nestResults_bestFitsMean, &nestResults_predlims,
+                 &bayesResults->parConfInts);
     cast(nestResults_predlims.refPredInts, bayesResults->predlims.refPredInts);
     cast(nestResults_predlims.sldPredInts, bayesResults->predlims.sldPredInts);
     bayesResults->predlims.refXdata.set_size(nestResults_predlims.refXdata.size
       (0));
-    for (int32_T i{0}; i < nestResults_predlims.refXdata.size(0); i++) {
+    for (i = 0; i < nestResults_predlims.refXdata.size(0); i++) {
       bayesResults->predlims.refXdata[i].f1.set_size(1,
         nestResults_predlims.refXdata[i].f1.size(1));
       loop_ub = nestResults_predlims.refXdata[i].f1.size(1);
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         bayesResults->predlims.refXdata[i].f1[bayesResults->predlims.refXdata[i]
           .f1.size(0) * i1] = nestResults_predlims.refXdata[i].f1[i1];
       }
@@ -162,15 +175,15 @@ namespace RAT
               &nestResults_predlims.sampleChi[1000],
               &bayesResults->predlims.sampleChi.data[0]);
     bayesResults->bestFitsMean.ref.set_size(nestResults_bestFitsMean.ref.size(0));
-    for (int32_T i{0}; i < nestResults_bestFitsMean.ref.size(0) *
+    for (i = 0; i < nestResults_bestFitsMean.ref.size(0) *
          nestResults_bestFitsMean.ref.size(1); i++) {
       bayesResults->bestFitsMean.ref[i].f1.set_size
         (nestResults_bestFitsMean.ref[i].f1.size(0),
          nestResults_bestFitsMean.ref[i].f1.size(1));
       loop_ub = nestResults_bestFitsMean.ref[i].f1.size(1);
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         b_loop_ub = nestResults_bestFitsMean.ref[i].f1.size(0);
-        for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+        for (i2 = 0; i2 < b_loop_ub; i2++) {
           bayesResults->bestFitsMean.ref[i].f1[i2 +
             bayesResults->bestFitsMean.ref[i].f1.size(0) * i1] =
             nestResults_bestFitsMean.ref[i].f1[i2 +
@@ -182,9 +195,9 @@ namespace RAT
     bayesResults->bestFitsMean.sld.set_size(nestResults_bestFitsMean.sld.size(0),
       nestResults_bestFitsMean.sld.size(1));
     loop_ub = nestResults_bestFitsMean.sld.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       b_loop_ub = nestResults_bestFitsMean.sld.size(0);
-      for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
+      for (i1 = 0; i1 < b_loop_ub; i1++) {
         bayesResults->bestFitsMean.sld[i1 + bayesResults->bestFitsMean.sld.size
           (0) * i] = nestResults_bestFitsMean.sld[i1 +
           nestResults_bestFitsMean.sld.size(0) * i];
@@ -194,15 +207,15 @@ namespace RAT
     bayesResults->bestFitsMean.chi = nestResults_bestFitsMean.chi;
     bayesResults->bestFitsMean.data.set_size(nestResults_bestFitsMean.data.size
       (0));
-    for (int32_T i{0}; i < nestResults_bestFitsMean.data.size(0) *
+    for (i = 0; i < nestResults_bestFitsMean.data.size(0) *
          nestResults_bestFitsMean.data.size(1); i++) {
       bayesResults->bestFitsMean.data[i].f1.set_size
         (nestResults_bestFitsMean.data[i].f1.size(0),
          nestResults_bestFitsMean.data[i].f1.size(1));
       loop_ub = nestResults_bestFitsMean.data[i].f1.size(1);
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         b_loop_ub = nestResults_bestFitsMean.data[i].f1.size(0);
-        for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+        for (i2 = 0; i2 < b_loop_ub; i2++) {
           bayesResults->bestFitsMean.data[i].f1[i2 +
             bayesResults->bestFitsMean.data[i].f1.size(0) * i1] =
             nestResults_bestFitsMean.data[i].f1[i2 +
@@ -211,21 +224,32 @@ namespace RAT
       }
     }
 
-    coder::blockedSummation(chain,
+    loop_ub = bayesResults->bayesRes.nestOutput.postSamples.size(0);
+    c_bayesResults.set_size(bayesResults->bayesRes.nestOutput.postSamples.size(0),
+      t8_predlims_sampleChi_size);
+    for (i = 0; i < t8_predlims_sampleChi_size; i++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        c_bayesResults[i1 + c_bayesResults.size(0) * i] =
+          bayesResults->bayesRes.nestOutput.postSamples[i1 +
+          bayesResults->bayesRes.nestOutput.postSamples.size(0) * i];
+      }
+    }
+
+    coder::blockedSummation(c_bayesResults,
       bayesResults->bayesRes.nestOutput.postSamples.size(0), r1);
     bayesResults->bestPars.set_size(1, r1.size(1));
     loop_ub = r1.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       bayesResults->bestPars[i] = r1[i] / static_cast<real_T>
         (bayesResults->bayesRes.nestOutput.postSamples.size(0));
     }
 
+    loop_ub = bayesResults->bayesRes.nestOutput.postSamples.size(0);
     bayesResults->chain.set_size
       (bayesResults->bayesRes.nestOutput.postSamples.size(0),
        t8_predlims_sampleChi_size);
-    for (int32_T i{0}; i < t8_predlims_sampleChi_size; i++) {
-      loop_ub = bayesResults->bayesRes.nestOutput.postSamples.size(0);
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+    for (i = 0; i < t8_predlims_sampleChi_size; i++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         bayesResults->chain[i1 + bayesResults->chain.size(0) * i] =
           bayesResults->bayesRes.nestOutput.postSamples[i1 +
           bayesResults->bayesRes.nestOutput.postSamples.size(0) * i];

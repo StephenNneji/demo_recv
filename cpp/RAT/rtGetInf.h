@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // rtGetInf.h
 //
@@ -14,8 +14,7 @@
 #include "rtwtypes.h"
 #ifdef __cplusplus
 
-extern "C"
-{
+extern "C" {
 
 #endif
 
@@ -27,7 +26,6 @@ extern "C"
 #ifdef __cplusplus
 
 }
-
 #endif
 #endif
 

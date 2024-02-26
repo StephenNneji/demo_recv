@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // callReflectivity.cpp
 //
@@ -41,8 +41,8 @@ namespace RAT
     real_T nLayersTot;
     real_T nRepeats;
     real_T step;
+    int32_T b_loop_ub;
     int32_T i;
-    int32_T i1;
     int32_T loop_ub;
     int32_T loop_ub_tmp;
     uint32_T layerCount;
@@ -92,18 +92,16 @@ namespace RAT
     layerCount = 2U;
     i = static_cast<int32_T>(nRepeats);
     for (int32_T m{0}; m < i; m++) {
-      i1 = layers.size(0);
-      for (int32_T n{0}; n < i1; n++) {
+      loop_ub = layers.size(0);
+      for (int32_T n{0}; n < loop_ub; n++) {
         if (!useImaginary) {
-          loop_ub_tmp = static_cast<int32_T>(layerCount + static_cast<uint32_T>
-            (n)) - 1;
+          loop_ub_tmp = static_cast<int32_T>(layerCount + n) - 1;
           thicks[loop_ub_tmp] = layers[n];
           slds[loop_ub_tmp].re = layers[n + layers.size(0)];
           slds[loop_ub_tmp].im = 0.0;
           roughs[loop_ub_tmp] = layers[n + layers.size(0) * 2];
         } else {
-          loop_ub_tmp = static_cast<int32_T>(layerCount + static_cast<uint32_T>
-            (n)) - 1;
+          loop_ub_tmp = static_cast<int32_T>(layerCount + n) - 1;
           thicks[loop_ub_tmp] = layers[n];
           slds[loop_ub_tmp].re = layers[n + layers.size(0)];
           slds[loop_ub_tmp].im = layers[n + layers.size(0) * 2];
@@ -111,7 +109,7 @@ namespace RAT
         }
       }
 
-      layerCount += static_cast<uint32_T>(layers.size(0));
+      layerCount += layers.size(0);
     }
 
     //  Add the air and substrate parameters
@@ -138,9 +136,9 @@ namespace RAT
         firstSection[0] = simLimits[0];
       } else if ((std::floor(simLimits[0]) == simLimits[0]) && (std::floor(step)
                   == step)) {
-        loop_ub = static_cast<int32_T>((b - simLimits[0]) / step);
-        firstSection.set_size(1, loop_ub + 1);
-        for (i = 0; i <= loop_ub; i++) {
+        b_loop_ub = static_cast<int32_T>(std::floor((b - simLimits[0]) / step));
+        firstSection.set_size(1, b_loop_ub + 1);
+        for (i = 0; i <= b_loop_ub; i++) {
           firstSection[i] = simLimits[0] + step * static_cast<real_T>(i);
         }
       } else {
@@ -167,9 +165,9 @@ namespace RAT
         lastSection.set_size(1, 1);
         lastSection[0] = b;
       } else if ((std::floor(b) == b) && (std::floor(step) == step)) {
-        loop_ub = static_cast<int32_T>((simLimits[1] - b) / step);
-        lastSection.set_size(1, loop_ub + 1);
-        for (i = 0; i <= loop_ub; i++) {
+        b_loop_ub = static_cast<int32_T>(std::floor((simLimits[1] - b) / step));
+        lastSection.set_size(1, b_loop_ub + 1);
+        for (i = 0; i <= b_loop_ub; i++) {
           lastSection[i] = b + step * static_cast<real_T>(i);
         }
       } else {
@@ -180,6 +178,7 @@ namespace RAT
     }
 
     loop_ub_tmp = firstSection.size(1);
+    b_loop_ub = thisData.size(0);
     simXdata.set_size((thisData.size(0) + firstSection.size(1)) +
                       lastSection.size(1));
     loop_ub = firstSection.size(1);
@@ -187,28 +186,26 @@ namespace RAT
       simXdata[i] = firstSection[i];
     }
 
-    loop_ub = thisData.size(0);
-    for (i = 0; i < loop_ub; i++) {
+    for (i = 0; i < b_loop_ub; i++) {
       simXdata[i + loop_ub_tmp] = thisData[i];
     }
 
     loop_ub = lastSection.size(1);
     for (i = 0; i < loop_ub; i++) {
-      simXdata[(i + loop_ub_tmp) + thisData.size(0)] = lastSection[i];
+      simXdata[(i + loop_ub_tmp) + b_loop_ub] = lastSection[i];
     }
 
-    splits_idx_1 = static_cast<uint32_T>(firstSection.size(1)) +
-      static_cast<uint32_T>(thisData.size(0));
+    splits_idx_1 = static_cast<uint32_T>(firstSection.size(1)) + thisData.size(0);
     simulation.set_size(simXdata.size(0), 2);
-    loop_ub = simXdata.size(0);
+    b_loop_ub = simXdata.size(0);
     for (i = 0; i < 2; i++) {
-      for (i1 = 0; i1 < loop_ub; i1++) {
-        simulation[i1 + simulation.size(0) * i] = 0.0;
+      for (loop_ub = 0; loop_ub < b_loop_ub; loop_ub++) {
+        simulation[loop_ub + simulation.size(0) * i] = 0.0;
       }
     }
 
-    loop_ub = simXdata.size(0);
-    for (i = 0; i < loop_ub; i++) {
+    b_loop_ub = simXdata.size(0);
+    for (i = 0; i < b_loop_ub; i++) {
       simulation[i] = simXdata[i];
     }
 
@@ -219,6 +216,7 @@ namespace RAT
     simResolData[0] = 0.0;
     if (resolution == -1.0) {
       loop_ub_tmp = firstSection.size(1);
+      b_loop_ub = thisData.size(0);
       simResolData.set_size((thisData.size(0) + firstSection.size(1)) +
                             lastSection.size(1));
       loop_ub = firstSection.size(1);
@@ -226,15 +224,14 @@ namespace RAT
         simResolData[i] = thisData[thisData.size(0) * 3];
       }
 
-      loop_ub = thisData.size(0);
-      for (i = 0; i < loop_ub; i++) {
+      for (i = 0; i < b_loop_ub; i++) {
         simResolData[i + loop_ub_tmp] = thisData[i + thisData.size(0) * 3];
       }
 
       loop_ub = lastSection.size(1);
       for (i = 0; i < loop_ub; i++) {
-        simResolData[(i + loop_ub_tmp) + thisData.size(0)] = thisData
-          [(thisData.size(0) + thisData.size(0) * 3) - 1];
+        simResolData[(i + loop_ub_tmp) + b_loop_ub] = thisData[(thisData.size(0)
+          + thisData.size(0) * 3) - 1];
       }
     }
 
@@ -249,34 +246,34 @@ namespace RAT
       // simRef = dataResolutionPollyParallelPoints(simXdata,simRef,simResolData,length(simXdata));
       dataResolutionPolly(simXdata, simRef, simResolData, static_cast<real_T>
                           (simXdata.size(0)), r);
-      loop_ub = r.size(0);
-      for (i = 0; i < loop_ub; i++) {
+      b_loop_ub = r.size(0);
+      for (i = 0; i < b_loop_ub; i++) {
         simulation[i + simulation.size(0)] = r[i];
       }
     } else {
       // simRef = resolutionPollyParallelPoints(simXdata,simRef,res,length(simXdata));
       resolutionPolly(simXdata, simRef, resolution, static_cast<real_T>
                       (simXdata.size(0)), r);
-      loop_ub = r.size(0);
-      for (i = 0; i < loop_ub; i++) {
+      b_loop_ub = r.size(0);
+      for (i = 0; i < b_loop_ub; i++) {
         simulation[i + simulation.size(0)] = r[i];
       }
     }
 
-    if (static_cast<uint32_T>(firstSection.size(1)) + 1U > splits_idx_1) {
+    if (firstSection.size(1) + 1U > splits_idx_1) {
       i = 0;
-      i1 = 0;
+      loop_ub = 0;
     } else {
       i = firstSection.size(1);
-      i1 = static_cast<int32_T>(splits_idx_1);
+      loop_ub = static_cast<int32_T>(splits_idx_1);
     }
 
-    loop_ub = i1 - i;
-    reflectivity.set_size(loop_ub, 2);
-    for (i1 = 0; i1 < 2; i1++) {
-      for (loop_ub_tmp = 0; loop_ub_tmp < loop_ub; loop_ub_tmp++) {
-        reflectivity[loop_ub_tmp + reflectivity.size(0) * i1] = simulation[(i +
-          loop_ub_tmp) + simulation.size(0) * i1];
+    b_loop_ub = loop_ub - i;
+    reflectivity.set_size(b_loop_ub, 2);
+    for (loop_ub = 0; loop_ub < 2; loop_ub++) {
+      for (loop_ub_tmp = 0; loop_ub_tmp < b_loop_ub; loop_ub_tmp++) {
+        reflectivity[loop_ub_tmp + reflectivity.size(0) * loop_ub] = simulation
+          [(i + loop_ub_tmp) + simulation.size(0) * loop_ub];
       }
     }
   }
@@ -301,8 +298,8 @@ namespace RAT
     real_T nLayersTot;
     real_T nRepeats;
     real_T step;
+    int32_T b_loop_ub;
     int32_T i;
-    int32_T i1;
     int32_T loop_ub;
     int32_T loop_ub_tmp;
     uint32_T layerCount;
@@ -352,18 +349,16 @@ namespace RAT
     layerCount = 2U;
     i = static_cast<int32_T>(nRepeats);
     for (int32_T m{0}; m < i; m++) {
-      i1 = layers.size(0);
-      for (int32_T n{0}; n < i1; n++) {
+      loop_ub = layers.size(0);
+      for (int32_T n{0}; n < loop_ub; n++) {
         if (!useImaginary) {
-          loop_ub_tmp = static_cast<int32_T>(layerCount + static_cast<uint32_T>
-            (n)) - 1;
+          loop_ub_tmp = static_cast<int32_T>(layerCount + n) - 1;
           thicks[loop_ub_tmp] = layers[n];
           slds[loop_ub_tmp].re = layers[n + layers.size(0)];
           slds[loop_ub_tmp].im = 0.0;
           roughs[loop_ub_tmp] = layers[n + layers.size(0) * 2];
         } else {
-          loop_ub_tmp = static_cast<int32_T>(layerCount + static_cast<uint32_T>
-            (n)) - 1;
+          loop_ub_tmp = static_cast<int32_T>(layerCount + n) - 1;
           thicks[loop_ub_tmp] = layers[n];
           slds[loop_ub_tmp].re = layers[n + layers.size(0)];
           slds[loop_ub_tmp].im = layers[n + layers.size(0) * 2];
@@ -371,7 +366,7 @@ namespace RAT
         }
       }
 
-      layerCount += static_cast<uint32_T>(layers.size(0));
+      layerCount += layers.size(0);
     }
 
     //  Add the air and substrate parameters
@@ -398,9 +393,9 @@ namespace RAT
         firstSection[0] = simLimits[0];
       } else if ((std::floor(simLimits[0]) == simLimits[0]) && (std::floor(step)
                   == step)) {
-        loop_ub = static_cast<int32_T>((b - simLimits[0]) / step);
-        firstSection.set_size(1, loop_ub + 1);
-        for (i = 0; i <= loop_ub; i++) {
+        b_loop_ub = static_cast<int32_T>(std::floor((b - simLimits[0]) / step));
+        firstSection.set_size(1, b_loop_ub + 1);
+        for (i = 0; i <= b_loop_ub; i++) {
           firstSection[i] = simLimits[0] + step * static_cast<real_T>(i);
         }
       } else {
@@ -427,9 +422,9 @@ namespace RAT
         lastSection.set_size(1, 1);
         lastSection[0] = b;
       } else if ((std::floor(b) == b) && (std::floor(step) == step)) {
-        loop_ub = static_cast<int32_T>((simLimits[1] - b) / step);
-        lastSection.set_size(1, loop_ub + 1);
-        for (i = 0; i <= loop_ub; i++) {
+        b_loop_ub = static_cast<int32_T>(std::floor((simLimits[1] - b) / step));
+        lastSection.set_size(1, b_loop_ub + 1);
+        for (i = 0; i <= b_loop_ub; i++) {
           lastSection[i] = b + step * static_cast<real_T>(i);
         }
       } else {
@@ -440,6 +435,7 @@ namespace RAT
     }
 
     loop_ub_tmp = firstSection.size(1);
+    b_loop_ub = thisData.size(0);
     simXdata.set_size((thisData.size(0) + firstSection.size(1)) +
                       lastSection.size(1));
     loop_ub = firstSection.size(1);
@@ -447,28 +443,26 @@ namespace RAT
       simXdata[i] = firstSection[i];
     }
 
-    loop_ub = thisData.size(0);
-    for (i = 0; i < loop_ub; i++) {
+    for (i = 0; i < b_loop_ub; i++) {
       simXdata[i + loop_ub_tmp] = thisData[i];
     }
 
     loop_ub = lastSection.size(1);
     for (i = 0; i < loop_ub; i++) {
-      simXdata[(i + loop_ub_tmp) + thisData.size(0)] = lastSection[i];
+      simXdata[(i + loop_ub_tmp) + b_loop_ub] = lastSection[i];
     }
 
-    splits_idx_1 = static_cast<uint32_T>(firstSection.size(1)) +
-      static_cast<uint32_T>(thisData.size(0));
+    splits_idx_1 = static_cast<uint32_T>(firstSection.size(1)) + thisData.size(0);
     simulation.set_size(simXdata.size(0), 2);
-    loop_ub = simXdata.size(0);
+    b_loop_ub = simXdata.size(0);
     for (i = 0; i < 2; i++) {
-      for (i1 = 0; i1 < loop_ub; i1++) {
-        simulation[i1 + simulation.size(0) * i] = 0.0;
+      for (loop_ub = 0; loop_ub < b_loop_ub; loop_ub++) {
+        simulation[loop_ub + simulation.size(0) * i] = 0.0;
       }
     }
 
-    loop_ub = simXdata.size(0);
-    for (i = 0; i < loop_ub; i++) {
+    b_loop_ub = simXdata.size(0);
+    for (i = 0; i < b_loop_ub; i++) {
       simulation[i] = simXdata[i];
     }
 
@@ -479,6 +473,7 @@ namespace RAT
     simResolData[0] = 0.0;
     if (resolution == -1.0) {
       loop_ub_tmp = firstSection.size(1);
+      b_loop_ub = thisData.size(0);
       simResolData.set_size((thisData.size(0) + firstSection.size(1)) +
                             lastSection.size(1));
       loop_ub = firstSection.size(1);
@@ -486,15 +481,14 @@ namespace RAT
         simResolData[i] = thisData[thisData.size(0) * 3];
       }
 
-      loop_ub = thisData.size(0);
-      for (i = 0; i < loop_ub; i++) {
+      for (i = 0; i < b_loop_ub; i++) {
         simResolData[i + loop_ub_tmp] = thisData[i + thisData.size(0) * 3];
       }
 
       loop_ub = lastSection.size(1);
       for (i = 0; i < loop_ub; i++) {
-        simResolData[(i + loop_ub_tmp) + thisData.size(0)] = thisData
-          [(thisData.size(0) + thisData.size(0) * 3) - 1];
+        simResolData[(i + loop_ub_tmp) + b_loop_ub] = thisData[(thisData.size(0)
+          + thisData.size(0) * 3) - 1];
       }
     }
 
@@ -506,33 +500,33 @@ namespace RAT
     if (resolution == -1.0) {
       dataResolutionPolly(simXdata, simRef, simResolData, static_cast<real_T>
                           (simXdata.size(0)), r);
-      loop_ub = r.size(0);
-      for (i = 0; i < loop_ub; i++) {
+      b_loop_ub = r.size(0);
+      for (i = 0; i < b_loop_ub; i++) {
         simulation[i + simulation.size(0)] = r[i];
       }
     } else {
       resolutionPolly(simXdata, simRef, resolution, static_cast<real_T>
                       (simXdata.size(0)), r);
-      loop_ub = r.size(0);
-      for (i = 0; i < loop_ub; i++) {
+      b_loop_ub = r.size(0);
+      for (i = 0; i < b_loop_ub; i++) {
         simulation[i + simulation.size(0)] = r[i];
       }
     }
 
-    if (static_cast<uint32_T>(firstSection.size(1)) + 1U > splits_idx_1) {
+    if (firstSection.size(1) + 1U > splits_idx_1) {
       i = 0;
-      i1 = 0;
+      loop_ub = 0;
     } else {
       i = firstSection.size(1);
-      i1 = static_cast<int32_T>(splits_idx_1);
+      loop_ub = static_cast<int32_T>(splits_idx_1);
     }
 
-    loop_ub = i1 - i;
-    reflectivity.set_size(loop_ub, 2);
-    for (i1 = 0; i1 < 2; i1++) {
-      for (loop_ub_tmp = 0; loop_ub_tmp < loop_ub; loop_ub_tmp++) {
-        reflectivity[loop_ub_tmp + reflectivity.size(0) * i1] = simulation[(i +
-          loop_ub_tmp) + simulation.size(0) * i1];
+    b_loop_ub = loop_ub - i;
+    reflectivity.set_size(b_loop_ub, 2);
+    for (loop_ub = 0; loop_ub < 2; loop_ub++) {
+      for (loop_ub_tmp = 0; loop_ub_tmp < b_loop_ub; loop_ub_tmp++) {
+        reflectivity[loop_ub_tmp + reflectivity.size(0) * loop_ub] = simulation
+          [(i + loop_ub_tmp) + simulation.size(0) * loop_ub];
       }
     }
   }

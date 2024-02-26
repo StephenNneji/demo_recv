@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // rand.cpp
 //
@@ -221,6 +221,7 @@ namespace RAT
     real_T b_rand()
     {
       real_T r;
+      uint32_T u[2];
 
       // ========================= COPYRIGHT NOTICE ============================
       //  This is a uniform (0,1) pseudorandom number generator based on:
@@ -260,7 +261,6 @@ namespace RAT
       //  OF THIS  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       //
       // =============================   END   =================================
-      uint32_T u[2];
       do {
         genrand_uint32_vector(state, u);
         u[0] >>= 5U;
@@ -284,11 +284,11 @@ namespace RAT
       }
     }
 
-    void b_rand(const real_T varargin_1[2], ::coder::array<real_T, 1U> &r)
+    void b_rand(const real_T varargin_1[2], ::coder::array<real_T, 2U> &r)
     {
       int32_T i;
       i = static_cast<int32_T>(varargin_1[0]);
-      r.set_size(i);
+      r.set_size(i, 1);
       for (int32_T k{0}; k < i; k++) {
         r[k] = eml_rand_mt19937ar(state);
       }
@@ -324,6 +324,7 @@ namespace RAT
 
     void c_rand(real_T r[1000])
     {
+      uint32_T u[2];
       for (int32_T k{0}; k < 1000; k++) {
         real_T b_r;
 
@@ -365,7 +366,6 @@ namespace RAT
         //  OF THIS  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         //
         // =============================   END   =================================
-        uint32_T u[2];
         do {
           genrand_uint32_vector(state, u);
           u[0] >>= 5U;

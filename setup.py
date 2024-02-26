@@ -17,7 +17,7 @@ libevent = ('eventManager', {'sources': ['cpp/RAT/events/eventManager.cpp'],
 
 ext_modules = [
     Extension(
-        'rat.rat_core',
+        'RAT.rat_core',
         sources=['cpp/rat.cpp', *glob('cpp/RAT/*.c*')],
         include_dirs=[
             # Path to pybind11 headers
@@ -89,15 +89,15 @@ class BuildExt(build_ext):
     def run(self):
         super().run()
         build_py = self.get_finalized_command('build_py')
-        package_dir = f'{build_py.build_lib}/rat/'
+        package_dir = f'{build_py.build_lib}/RAT/'
         for p in Path(package_dir).glob("**/*"):
             if p.suffix in {".exp", ".a", ".lib"}:
                 p.unlink() 
                 
         if self.inplace:
             obj_name = get_shared_object_name(libevent[0])
-            src = f'{build_py.build_lib}/rat/{obj_name}'
-            dest = f'{build_py.get_package_dir("rat")}/{obj_name}'
+            src = f'{build_py.build_lib}/RAT/{obj_name}'
+            dest = f'{build_py.get_package_dir("RAT")}/{obj_name}'
             build_py.copy_file(src, dest)
 
 
@@ -105,7 +105,7 @@ class BuildClib(build_clib):
     def initialize_options(self):
         super().initialize_options()
         build_py = self.get_finalized_command('build_py')
-        self.build_clib = f'{build_py.build_lib}/rat'
+        self.build_clib = f'{build_py.build_lib}/RAT'
 
     def build_libraries(self, libraries):
         # bug in distutils: flag not valid for c++
@@ -143,30 +143,31 @@ class BuildClib(build_clib):
                 )
 
         super().build_libraries(libraries)
-
+                                           
 
 setup(
-    name='rat',
-    version=__version__,
-    author='demo',
-    author_email='demo@gmail.com',
-    url='https://github.com/RascalSoftware/python-RAT',
-    description='Python extension for the Reflectivity Analysis Toolbox (RAT)',
-    long_description='',
-    packages=['rat'],
-    include_package_data=True,
-    package_data={'': [get_shared_object_name(libevent[0])]},
-    libraries=[libevent],
-    ext_modules=ext_modules,
-    install_requires=['numpy'],
-    python_requires='>=3.9',
-    # setup_requires=['pybind11>=2.4'],
-    cmdclass={'build_clib': BuildClib, 'build_ext': BuildExt},
-    extras_require={"Matlab_2023b": ["matlabengine==23.2.1"],
-                    "Matlab_2023a": ["matlabengine==9.14.3"],
-                    "Matlab-2022b": ["matlabengine==9.13.9"],
-                    "Matlab_2022a": ["matlabengine==9.12.19"],
-                    "Matlab_2021b": ["matlabengine==9.11.21"],
-                    "Matlab_2021a": ["matlabengine==9.10.3"]},
+    name = 'RAT',
+    version = __version__,
+    author = '',
+    author_email = '',
+    url = 'https://github.com/RascalSoftware/python-RAT',
+    description = 'Python extension for the Reflectivity Analysis Toolbox (RAT)',
+    packages = ['RAT'],
+    include_package_data = True,
+    package_data = {'': [get_shared_object_name(libevent[0])]},
+    cmdclass = {'build_clib': BuildClib, 'build_ext': BuildExt},
+    libraries = [libevent],
+    ext_modules = ext_modules,
+    python_requires = '>=3.9',
+    install_requires = ['numpy >= 1.20', 'prettytable >= 3.9.0', 'pydantic >= 2.4.2'],
+    extras_require = {':python_version < "3.11"': ['StrEnum >= 0.4.15'],
+                      'Dev': ['pytest>=7.4.0', 'pytest-cov>=4.1.0'],
+                      'Matlab_latest': ['matlabengine'],
+                      'Matlab_2023b': ['matlabengine == 23.2.1'],
+                      'Matlab_2023a': ['matlabengine == 9.14.3'],
+                      'Matlab-2022b': ['matlabengine == 9.13.9'],
+                      'Matlab_2022a': ['matlabengine == 9.12.19'],
+                      'Matlab_2021b': ['matlabengine == 9.11.21'],
+                      'Matlab_2021a': ['matlabengine == 9.10.3']},
     zip_safe=False,
 )

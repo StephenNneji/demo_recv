@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // var.cpp
 //
@@ -23,17 +23,18 @@ namespace RAT
     {
       ::coder::array<real_T, 1U> xv;
       int32_T hi;
+      int32_T k;
       int32_T loop_ub;
       int32_T nx;
       int32_T outsize_idx_0;
       y.set_size(1, x.size(1));
       hi = x.size(1);
-      for (int32_T k{0}; k < hi; k++) {
+      for (k = 0; k < hi; k++) {
         y[k] = 0.0;
       }
 
       hi = x.size(1);
-      if (x.size(1) - 1 >= 0) {
+      if (0 <= x.size(1) - 1) {
         nx = x.size(0);
         outsize_idx_0 = x.size(0);
         loop_ub = x.size(0);
@@ -41,15 +42,15 @@ namespace RAT
 
       for (int32_T b_k{0}; b_k < hi; b_k++) {
         xv.set_size(outsize_idx_0);
-        for (int32_T k{0}; k < loop_ub; k++) {
+        for (k = 0; k < loop_ub; k++) {
           xv[k] = 0.0;
         }
 
-        for (int32_T k{0}; k < nx; k++) {
+        for (k = 0; k < nx; k++) {
           xv[k] = x[k + x.size(0) * b_k];
         }
 
-        y[b_k] = b_varstd_anonFcn3(x.size(0), xv);
+        y[b_k] = b_anon(x.size(0), xv);
       }
     }
   }

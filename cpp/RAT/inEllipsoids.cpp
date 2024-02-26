@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // inEllipsoids.cpp
 //
@@ -13,10 +13,10 @@
 #include "RATMain_data.h"
 #include "diag.h"
 #include "eig.h"
+#include "power.h"
 #include "rt_nonfinite.h"
 #include "sqrt.h"
 #include "sum.h"
-#include "unsafeSxfun.h"
 #include "coder_array.h"
 #include <cmath>
 
@@ -31,9 +31,10 @@ namespace RAT
     ::coder::array<creal_T, 2U> V;
     ::coder::array<creal_T, 2U> b_pnt;
     ::coder::array<creal_T, 2U> c_pnt;
+    ::coder::array<creal_T, 2U> r1;
     ::coder::array<creal_T, 1U> r;
     ::coder::array<real_T, 2U> b_Bs;
-    creal_T varargin_1;
+    creal_T dc;
     real_T N;
     int32_T b_loop_ub;
     int32_T i;
@@ -62,7 +63,7 @@ namespace RAT
 
     //  loop over number of ellipsiods and work out whether it contains the point
     i = mus.size(0);
-    if (i - 1 >= 0) {
+    if (0 <= i - 1) {
       loop_ub = Bs.size(1);
       b_loop_ub = pnt.size(1);
     }
@@ -104,109 +105,94 @@ namespace RAT
         coder::internal::scalar::d_sqrt(&r[b_k]);
       }
 
-      if ((pnt.size(1) == mus.size(1)) && (r.size(0) == V.size(1))) {
-        real_T pnt_re_tmp;
-        c_pnt.set_size(1, pnt.size(1));
-        for (i1 = 0; i1 < b_loop_ub; i1++) {
-          c_pnt[i1].re = pnt[i1] - mus[k + mus.size(0) * i1];
-          c_pnt[i1].im = 0.0;
-        }
-
-        c_loop_ub = V.size(1);
-        b_pnt.set_size(1, V.size(1));
-        for (i1 = 0; i1 < c_loop_ub; i1++) {
-          real_T b_pnt_re_tmp;
-          real_T c_pnt_re_tmp;
-          real_T d_pnt_re_tmp;
-          real_T im;
-          real_T re;
-          re = 0.0;
-          im = 0.0;
-          b_k = c_pnt.size(1);
-          for (i2 = 0; i2 < b_k; i2++) {
-            pnt_re_tmp = c_pnt[i2].re;
-            d_pnt_re_tmp = V[i2 + V.size(0) * i1].im;
-            b_pnt_re_tmp = c_pnt[i2].im;
-            c_pnt_re_tmp = V[i2 + V.size(0) * i1].re;
-            re += pnt_re_tmp * c_pnt_re_tmp - b_pnt_re_tmp * d_pnt_re_tmp;
-            im += pnt_re_tmp * d_pnt_re_tmp + b_pnt_re_tmp * c_pnt_re_tmp;
-          }
-
-          b_pnt_re_tmp = r[i1].re;
-          c_pnt_re_tmp = -r[i1].im;
-          if (c_pnt_re_tmp == 0.0) {
-            if (im == 0.0) {
-              b_pnt[i1].re = re / b_pnt_re_tmp;
-              b_pnt[i1].im = 0.0;
-            } else if (re == 0.0) {
-              b_pnt[i1].re = 0.0;
-              b_pnt[i1].im = im / b_pnt_re_tmp;
-            } else {
-              b_pnt[i1].re = re / b_pnt_re_tmp;
-              b_pnt[i1].im = im / b_pnt_re_tmp;
-            }
-          } else if (b_pnt_re_tmp == 0.0) {
-            if (re == 0.0) {
-              b_pnt[i1].re = im / c_pnt_re_tmp;
-              b_pnt[i1].im = 0.0;
-            } else if (im == 0.0) {
-              b_pnt[i1].re = 0.0;
-              b_pnt[i1].im = -(re / c_pnt_re_tmp);
-            } else {
-              b_pnt[i1].re = im / c_pnt_re_tmp;
-              b_pnt[i1].im = -(re / c_pnt_re_tmp);
-            }
-          } else {
-            real_T brm;
-            brm = std::abs(b_pnt_re_tmp);
-            pnt_re_tmp = std::abs(c_pnt_re_tmp);
-            if (brm > pnt_re_tmp) {
-              d_pnt_re_tmp = c_pnt_re_tmp / b_pnt_re_tmp;
-              pnt_re_tmp = b_pnt_re_tmp + d_pnt_re_tmp * c_pnt_re_tmp;
-              b_pnt[i1].re = (re + d_pnt_re_tmp * im) / pnt_re_tmp;
-              b_pnt[i1].im = (im - d_pnt_re_tmp * re) / pnt_re_tmp;
-            } else if (pnt_re_tmp == brm) {
-              if (b_pnt_re_tmp > 0.0) {
-                d_pnt_re_tmp = 0.5;
-              } else {
-                d_pnt_re_tmp = -0.5;
-              }
-
-              if (c_pnt_re_tmp > 0.0) {
-                pnt_re_tmp = 0.5;
-              } else {
-                pnt_re_tmp = -0.5;
-              }
-
-              b_pnt[i1].re = (re * d_pnt_re_tmp + im * pnt_re_tmp) / brm;
-              b_pnt[i1].im = (im * d_pnt_re_tmp - re * pnt_re_tmp) / brm;
-            } else {
-              d_pnt_re_tmp = b_pnt_re_tmp / c_pnt_re_tmp;
-              pnt_re_tmp = c_pnt_re_tmp + d_pnt_re_tmp * b_pnt_re_tmp;
-              b_pnt[i1].re = (d_pnt_re_tmp * re + im) / pnt_re_tmp;
-              b_pnt[i1].im = (d_pnt_re_tmp * im - re) / pnt_re_tmp;
-            }
-          }
-        }
-
-        b_pnt.set_size(1, b_pnt.size(1));
-        c_loop_ub = b_pnt.size(1);
-        for (i1 = 0; i1 < c_loop_ub; i1++) {
-          creal_T varargout_1;
-          varargin_1 = b_pnt[i1];
-          varargout_1.re = varargin_1.re * varargin_1.re - varargin_1.im *
-            varargin_1.im;
-          pnt_re_tmp = varargin_1.re * varargin_1.im;
-          varargout_1.im = pnt_re_tmp + pnt_re_tmp;
-          b_pnt[i1] = varargout_1;
-        }
-      } else {
-        binary_expand_op(b_pnt, pnt, mus, k, V, r);
+      b_pnt.set_size(1, pnt.size(1));
+      for (i1 = 0; i1 < b_loop_ub; i1++) {
+        b_pnt[i1].re = pnt[i1] - mus[k + mus.size(0) * i1];
+        b_pnt[i1].im = 0.0;
       }
 
-      varargin_1 = coder::sum(b_pnt);
-      coder::internal::scalar::d_sqrt(&varargin_1);
-      if (varargin_1.re <= 1.0) {
+      c_loop_ub = V.size(1);
+      c_pnt.set_size(1, V.size(1));
+      for (i1 = 0; i1 < c_loop_ub; i1++) {
+        real_T bi;
+        real_T br;
+        real_T im;
+        real_T re;
+        re = 0.0;
+        im = 0.0;
+        b_k = b_pnt.size(1);
+        for (i2 = 0; i2 < b_k; i2++) {
+          re += b_pnt[i2].re * V[i2 + V.size(0) * i1].re - b_pnt[i2].im * V[i2 +
+            V.size(0) * i1].im;
+          im += b_pnt[i2].re * V[i2 + V.size(0) * i1].im + b_pnt[i2].im * V[i2 +
+            V.size(0) * i1].re;
+        }
+
+        br = r[i1].re;
+        bi = -r[i1].im;
+        if (bi == 0.0) {
+          if (im == 0.0) {
+            c_pnt[i1].re = re / br;
+            c_pnt[i1].im = 0.0;
+          } else if (re == 0.0) {
+            c_pnt[i1].re = 0.0;
+            c_pnt[i1].im = im / br;
+          } else {
+            c_pnt[i1].re = re / br;
+            c_pnt[i1].im = im / br;
+          }
+        } else if (br == 0.0) {
+          if (re == 0.0) {
+            c_pnt[i1].re = im / bi;
+            c_pnt[i1].im = 0.0;
+          } else if (im == 0.0) {
+            c_pnt[i1].re = 0.0;
+            c_pnt[i1].im = -(re / bi);
+          } else {
+            c_pnt[i1].re = im / bi;
+            c_pnt[i1].im = -(re / bi);
+          }
+        } else {
+          real_T bim;
+          real_T brm;
+          brm = std::abs(br);
+          bim = std::abs(bi);
+          if (brm > bim) {
+            real_T s;
+            s = bi / br;
+            bim = br + s * bi;
+            c_pnt[i1].re = (re + s * im) / bim;
+            c_pnt[i1].im = (im - s * re) / bim;
+          } else if (bim == brm) {
+            real_T s;
+            if (br > 0.0) {
+              s = 0.5;
+            } else {
+              s = -0.5;
+            }
+
+            if (bi > 0.0) {
+              bim = 0.5;
+            } else {
+              bim = -0.5;
+            }
+
+            c_pnt[i1].re = (re * s + im * bim) / brm;
+            c_pnt[i1].im = (im * s - re * bim) / brm;
+          } else {
+            real_T s;
+            s = br / bi;
+            bim = bi + s * br;
+            c_pnt[i1].re = (s * re + im) / bim;
+            c_pnt[i1].im = (s * im - re) / bim;
+          }
+        }
+      }
+
+      coder::power(c_pnt, r1);
+      dc = coder::sum(r1);
+      coder::internal::scalar::d_sqrt(&dc);
+      if (dc.re <= 1.0) {
         //  values is within the ellipsiod
         N++;
       }

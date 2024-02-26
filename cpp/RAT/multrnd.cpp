@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // multrnd.cpp
 //
@@ -10,59 +10,15 @@
 
 // Include files
 #include "multrnd.h"
+#include "blockedSummation.h"
 #include "combineVectorElements.h"
 #include "rand.h"
 #include "rt_nonfinite.h"
-#include "sum.h"
 #include "coder_array.h"
-
-// Function Declarations
-namespace RAT
-{
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, const real_T in3_data[], int32_T in4);
-}
 
 // Function Definitions
 namespace RAT
 {
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, const real_T in3_data[], int32_T in4)
-  {
-    ::coder::array<real_T, 2U> b_in1;
-    real_T in3;
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_1;
-    int32_T stride_1_1;
-    in3 = in3_data[in4];
-    if (in2.size(1) == 1) {
-      i = in1.size(1);
-    } else {
-      i = in2.size(1);
-    }
-
-    b_in1.set_size(1, i);
-    stride_0_1 = (in1.size(1) != 1);
-    stride_1_1 = (in2.size(1) != 1);
-    if (in2.size(1) == 1) {
-      loop_ub = in1.size(1);
-    } else {
-      loop_ub = in2.size(1);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      b_in1[i] = in1[i * stride_0_1] + static_cast<real_T>(in2[i * stride_1_1] >
-        in3);
-    }
-
-    in1.set_size(1, b_in1.size(1));
-    loop_ub = b_in1.size(1);
-    for (i = 0; i < loop_ub; i++) {
-      in1[i] = b_in1[i];
-    }
-  }
-
   void multrnd(real_T n, const real_T p_data[], const int32_T p_size[2], real_T
                X_data[], int32_T X_size[2])
   {
@@ -72,6 +28,8 @@ namespace RAT
     ::coder::array<boolean_T, 2U> b_o;
     real_T s_data[3];
     real_T P;
+    int32_T i;
+    int32_T j;
     int32_T loop_ub_tmp;
 
     //  MULTRND Multinomial random sequence of m simulations of k outcomes with p probabiltites
@@ -80,8 +38,8 @@ namespace RAT
     //   multinomial distribution with n trials and k outcomes, where the probability for each
     //   simulation is,
     //                           n!
-    //                  ----------------------  ×  p1^n1 × p2^n2 ×  . . .  × pk^nk .
-    //                 n1! × n2! ×  . . .  × nk!
+    //                  ----------------------  �  p1^n1 � p2^n2 �  . . .  � pk^nk .
+    //                 n1! � n2! �  . . .  � nk!
     //
     //   Then, a single sample {n1, n2,  . . .  , nk} have a multinomial joint distribution with
     //   parameters n and p1, p2,  . . .  , pk. The parameter n is called the number of trials;
@@ -153,7 +111,11 @@ namespace RAT
     //            Internet at the URL address http://hcohl.shell42.com/as/frameindex.htm
     //
     b_p_data.set((real_T *)&p_data[0], p_size[0], p_size[1]);
-    P = coder::sum(b_p_data);
+    if (b_p_data.size(1) == 0) {
+      P = 0.0;
+    } else {
+      P = coder::nestedIter(b_p_data, b_p_data.size(1));
+    }
 
     // if P ~= 1,
     //     error('The sum of the input probabilities must be equal 1.')
@@ -161,7 +123,7 @@ namespace RAT
     // end;
     loop_ub_tmp = static_cast<int32_T>(n);
     o.set_size(1, loop_ub_tmp);
-    for (int32_T i{0}; i < loop_ub_tmp; i++) {
+    for (i = 0; i < loop_ub_tmp; i++) {
       o[i] = 1.0;
     }
 
@@ -171,24 +133,20 @@ namespace RAT
     s_data[1] += s_data[0];
     s_data[2] += s_data[1];
     coder::b_rand(n, r);
-    for (int32_T j{0}; j < 3; j++) {
+    for (j = 0; j < 3; j++) {
+      o.set_size(1, o.size(1));
       loop_ub_tmp = o.size(1);
-      if (o.size(1) == r.size(1)) {
-        o.set_size(1, o.size(1));
-        for (int32_T i{0}; i < loop_ub_tmp; i++) {
-          o[i] = o[i] + static_cast<real_T>(r[i] > s_data[j]);
-        }
-      } else {
-        binary_expand_op(o, r, s_data, j);
+      for (i = 0; i < loop_ub_tmp; i++) {
+        o[i] = o[i] + static_cast<real_T>(r[i] > s_data[j]);
       }
     }
 
     X_size[0] = 1;
     X_size[1] = 3;
     loop_ub_tmp = o.size(1);
-    for (int32_T j{0}; j < 3; j++) {
+    for (j = 0; j < 3; j++) {
       b_o.set_size(1, o.size(1));
-      for (int32_T i{0}; i < loop_ub_tmp; i++) {
+      for (i = 0; i < loop_ub_tmp; i++) {
         b_o[i] = (o[i] == static_cast<real_T>(j) + 1.0);
       }
 

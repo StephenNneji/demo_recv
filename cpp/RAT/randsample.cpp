@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // randsample.cpp
 //
@@ -10,10 +10,10 @@
 
 // Include files
 #include "randsample.h"
+#include "blockedSummation.h"
 #include "histc.h"
 #include "rand.h"
 #include "rt_nonfinite.h"
-#include "sum.h"
 #include "coder_array.h"
 #include <cmath>
 
@@ -60,7 +60,12 @@ namespace RAT
       int32_T a__1_size;
       x = std::floor(varargin_2);
       b_varargin_4_data.set((real_T *)&varargin_4_data[0], 3);
-      sumw = sum(b_varargin_4_data);
+      if (b_varargin_4_data.size(0) == 0) {
+        sumw = 0.0;
+      } else {
+        sumw = nestedIter(b_varargin_4_data, b_varargin_4_data.size(0));
+      }
+
       edges_data[0] = 0.0;
       edges_data[3] = 1.0;
       edges_data[1] = std::fmin(varargin_4_data[0] / sumw, 1.0);

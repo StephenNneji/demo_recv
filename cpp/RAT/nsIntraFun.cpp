@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // nsIntraFun.cpp
 //
@@ -20,12 +20,12 @@
 // Function Definitions
 namespace RAT
 {
-  real_T nsIntraFun(const c_struct_T *data_f1, const struct2_T *data_f2, const
+  real_T nsIntraFun(const d_struct_T *data_f1, const struct2_T *data_f2, const
                     cell_11 *data_f4, const ::coder::array<real_T, 2U> &p)
   {
-    c_struct_T problemStruct;
     cell_wrap_9 a__1[6];
-    d_struct_T b_problemStruct;
+    d_struct_T problemStruct;
+    e_struct_T b_problemStruct;
     int32_T loop_ub;
     problemStruct = *data_f1;
 
@@ -46,20 +46,22 @@ namespace RAT
     return -b_problemStruct.calculations.sumChi / 2.0;
   }
 
-  real_T nsIntraFun(const c_struct_T *data_f1, const struct2_T *data_f2, const
+  real_T nsIntraFun(const d_struct_T *data_f1, const struct2_T *data_f2, const
                     cell_11 *data_f4, const ::coder::array<real_T, 1U> &p)
   {
-    c_struct_T problemStruct;
     cell_wrap_9 a__1[6];
-    d_struct_T b_problemStruct;
+    d_struct_T problemStruct;
+    e_struct_T b_problemStruct;
     int32_T p_idx_0;
     problemStruct = *data_f1;
 
     //  Removed use of cells....
     p_idx_0 = p.size(0);
     problemStruct.fitParams.set_size(p.size(0), 1);
-    for (int32_T i{0}; i < p_idx_0; i++) {
-      problemStruct.fitParams[i] = p[i];
+    for (int32_T i{0}; i < 1; i++) {
+      for (int32_T i1{0}; i1 < p_idx_0; i1++) {
+        problemStruct.fitParams[i1] = p[i1];
+      }
     }
 
     unpackParams(&problemStruct, data_f2->checks.fitParam,

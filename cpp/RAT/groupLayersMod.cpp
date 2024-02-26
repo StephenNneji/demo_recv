@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // groupLayersMod.cpp
 //
@@ -26,6 +26,7 @@ namespace RAT
     ::coder::array<real_T, 2U> layers;
     ::coder::array<real_T, 1U> roughs;
     int32_T b_loop_ub;
+    int32_T c_loop_ub;
     int32_T i;
     int32_T loop_ub;
     uint32_T unnamed_idx_0;
@@ -59,20 +60,20 @@ namespace RAT
     loop_ub = allLayers.size(1);
     for (i = 0; i < loop_ub; i++) {
       b_loop_ub = static_cast<int32_T>(unnamed_idx_0);
-      for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
-        layers[i1 + layers.size(0) * i] = 0.0;
+      for (c_loop_ub = 0; c_loop_ub < b_loop_ub; c_loop_ub++) {
+        layers[c_loop_ub + layers.size(0) * i] = 0.0;
       }
     }
 
     if ((allLayers.size(0) != 0) && (allLayers.size(1) != 0)) {
-      if (coder::internal::q_strcmp(geometry_data, geometry_size)) {
+      if (coder::internal::p_strcmp(geometry_data, geometry_size)) {
         layers.set_size(allLayers.size(0), allLayers.size(1));
         loop_ub = allLayers.size(1);
-        b_loop_ub = allLayers.size(0);
         for (i = 0; i < loop_ub; i++) {
-          for (int32_T i1{0}; i1 < b_loop_ub; i1++) {
-            layers[i1 + layers.size(0) * i] = allLayers[i1 + allLayers.size(0) *
-              i];
+          b_loop_ub = allLayers.size(0);
+          for (c_loop_ub = 0; c_loop_ub < b_loop_ub; c_loop_ub++) {
+            layers[c_loop_ub + layers.size(0) * i] = allLayers[c_loop_ub +
+              allLayers.size(0) * i];
           }
         }
 
@@ -80,9 +81,9 @@ namespace RAT
       } else {
         *outSsubs = allLayers[(allLayers.size(0) + allLayers.size(0) * 2) - 1];
         if (allLayers.size(0) > 1) {
+          loop_ub = allLayers.size(0);
           roughs.set_size(allLayers.size(0));
           roughs[0] = allRoughs;
-          loop_ub = allLayers.size(0);
           for (i = 0; i <= loop_ub - 2; i++) {
             roughs[i + 1] = allLayers[i + allLayers.size(0) * 2];
           }
@@ -92,14 +93,15 @@ namespace RAT
         }
 
         if (allLayers.size(1) == 5) {
-          layers.set_size(allLayers.size(0), 4);
           loop_ub = allLayers.size(0);
+          b_loop_ub = allLayers.size(0);
+          c_loop_ub = allLayers.size(0);
+          layers.set_size(allLayers.size(0), 4);
           for (i = 0; i < loop_ub; i++) {
             layers[i] = allLayers[i];
           }
 
-          loop_ub = allLayers.size(0);
-          for (i = 0; i < loop_ub; i++) {
+          for (i = 0; i < b_loop_ub; i++) {
             layers[i + layers.size(0)] = allLayers[i + allLayers.size(0)];
           }
 
@@ -108,19 +110,18 @@ namespace RAT
             layers[i + layers.size(0) * 2] = roughs[i];
           }
 
-          loop_ub = allLayers.size(0);
-          for (i = 0; i < loop_ub; i++) {
+          for (i = 0; i < c_loop_ub; i++) {
             layers[i + layers.size(0) * 3] = allLayers[i + allLayers.size(0) * 3];
           }
         } else {
-          layers.set_size(allLayers.size(0), 3);
           loop_ub = allLayers.size(0);
+          b_loop_ub = allLayers.size(0);
+          layers.set_size(allLayers.size(0), 3);
           for (i = 0; i < loop_ub; i++) {
             layers[i] = allLayers[i];
           }
 
-          loop_ub = allLayers.size(0);
-          for (i = 0; i < loop_ub; i++) {
+          for (i = 0; i < b_loop_ub; i++) {
             layers[i + layers.size(0)] = allLayers[i + allLayers.size(0)];
           }
 
@@ -135,17 +136,17 @@ namespace RAT
       if (allLayers.size(1) == 5) {
         i = allLayers.size(0);
         for (int32_T j{0}; j < i; j++) {
+          real_T pc_add;
           real_T this_pcw;
           this_pcw = allLayers[j + allLayers.size(0) * 3];
-          if (!std::isnan(this_pcw)) {
-            real_T d;
-            if (allLayers[j + allLayers.size(0) * 4] == 1.0) {
-              d = bulkIns;
-            } else {
-              d = bulkOuts;
-            }
+          if (allLayers[j + allLayers.size(0) * 4] == 1.0) {
+            pc_add = bulkIns;
+          } else {
+            pc_add = bulkOuts;
+          }
 
-            layers[j + layers.size(0)] = d * (this_pcw / 100.0) + (1.0 -
+          if (!std::isnan(this_pcw)) {
+            layers[j + layers.size(0)] = pc_add * (this_pcw / 100.0) + (1.0 -
               this_pcw / 100.0) * layers[j + layers.size(0)];
           }
         }
@@ -153,11 +154,12 @@ namespace RAT
     }
 
     if ((layers.size(0) != 0) && (layers.size(1) != 0)) {
-      outLayers.set_size(layers.size(0), 3);
       loop_ub = layers.size(0);
+      outLayers.set_size(layers.size(0), 3);
       for (i = 0; i < 3; i++) {
-        for (int32_T i1{0}; i1 < loop_ub; i1++) {
-          outLayers[i1 + outLayers.size(0) * i] = layers[i1 + layers.size(0) * i];
+        for (c_loop_ub = 0; c_loop_ub < loop_ub; c_loop_ub++) {
+          outLayers[c_loop_ub + outLayers.size(0) * i] = layers[c_loop_ub +
+            layers.size(0) * i];
         }
       }
     } else {

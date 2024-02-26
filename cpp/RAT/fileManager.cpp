@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // fileManager.cpp
 //
@@ -16,7 +16,7 @@
 // Variable Definitions
 namespace RAT
 {
-  static FILE* eml_openfiles[20];
+  static FILE * eml_openfiles[20];
 }
 
 // Function Definitions
@@ -46,7 +46,7 @@ namespace RAT
 
   void filedata_init()
   {
-    FILE* a;
+    FILE * a;
     a = NULL;
     for (int32_T i{0}; i < 20; i++) {
       eml_openfiles[i] = a;

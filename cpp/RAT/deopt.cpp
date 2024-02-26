@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // deopt.cpp
 //
@@ -15,292 +15,22 @@
 #include "RATMain_types.h"
 #include "leftWin.h"
 #include "mergesort.h"
+#include "print_processing.h"
 #include "rand.h"
 #include "randperm.h"
+#include "rem.h"
 #include "repmat.h"
 #include "rt_nonfinite.h"
 #include "runDE.h"
 #include "strcmp.h"
-#include "validate_print_arguments.h"
 #include "coder_array.h"
+#include <cmath>
 #include <stdio.h>
-
-// Function Declarations
-namespace RAT
-{
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, int32_T in2,
-    const j_struct_T *in3, const ::coder::array<real_T, 2U> &in4);
-  static void h_binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, const ::coder::array<boolean_T, 2U> &in3, const ::
-    coder::array<real_T, 2U> &in4, const ::coder::array<real_T, 2U> &in5, const ::
-    coder::array<real_T, 2U> &in6, const int32_T in7[2], real_T in8);
-}
 
 // Function Definitions
 namespace RAT
 {
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, int32_T in2,
-    const j_struct_T *in3, const ::coder::array<real_T, 2U> &in4)
-  {
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_1;
-    int32_T stride_1_1;
-    int32_T stride_2_1;
-    int32_T stride_3_1;
-    stride_0_1 = (in3->FVr_minbound.size(1) != 1);
-    stride_1_1 = (in4.size(1) != 1);
-    stride_2_1 = (in3->FVr_maxbound.size(1) != 1);
-    stride_3_1 = (in3->FVr_minbound.size(1) != 1);
-    if (in3->FVr_minbound.size(1) == 1) {
-      i = in3->FVr_maxbound.size(1);
-    } else {
-      i = in3->FVr_minbound.size(1);
-    }
-
-    if (i == 1) {
-      i = in4.size(1);
-    } else if (in3->FVr_minbound.size(1) == 1) {
-      i = in3->FVr_maxbound.size(1);
-    } else {
-      i = in3->FVr_minbound.size(1);
-    }
-
-    if (i == 1) {
-      loop_ub = in3->FVr_minbound.size(1);
-    } else {
-      if (in3->FVr_minbound.size(1) == 1) {
-        i = in3->FVr_maxbound.size(1);
-      } else {
-        i = in3->FVr_minbound.size(1);
-      }
-
-      if (i == 1) {
-        loop_ub = in4.size(1);
-      } else if (in3->FVr_minbound.size(1) == 1) {
-        loop_ub = in3->FVr_maxbound.size(1);
-      } else {
-        loop_ub = in3->FVr_minbound.size(1);
-      }
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      in1[in2 + in1.size(0) * i] = in3->FVr_minbound[i * stride_0_1] + in4[i *
-        stride_1_1] * (in3->FVr_maxbound[i * stride_2_1] - in3->FVr_minbound[i *
-                       stride_3_1]);
-    }
-  }
-
-  static void h_binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, const ::coder::array<boolean_T, 2U> &in3, const ::
-    coder::array<real_T, 2U> &in4, const ::coder::array<real_T, 2U> &in5, const ::
-    coder::array<real_T, 2U> &in6, const int32_T in7[2], real_T in8)
-  {
-    int32_T aux_0_1;
-    int32_T aux_1_1;
-    int32_T aux_2_1;
-    int32_T aux_3_1;
-    int32_T aux_4_1;
-    int32_T aux_5_1;
-    int32_T b_in5;
-    int32_T b_in7;
-    int32_T i;
-    int32_T i1;
-    int32_T loop_ub;
-    int32_T stride_0_0;
-    int32_T stride_0_1;
-    int32_T stride_1_0;
-    int32_T stride_1_1;
-    int32_T stride_2_0;
-    int32_T stride_2_1;
-    int32_T stride_3_0;
-    int32_T stride_3_1;
-    int32_T stride_4_0;
-    int32_T stride_4_1;
-    int32_T stride_5_0;
-    int32_T stride_5_1;
-    b_in5 = in5.size(1);
-    b_in7 = in7[1];
-    if (b_in7 == 1) {
-      i = b_in5;
-    } else {
-      i = b_in7;
-    }
-
-    if (in3.size(0) == 1) {
-      if (i == 1) {
-        i = in4.size(0);
-      } else if (b_in7 == 1) {
-        i = b_in5;
-      } else {
-        i = b_in7;
-      }
-    } else {
-      i = in3.size(0);
-    }
-
-    if (b_in7 == 1) {
-      i1 = b_in5;
-    } else {
-      i1 = b_in7;
-    }
-
-    if (i == 1) {
-      if (in3.size(0) == 1) {
-        i = in2.size(0);
-      } else {
-        i = in3.size(0);
-      }
-    } else if (in3.size(0) == 1) {
-      if (i1 == 1) {
-        i = in4.size(0);
-      } else if (b_in7 == 1) {
-        i = b_in5;
-      } else {
-        i = b_in7;
-      }
-    } else {
-      i = in3.size(0);
-    }
-
-    if (in3.size(1) == 1) {
-      if (in2.size(1) == 1) {
-        i1 = in4.size(1);
-      } else {
-        i1 = in2.size(1);
-      }
-    } else {
-      i1 = in3.size(1);
-    }
-
-    if (i1 == 1) {
-      if (in3.size(1) == 1) {
-        i1 = in2.size(1);
-      } else {
-        i1 = in3.size(1);
-      }
-    } else if (in3.size(1) == 1) {
-      if (in2.size(1) == 1) {
-        i1 = in4.size(1);
-      } else {
-        i1 = in2.size(1);
-      }
-    } else {
-      i1 = in3.size(1);
-    }
-
-    in1.set_size(i, i1);
-    stride_0_0 = (in2.size(0) != 1);
-    stride_0_1 = (in2.size(1) != 1);
-    stride_1_0 = (in3.size(0) != 1);
-    stride_1_1 = (in3.size(1) != 1);
-    stride_2_0 = (in4.size(0) != 1);
-    stride_2_1 = (in4.size(1) != 1);
-    stride_3_0 = (b_in5 != 1);
-    stride_3_1 = (in2.size(1) != 1);
-    stride_4_0 = (b_in7 != 1);
-    stride_4_1 = (in2.size(1) != 1);
-    stride_5_0 = (in3.size(0) != 1);
-    stride_5_1 = (in3.size(1) != 1);
-    aux_0_1 = 0;
-    aux_1_1 = 0;
-    aux_2_1 = 0;
-    aux_3_1 = 0;
-    aux_4_1 = 0;
-    aux_5_1 = 0;
-    if (in3.size(1) == 1) {
-      if (in2.size(1) == 1) {
-        i = in4.size(1);
-      } else {
-        i = in2.size(1);
-      }
-    } else {
-      i = in3.size(1);
-    }
-
-    if (i == 1) {
-      if (in3.size(1) == 1) {
-        loop_ub = in2.size(1);
-      } else {
-        loop_ub = in3.size(1);
-      }
-    } else if (in3.size(1) == 1) {
-      if (in2.size(1) == 1) {
-        loop_ub = in4.size(1);
-      } else {
-        loop_ub = in2.size(1);
-      }
-    } else {
-      loop_ub = in3.size(1);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      int32_T b_loop_ub;
-      int32_T i2;
-      i1 = in3.size(0);
-      b_loop_ub = in4.size(0);
-      if (b_in7 == 1) {
-        i2 = b_in5;
-      } else {
-        i2 = b_in7;
-      }
-
-      if (i1 == 1) {
-        if (i2 == 1) {
-          i2 = b_loop_ub;
-        } else if (b_in7 == 1) {
-          i2 = b_in5;
-        } else {
-          i2 = b_in7;
-        }
-      } else {
-        i2 = i1;
-      }
-
-      if (i2 == 1) {
-        if (i1 == 1) {
-          b_loop_ub = in2.size(0);
-        } else {
-          b_loop_ub = i1;
-        }
-      } else if (i1 == 1) {
-        if (b_in7 == 1) {
-          i1 = b_in5;
-        } else {
-          i1 = b_in7;
-        }
-
-        if (i1 != 1) {
-          if (b_in7 == 1) {
-            b_loop_ub = b_in5;
-          } else {
-            b_loop_ub = b_in7;
-          }
-        }
-      } else {
-        b_loop_ub = i1;
-      }
-
-      for (i1 = 0; i1 < b_loop_ub; i1++) {
-        in1[i1 + in1.size(0) * i] = in2[i1 * stride_0_0 + in2.size(0) * aux_0_1]
-          * static_cast<real_T>(static_cast<real_T>(in3[i1 * stride_1_0 +
-          in3.size(0) * aux_1_1]) < 0.5) + (in4[i1 * stride_2_0 + in4.size(0) *
-          aux_2_1] + (in2[(static_cast<int32_T>(in5[i1 * stride_3_0]) + in2.size
-                           (0) * aux_3_1) - 1] - in2[(static_cast<int32_T>
-          (in6[i1 * stride_4_0]) + in2.size(0) * aux_4_1) - 1]) * in8) *
-          static_cast<real_T>(in3[i1 * stride_5_0 + in3.size(0) * aux_5_1]);
-      }
-
-      aux_5_1 += stride_5_1;
-      aux_4_1 += stride_4_1;
-      aux_3_1 += stride_3_1;
-      aux_2_1 += stride_2_1;
-      aux_1_1 += stride_1_1;
-      aux_0_1 += stride_0_1;
-    }
-  }
-
-  void deopt(const c_struct_T *problem, const ::coder::array<cell_wrap_2, 2U>
+  void deopt(const d_struct_T *problem, const ::coder::array<cell_wrap_2, 2U>
              &problemCells_f1, const ::coder::array<cell_wrap_8, 2U>
              &problemCells_f2, const ::coder::array<cell_wrap_2, 2U>
              &problemCells_f3, const ::coder::array<cell_wrap_2, 2U>
@@ -312,21 +42,26 @@ namespace RAT
              int32_T controls_parallel_size[2], const real_T controls_resamPars
              [2], boolean_T controls_calcSldDuringFit, const char_T
              controls_display_data[], const int32_T controls_display_size[2],
-             const struct3_T *controls_checks, const j_struct_T *S_struct, ::
+             const struct3_T *controls_checks, const k_struct_T *S_struct, ::
              coder::array<real_T, 2U> &FVr_bestmem)
   {
-    ::coder::array<l_struct_T, 1U> S_val;
+    ::coder::array<struct_T, 1U> S_val;
     ::coder::array<real_T, 2U> FM_pm3;
     ::coder::array<real_T, 2U> FM_pop;
     ::coder::array<real_T, 2U> FM_ui;
     ::coder::array<real_T, 2U> FVr_a1;
     ::coder::array<real_T, 2U> FVr_a2;
     ::coder::array<real_T, 2U> FVr_a3;
+    ::coder::array<real_T, 2U> FVr_rot;
+    ::coder::array<real_T, 2U> FVr_rt;
     ::coder::array<real_T, 2U> b_FM_pop;
+    ::coder::array<real_T, 2U> b_FVr_rot;
     ::coder::array<real_T, 2U> r;
     ::coder::array<real_T, 2U> r1;
     ::coder::array<boolean_T, 2U> FM_mui;
-    c_struct_T b_problem;
+    d_struct_T b_problem;
+    real_T validatedHoleFilling[5];
+    real_T p[4];
     real_T F_CR;
     real_T I_D;
     real_T I_NP;
@@ -335,10 +70,11 @@ namespace RAT
     real_T S_bestval_FVr_oa;
     real_T b;
     real_T fWeight;
-    int32_T b_loop_ub_tmp;
+    int32_T iv[4];
     int32_T i;
     int32_T i1;
     int32_T i2;
+    int32_T k;
     int32_T loop_ub;
     int32_T loop_ub_tmp;
 
@@ -456,34 +192,19 @@ namespace RAT
     // ----FM_pop is a matrix of size I_NPx(I_D+1). It will be initialized------
     // ----with random values between the min and max values of the-------------
     // ----parameters-----------------------------------------------------------
-    loop_ub = S_struct->FVr_minbound.size(1);
-    for (int32_T k{0}; k < i; k++) {
+    for (k = 0; k < i; k++) {
       coder::b_rand(I_D, r);
-      if (S_struct->FVr_maxbound.size(1) == 1) {
-        i1 = S_struct->FVr_minbound.size(1);
-      } else {
-        i1 = S_struct->FVr_maxbound.size(1);
+      b_FM_pop.set_size(1, r.size(1));
+      loop_ub = r.size(1);
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b_FM_pop[i1] = r[i1];
       }
 
-      if (r.size(1) == 1) {
-        if (S_struct->FVr_maxbound.size(1) == 1) {
-          i2 = S_struct->FVr_minbound.size(1);
-        } else {
-          i2 = S_struct->FVr_maxbound.size(1);
-        }
-      } else {
-        i2 = r.size(1);
-      }
-
-      if ((S_struct->FVr_maxbound.size(1) == S_struct->FVr_minbound.size(1)) &&
-          (r.size(1) == i1) && (S_struct->FVr_minbound.size(1) == i2)) {
-        for (i1 = 0; i1 < loop_ub; i1++) {
-          b = S_struct->FVr_minbound[i1];
-          FM_pop[k + FM_pop.size(0) * i1] = b + r[i1] * (S_struct->
-            FVr_maxbound[i1] - b);
-        }
-      } else {
-        binary_expand_op(FM_pop, k, S_struct, r);
+      loop_ub = S_struct->FVr_minbound.size(1);
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b = S_struct->FVr_minbound[i1];
+        FM_pop[k + FM_pop.size(0) * i1] = b + b_FM_pop[i1] *
+          (S_struct->FVr_maxbound[i1] - b);
       }
     }
 
@@ -492,8 +213,8 @@ namespace RAT
     coder::repmat(I_NP, S_val);
 
     //  start with first population member
-    b_FM_pop.set_size(1, FM_pop.size(1));
     loop_ub = FM_pop.size(1);
+    b_FM_pop.set_size(1, FM_pop.size(1));
     for (i1 = 0; i1 < loop_ub; i1++) {
       b_FM_pop[i1] = FM_pop[FM_pop.size(0) * i1];
     }
@@ -508,15 +229,15 @@ namespace RAT
     S_bestval_FVr_oa = S_val[0].FVr_oa;
 
     //  best objective function value so far
-    b_loop_ub_tmp = static_cast<int32_T>(I_NP - 1.0);
-    loop_ub = FM_pop.size(1);
-    for (int32_T k{0}; k < b_loop_ub_tmp; k++) {
-      l_struct_T expl_temp;
+    i1 = static_cast<int32_T>(I_NP + -1.0);
+    for (k = 0; k < i1; k++) {
+      struct_T expl_temp;
 
       //  check the remaining members
+      loop_ub = FM_pop.size(1);
       b_FM_pop.set_size(1, FM_pop.size(1));
-      for (i1 = 0; i1 < loop_ub; i1++) {
-        b_FM_pop[i1] = FM_pop[(k + FM_pop.size(0) * i1) + 1];
+      for (i2 = 0; i2 < loop_ub; i2++) {
+        b_FM_pop[i2] = FM_pop[(k + FM_pop.size(0) * i2) + 1];
       }
 
       b_problem = *problem;
@@ -548,10 +269,27 @@ namespace RAT
     //  intermediate population of perturbed vectors
     //  mask for intermediate population
     //  mask for old population
+    if (I_NP - 1.0 < 0.0) {
+      FVr_rot.set_size(1, 0);
+    } else if (std::isinf(I_NP - 1.0) && (0.0 == I_NP - 1.0)) {
+      FVr_rot.set_size(1, 1);
+      FVr_rot[0] = rtNaN;
+    } else {
+      loop_ub = static_cast<int32_T>(std::floor(I_NP - 1.0));
+      FVr_rot.set_size(1, loop_ub + 1);
+      for (i1 = 0; i1 <= loop_ub; i1++) {
+        FVr_rot[i1] = i1;
+      }
+    }
+
     //  rotating index array (size I_NP)
     //  rotating index array (size I_D)
     //  another rotating index array
     //  rotating index array for exponential crossover
+    //  index array
+    //  index array
+    //  index array
+    //  index array
     //  index array
     FVr_bestmem.set_size(1, loop_ub_tmp);
     for (i1 = 0; i1 < loop_ub_tmp; i1++) {
@@ -559,12 +297,10 @@ namespace RAT
     }
 
     //
+    //
     // FM_pop = zeros(I_NP,2);
     I_iter = 1.0;
     while ((I_iter < I_itermax) && (S_bestval_FVr_oa > S_struct->F_VTR)) {
-      real_T p[4];
-      int32_T iv[4];
-      int32_T FVr_rt_size[2];
       int32_T b_FVr_a1;
 
       //  save the old population
@@ -587,33 +323,37 @@ namespace RAT
       }
 
       //  shuffle locations of vectors
-      r.set_size(1, static_cast<int32_T>(I_NP - 1.0) + 1);
-      for (i1 = 0; i1 <= b_loop_ub_tmp; i1++) {
-        r[i1] = rt_remd_snf(static_cast<real_T>(i1) + p[0], I_NP);
+      b_FVr_rot.set_size(1, FVr_rot.size(1));
+      loop_ub = FVr_rot.size(1);
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b_FVr_rot[i1] = FVr_rot[i1] + p[0];
       }
 
-      FVr_rt_size[0] = 1;
-      FVr_rt_size[1] = r.size(1);
-
-      //  rotate indices by ind(1) positions
-      r.set_size(1, static_cast<int32_T>(I_NP - 1.0) + 1);
-      for (i1 = 0; i1 <= b_loop_ub_tmp; i1++) {
-        r[i1] = rt_remd_snf(static_cast<real_T>(i1) + p[0], I_NP);
-      }
-
-      FVr_a2.set_size(1, r.size(1));
+      coder::b_rem(b_FVr_rot, I_NP, r);
+      FVr_rt.set_size(1, r.size(1));
       loop_ub = r.size(1);
       for (i1 = 0; i1 < loop_ub; i1++) {
-        FVr_a2[FVr_a2.size(0) * i1] = FVr_a1[static_cast<int32_T>(r[i1] + 1.0) -
-          1];
+        FVr_rt[FVr_rt.size(0) * i1] = r[i1];
+      }
+
+      //  rotate indices by ind(1) positions
+      FVr_a2.set_size(1, FVr_rt.size(1));
+      loop_ub = FVr_rt.size(1);
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        for (i2 = 0; i2 < 1; i2++) {
+          FVr_a2[FVr_a2.size(0) * i1] = FVr_a1[static_cast<int32_T>
+            (FVr_rt[FVr_rt.size(0) * i1] + 1.0) - 1];
+        }
       }
 
       //  rotate vector locations
-      r.set_size(1, static_cast<int32_T>(I_NP - 1.0) + 1);
-      for (i1 = 0; i1 <= b_loop_ub_tmp; i1++) {
-        r[i1] = rt_remd_snf(static_cast<real_T>(i1) + p[1], I_NP);
+      b_FVr_rot.set_size(1, FVr_rot.size(1));
+      loop_ub = FVr_rot.size(1);
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b_FVr_rot[i1] = FVr_rot[i1] + p[1];
       }
 
+      coder::b_rem(b_FVr_rot, I_NP, r);
       FVr_a3.set_size(1, r.size(1));
       loop_ub = r.size(1);
       for (i1 = 0; i1 < loop_ub; i1++) {
@@ -623,14 +363,17 @@ namespace RAT
 
       //  shuffled population 1
       //  shuffled population 2
-      r.set_size(1, static_cast<int32_T>(I_NP - 1.0) + 1);
-      for (i1 = 0; i1 <= b_loop_ub_tmp; i1++) {
-        r[i1] = rt_remd_snf(static_cast<real_T>(i1) + p[1], I_NP);
+      b_FVr_rot.set_size(1, FVr_rot.size(1));
+      loop_ub = FVr_rot.size(1);
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b_FVr_rot[i1] = FVr_rot[i1] + p[1];
       }
 
+      coder::b_rem(b_FVr_rot, I_NP, r);
       b_FVr_a1 = r.size(1);
-      FM_pm3.set_size(r.size(1), FM_pop.size(1));
       loop_ub = FM_pop.size(1);
+      coder::b_rem(b_FVr_rot, I_NP, r);
+      FM_pm3.set_size(r.size(1), FM_pop.size(1));
       for (i1 = 0; i1 < loop_ub; i1++) {
         for (i2 = 0; i2 < b_FVr_a1; i2++) {
           FM_pm3[i2 + FM_pm3.size(0) * i1] = FM_pop[(static_cast<int32_T>
@@ -668,66 +411,26 @@ namespace RAT
       b = (1.0 - fWeight) * coder::b_rand() + fWeight;
 
       //  differential variation
-      if (FM_pm3.size(0) == 1) {
-        i1 = FVr_a1.size(1);
-      } else {
-        i1 = FM_pm3.size(0);
-      }
-
-      if (FM_pm3.size(1) == 1) {
-        i2 = FM_pop.size(1);
-      } else {
-        i2 = FM_pm3.size(1);
-      }
-
-      if (FM_pop.size(1) == 1) {
-        b_FVr_a1 = FM_mui.size(1);
-      } else {
-        b_FVr_a1 = FM_pop.size(1);
-      }
-
-      if (FM_pm3.size(1) == 1) {
-        loop_ub = FM_pop.size(1);
-      } else {
-        loop_ub = FM_pm3.size(1);
-      }
-
-      if (loop_ub == 1) {
-        loop_ub = FM_mui.size(1);
-      } else if (FM_pm3.size(1) == 1) {
-        loop_ub = FM_pop.size(1);
-      } else {
-        loop_ub = FM_pm3.size(1);
-      }
-
-      if ((FM_pop.size(1) == FM_mui.size(1)) && (FVr_a1.size(1) == FVr_rt_size[1])
-          && (FM_pm3.size(0) == FVr_a1.size(1)) && (FM_pm3.size(1) ==
-           FM_pop.size(1)) && (i1 == FM_mui.size(0)) && (i2 == FM_mui.size(1)) &&
-          (FM_pop.size(0) == FM_mui.size(0)) && (b_FVr_a1 == loop_ub)) {
-        FM_ui.set_size(FM_pop.size(0), FM_pop.size(1));
-        loop_ub = FM_pop.size(1);
-        for (i1 = 0; i1 < loop_ub; i1++) {
-          b_FVr_a1 = FM_pop.size(0);
-          for (i2 = 0; i2 < b_FVr_a1; i2++) {
-            boolean_T b_b;
-            b_b = FM_mui[i2 + FM_mui.size(0) * i1];
-            FM_ui[i2 + FM_ui.size(0) * i1] = FM_pop[i2 + FM_pop.size(0) * i1] *
-              static_cast<real_T>(static_cast<real_T>(b_b) < 0.5) + (FM_pm3[i2 +
-              FM_pm3.size(0) * i1] + (FM_pop[(static_cast<int32_T>(FVr_a1[i2]) +
-              FM_pop.size(0) * i1) - 1] - FM_pop[(static_cast<int32_T>(FVr_a2[i2])
-              + FM_pop.size(0) * i1) - 1]) * b) * static_cast<real_T>(b_b);
-          }
+      FM_ui.set_size(FM_pop.size(0), FM_pop.size(1));
+      loop_ub = FM_pop.size(1);
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b_FVr_a1 = FM_pop.size(0);
+        for (i2 = 0; i2 < b_FVr_a1; i2++) {
+          boolean_T b_b;
+          b_b = FM_mui[i2 + FM_mui.size(0) * i1];
+          FM_ui[i2 + FM_ui.size(0) * i1] = FM_pop[i2 + FM_pop.size(0) * i1] *
+            static_cast<real_T>(static_cast<real_T>(b_b) < 0.5) + (FM_pm3[i2 +
+            FM_pm3.size(0) * i1] + (FM_pop[(static_cast<int32_T>(FVr_a1[i2]) +
+            FM_pop.size(0) * i1) - 1] - FM_pop[(static_cast<int32_T>(FVr_a2[i2])
+            + FM_pop.size(0) * i1) - 1]) * b) * static_cast<real_T>(b_b);
         }
-      } else {
-        h_binary_expand_op(FM_ui, FM_pop, FM_mui, FM_pm3, FVr_a1, FVr_a2,
-                           FVr_rt_size, b);
       }
 
       //  crossover
       // -----Optional parent+child selection-----------------------------------------
       // -----Select which vectors are allowed to enter the new population------------
-      for (int32_T k{0}; k < i; k++) {
-        l_struct_T S_tempval;
+      for (k = 0; k < i; k++) {
+        struct_T S_tempval;
 
         // =====Only use this if boundary constraints are needed==================
         for (int32_T j{0}; j < loop_ub_tmp; j++) {
@@ -797,9 +500,8 @@ namespace RAT
       // ----Output section----------------------------------------------------------
       if (((rt_remd_snf(I_iter, 1.0) == 0.0) || (I_iter == 1.0)) && coder::
           internal::w_strcmp(controls_display_data, controls_display_size)) {
-        real_T validatedHoleFilling[5];
-        coder::internal::validate_print_arguments(I_iter, S_bestval_FVr_oa,
-          fWeight, F_CR, I_NP, validatedHoleFilling);
+        coder::internal::print_processing(I_iter, S_bestval_FVr_oa, fWeight,
+          F_CR, I_NP, validatedHoleFilling);
         printf("Iteration: %g,  Best: %f,  fWeight: %f,  F_CR: %f,  I_NP: %g\n\n",
                validatedHoleFilling[0], validatedHoleFilling[1],
                validatedHoleFilling[2], validatedHoleFilling[3],

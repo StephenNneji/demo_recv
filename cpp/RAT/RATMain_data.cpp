@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // RATMain_data.cpp
 //
@@ -22,7 +22,7 @@ namespace RAT
   boolean_T lastNchar_not_empty;
   real_T freq;
   boolean_T freq_not_empty;
-  omp_nest_lock_t RATMain_nestLockGlobal;
+  omp_nest_lock_t emlrtNestLockGlobal;
   const char_T cv[128]{ '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06',
     '\x07', '\x08', '\x09', '\x0a', '\x0b', '\x0c', '\x0d', '\x0e', '\x0f',
     '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17', '\x18',
@@ -34,6 +34,8 @@ namespace RAT
     '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
     'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}',
     '~', '\x7f' };
+
+  const char_T cv1[9]{ 'c', 'a', 'l', 'c', 'u', 'l', 'a', 't', 'e' };
 
   const real_T dv[257]{ 0.0, 0.215241895984875, 0.286174591792068,
     0.335737519214422, 0.375121332878378, 0.408389134611989, 0.43751840220787,
@@ -170,8 +172,6 @@ namespace RAT
     0.00861658276939875, 0.00705087547137324, 0.00552240329925101,
     0.00403797259336304, 0.00260907274610216, 0.0012602859304986,
     0.000477467764609386 };
-
-  const char_T cv1[9]{ 'c', 'a', 'l', 'c', 'u', 'l', 'a', 't', 'e' };
 }
 
 // End of code generation (RATMain_data.cpp)

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // RATMain_initialize.cpp
 //
@@ -19,14 +19,13 @@
 #include "textProgressBar.h"
 #include "timeKeeper.h"
 #include "triggerEvent.h"
-#include "omp.h"
 
 // Function Definitions
 namespace RAT
 {
   void RATMain_initialize()
   {
-    omp_init_nest_lock(&RATMain_nestLockGlobal);
+    omp_init_nest_lock(&emlrtNestLockGlobal);
     savedTime_not_empty_init();
     freq_not_empty_init();
     lastNchar_not_empty_init();

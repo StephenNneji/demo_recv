@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // ratDREAM.cpp
 //
@@ -12,7 +12,6 @@
 #include "ratDREAM.h"
 #include "RATMain_data.h"
 #include "RATMain_internal_types.h"
-#include "RATMain_rtwutil.h"
 #include "RATMain_types.h"
 #include "adaptPCR.h"
 #include "blockedSummation.h"
@@ -27,16 +26,15 @@
 #include "initializeDREAM.h"
 #include "metropolisRule.h"
 #include "mod.h"
+#include "power.h"
 #include "removeOutlier.h"
 #include "repmat.h"
 #include "rt_nonfinite.h"
 #include "setupDREAM.h"
 #include "std.h"
-#include "sum.h"
 #include "textProgressBar.h"
 #include "tic.h"
 #include "toc.h"
-#include "unsafeSxfun.h"
 #include "coder_array.h"
 #include "coder_bounded_array.h"
 #include <algorithm>
@@ -46,7 +44,7 @@
 // Type Definitions
 namespace RAT
 {
-  struct h_struct_T
+  struct i_struct_T
   {
     char_T prior[7];
     ::coder::array<real_T, 2U> min;
@@ -65,7 +63,7 @@ namespace RAT
                 const ::coder::array<real_T, 2U> &Par_info_min, const ::coder::
                 array<real_T, 2U> &Par_info_max, const char_T
                 Par_info_boundhandling_data[], const int32_T
-                Par_info_boundhandling_size[2], const c_struct_T
+                Par_info_boundhandling_size[2], const d_struct_T
                 *ratInputs_problemStruct, const cell_11 *ratInputs_problemCells,
                 const struct2_T *ratInputs_controls, const ::coder::array<real_T,
                 2U> &ratInputs_priors, ::coder::array<real_T, 3U> &chain,
@@ -75,27 +73,29 @@ namespace RAT
     ::coder::array<real_T, 2U> CR;
     ::coder::array<real_T, 2U> Table_gamma;
     ::coder::array<real_T, 2U> X;
+    ::coder::array<real_T, 2U> b_X;
     ::coder::array<real_T, 2U> b_r;
-    ::coder::array<real_T, 2U> b_xnew;
+    ::coder::array<real_T, 2U> e_X;
     ::coder::array<real_T, 2U> fx_new;
     ::coder::array<real_T, 2U> log_L;
     ::coder::array<real_T, 2U> r;
     ::coder::array<real_T, 2U> r1;
-    ::coder::array<real_T, 2U> x;
     ::coder::array<real_T, 2U> xnew;
     ::coder::array<real_T, 2U> xold;
-    ::coder::array<real_T, 1U> b_X;
     ::coder::array<real_T, 1U> c_X;
+    ::coder::array<real_T, 1U> d_X;
     ::coder::array<real_T, 1U> delta_normX;
     ::coder::array<real_T, 1U> idx_ac;
     ::coder::array<real_T, 1U> log_L_xnew;
     ::coder::array<real_T, 1U> log_PR_xnew;
     ::coder::array<int32_T, 1U> r2;
+    ::coder::array<boolean_T, 1U> CR_data;
     ::coder::array<boolean_T, 1U> accept;
-    ::coder::array<boolean_T, 1U> b_CR_data;
-    h_struct_T Par_info;
+    i_struct_T Par_info;
     struct13_T DREAMPar;
     struct14_T Meas_info;
+    real_T tmp_data[100];
+    real_T b_lCR_data[3];
     real_T delta_tot_data[3];
     real_T lCR_data[3];
     real_T pCR_data[3];
@@ -108,7 +108,7 @@ namespace RAT
     int32_T iteration;
     int32_T loop_ub;
     uint32_T iloc;
-    boolean_T CR_data[100];
+    boolean_T b_CR_data[100];
 
     //  Modified version of Vrugt DREAm algorithm to be specific for RAT....
     //  ----------------------------------------------------------------------------------------------%
@@ -123,6 +123,7 @@ namespace RAT
     //  DDD          DDD   RRRRRRRRRRRRRR     EEEEEEEEEEEEEEEE    AAAAAAAAAAA    MMM    MMMM     MMM  %
     //  DDD          DDD   RRR          RR    EEE                AAA       AAA   MMM             MMM  %
     //  DDD          DDD   RRR          RRR   EEE                AAA       AAA   MMM             MMM  %
+    //  DDD          DDD   RRR          RRR   EEE               AAA         AAA  MMM             MMM  %
     //  DDD          DDD   RRR          RRR   EEE               AAA         AAA  MMM             MMM  %
     //  DDDDDDDDDDDDDDDD   RRR          RRR   EEEEEEEEEEEEEEEE  AAA         AAA  MMM             MMM  %
     //  DDDDDDDDDDDDDDD    RRR          RRR   EEEEEEEEEEEEEEEE  AAA         AAA  MMM             MMM  %
@@ -258,15 +259,17 @@ namespace RAT
     Par_info.boundhandling.size[0] = 1;
     Par_info.boundhandling.size[1] = Par_info_boundhandling_size[1];
     loop_ub = Par_info_boundhandling_size[1];
-    if (loop_ub - 1 >= 0) {
+    if (0 <= loop_ub - 1) {
       std::copy(&Par_info_boundhandling_data[0],
                 &Par_info_boundhandling_data[loop_ub],
                 &Par_info.boundhandling.data[0]);
     }
 
+    Meas_info.Y = 0.0;
+    Meas_info.N = 0.0;
     setupDREAM(dreamVariables_d, dreamVariables_N, dreamVariables_T,
                dreamVariables_lambda, dreamVariables_pUnitGamma,
-               dreamVariables_adaptPCR, &DREAMPar, &Meas_info, chain, output,
+               dreamVariables_adaptPCR, &Meas_info, &DREAMPar, chain, output,
                log_L, Table_gamma);
     iloc = 1U;
     iteration = 1;
@@ -357,10 +360,9 @@ namespace RAT
     coder::tic();
 
     //  Now start iteration ...
-    i = static_cast<int32_T>(DREAMPar.T - 1.0);
+    i = static_cast<int32_T>(DREAMPar.T + -1.0);
     for (int32_T t{0}; t < i; t++) {
-      real_T tmp_data[100];
-      real_T varargin_1;
+      real_T j;
       int32_T b_loop_ub;
       int32_T i1;
       int32_T i2;
@@ -372,28 +374,36 @@ namespace RAT
       boolean_T empty_non_axis_sizes;
 
       //  Unoack current state of chain and associated log-likelihood and log-prior values
-      if (X.size(1) - 2 < 1) {
+      if (1.0 > static_cast<real_T>(X.size(1)) - 2.0) {
         loop_ub = 0;
       } else {
         loop_ub = X.size(1) - 2;
       }
 
+      b_loop_ub = X.size(0);
       xold.set_size(X.size(0), loop_ub);
       for (i1 = 0; i1 < loop_ub; i1++) {
-        b_loop_ub = X.size(0);
         for (i2 = 0; i2 < b_loop_ub; i2++) {
           xold[i2 + xold.size(0) * i1] = X[i2 + X.size(0) * i1];
         }
       }
 
       //  Now generate candidate in each sequence using current point and members of X
-      loop_ub = CR.size(0);
+      b_loop_ub = CR.size(0);
       tmp_size = CR.size(0);
-      for (i1 = 0; i1 < loop_ub; i1++) {
+      for (i1 = 0; i1 < b_loop_ub; i1++) {
         tmp_data[i1] = CR[i1 + CR.size(0) * gen];
       }
 
-      calcProposal(xold, tmp_data, &DREAMPar, Table_gamma, Par_info.min,
+      b_loop_ub = X.size(0);
+      b_X.set_size(X.size(0), loop_ub);
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        for (i2 = 0; i2 < b_loop_ub; i2++) {
+          b_X[i2 + b_X.size(0) * i1] = X[i2 + X.size(0) * i1];
+        }
+      }
+
+      calcProposal(b_X, tmp_data, &DREAMPar, Table_gamma, Par_info.min,
                    Par_info.max, Par_info.boundhandling.data,
                    Par_info.boundhandling.size, xnew);
       for (i1 = 0; i1 < tmp_size; i1++) {
@@ -411,18 +421,18 @@ namespace RAT
       //  Calculate the Metropolis ratio
       tmp_size = X.size(1);
       loop_ub = X.size(0);
-      b_X.set_size(X.size(0));
       c_X.set_size(X.size(0));
+      d_X.set_size(X.size(0));
       for (i1 = 0; i1 < loop_ub; i1++) {
-        b_X[i1] = X[i1 + X.size(0) * (tmp_size - 1)];
-        c_X[i1] = X[i1 + X.size(0) * (tmp_size - 2)];
+        c_X[i1] = X[i1 + X.size(0) * (tmp_size - 1)];
+        d_X[i1] = X[i1 + X.size(0) * (tmp_size - 2)];
       }
 
-      metropolisRule(&DREAMPar, log_L_xnew, log_PR_xnew, b_X, c_X, accept,
+      metropolisRule(&DREAMPar, log_L_xnew, log_PR_xnew, c_X, d_X, accept,
                      idx_ac);
 
       //  And update X and the model simulation
-      if (DREAMPar.d < 1.0) {
+      if (1.0 > DREAMPar.d) {
         loop_ub = 0;
       } else {
         loop_ub = static_cast<int32_T>(DREAMPar.d);
@@ -455,28 +465,28 @@ namespace RAT
         sizes_idx_1 = 0;
       }
 
-      b_xnew.set_size(idx_ac.size(0), loop_ub);
+      b_X.set_size(idx_ac.size(0), loop_ub);
       for (i1 = 0; i1 < loop_ub; i1++) {
         b_loop_ub = idx_ac.size(0);
         for (i2 = 0; i2 < b_loop_ub; i2++) {
-          b_xnew[i2 + b_xnew.size(0) * i1] = xnew[(static_cast<int32_T>
-            (idx_ac[i2]) + xnew.size(0) * i1) - 1];
+          b_X[i2 + b_X.size(0) * i1] = xnew[(static_cast<int32_T>(idx_ac[i2]) +
+            xnew.size(0) * i1) - 1];
         }
       }
 
       loop_ub = idx_ac.size(0);
+      d_X.set_size(idx_ac.size(0));
       c_X.set_size(idx_ac.size(0));
-      b_X.set_size(idx_ac.size(0));
       for (i1 = 0; i1 < loop_ub; i1++) {
         tmp_size = static_cast<int32_T>(idx_ac[i1]) - 1;
-        c_X[i1] = log_PR_xnew[tmp_size];
-        b_X[i1] = log_L_xnew[tmp_size];
+        d_X[i1] = log_PR_xnew[tmp_size];
+        c_X[i1] = log_L_xnew[tmp_size];
       }
 
       for (i1 = 0; i1 < input_sizes_idx_1; i1++) {
         for (i2 = 0; i2 < result; i2++) {
-          X[(static_cast<int32_T>(idx_ac[i2]) + X.size(0) * i1) - 1] = b_xnew[i2
-            + result * i1];
+          X[(static_cast<int32_T>(idx_ac[i2]) + X.size(0) * i1) - 1] = b_X[i2 +
+            result * i1];
         }
       }
 
@@ -484,7 +494,7 @@ namespace RAT
       for (i1 = 0; i1 < loop_ub; i1++) {
         for (i2 = 0; i2 < result; i2++) {
           X[(static_cast<int32_T>(idx_ac[i2]) + X.size(0) * input_sizes_idx_1) -
-            1] = c_X[i2];
+            1] = d_X[i2];
         }
       }
 
@@ -492,7 +502,7 @@ namespace RAT
       for (i1 = 0; i1 < loop_ub; i1++) {
         for (i2 = 0; i2 < result; i2++) {
           X[(static_cast<int32_T>(idx_ac[i2]) + X.size(0) * (input_sizes_idx_1 +
-              b_input_sizes_idx_1)) - 1] = b_X[i2];
+              b_input_sizes_idx_1)) - 1] = c_X[i2];
         }
       }
 
@@ -507,11 +517,11 @@ namespace RAT
         //  Store the current sample in chain
         iloc++;
         loop_ub = X.size(0);
-        b_xnew.set_size(X.size(1), X.size(0));
+        e_X.set_size(X.size(1), X.size(0));
         for (i1 = 0; i1 < loop_ub; i1++) {
           b_loop_ub = X.size(1);
           for (i2 = 0; i2 < b_loop_ub; i2++) {
-            b_xnew[i2 + b_xnew.size(0) * i1] = X[i1 + X.size(0) * i2];
+            e_X[i2 + e_X.size(0) * i1] = X[i1 + X.size(0) * i2];
           }
         }
 
@@ -520,8 +530,8 @@ namespace RAT
         for (i1 = 0; i1 < loop_ub; i1++) {
           for (i2 = 0; i2 < tmp_size; i2++) {
             chain[((static_cast<int32_T>(iloc) + chain.size(0) * i2) +
-                   chain.size(0) * chain.size(1) * i1) - 1] = b_xnew[i2 +
-              tmp_size * i1];
+                   chain.size(0) * chain.size(1) * i1) - 1] = e_X[i2 + tmp_size *
+              i1];
           }
         }
 
@@ -534,108 +544,93 @@ namespace RAT
       //  Check whether we update the crossover values
       if (DREAMPar.adaptPCR) {
         //  Calculate the standard deviation of each dimension of X
-        if (DREAMPar.N < 1.0) {
+        if (1.0 > DREAMPar.N) {
           loop_ub = 0;
         } else {
           loop_ub = static_cast<int32_T>(DREAMPar.N);
         }
 
-        if (DREAMPar.d < 1.0) {
+        if (1.0 > DREAMPar.d) {
           b_loop_ub = 0;
         } else {
           b_loop_ub = static_cast<int32_T>(DREAMPar.d);
         }
 
-        b_xnew.set_size(loop_ub, b_loop_ub);
+        e_X.set_size(loop_ub, b_loop_ub);
         for (i1 = 0; i1 < b_loop_ub; i1++) {
           for (i2 = 0; i2 < loop_ub; i2++) {
-            b_xnew[i2 + b_xnew.size(0) * i1] = X[i2 + X.size(0) * i1];
+            e_X[i2 + e_X.size(0) * i1] = X[i2 + X.size(0) * i1];
           }
         }
 
-        coder::b_std(b_xnew, r);
+        coder::b_std(e_X, r);
         coder::repmat(r, DREAMPar.N, b_r);
 
         //  Compute the Euclidean distance between new X and old X
-        if (xold.size(0) < 1) {
+        if (1 > xold.size(0)) {
           loop_ub = 0;
         } else {
           loop_ub = xold.size(0);
         }
 
-        if (DREAMPar.d < 1.0) {
+        if (1.0 > DREAMPar.d) {
           b_loop_ub = 0;
         } else {
           b_loop_ub = static_cast<int32_T>(DREAMPar.d);
         }
 
-        if (X.size(0) < 1) {
-          i1 = 0;
-        } else {
-          i1 = X.size(0);
-        }
-
-        if (DREAMPar.d < 1.0) {
-          i2 = 0;
-        } else {
-          i2 = static_cast<int32_T>(DREAMPar.d);
-        }
-
-        if (loop_ub == 1) {
-          tmp_size = i1;
-        } else {
-          tmp_size = loop_ub;
-        }
-
-        if (b_loop_ub == 1) {
-          result = i2;
-        } else {
-          result = b_loop_ub;
-        }
-
-        if ((loop_ub == i1) && (b_loop_ub == i2) && (tmp_size == b_r.size(0)) &&
-            (result == b_r.size(1))) {
-          x.set_size(loop_ub, b_loop_ub);
-          for (i1 = 0; i1 < b_loop_ub; i1++) {
-            for (i2 = 0; i2 < loop_ub; i2++) {
-              varargin_1 = (xold[i2 + xold.size(0) * i1] - X[i2 + X.size(0) * i1])
-                / b_r[i2 + b_r.size(0) * i1];
-              x[i2 + x.size(0) * i1] = rt_powd_snf(varargin_1, 2.0);
-            }
+        for (i1 = 0; i1 < b_loop_ub; i1++) {
+          for (i2 = 0; i2 < loop_ub; i2++) {
+            xold[i2 + loop_ub * i1] = (xold[i2 + xold.size(0) * i1] - X[i2 +
+              X.size(0) * i1]) / b_r[i2 + b_r.size(0) * i1];
           }
-        } else {
-          binary_expand_op(x, xold, loop_ub - 1, b_loop_ub - 1, X, i1 - 1, i2 -
-                           1, b_r);
+        }
+
+        xold.set_size(loop_ub, b_loop_ub);
+        coder::b_power(xold, b_X);
+        e_X.set_size(b_X.size(0), b_X.size(1));
+        loop_ub = b_X.size(1);
+        for (i1 = 0; i1 < loop_ub; i1++) {
+          b_loop_ub = b_X.size(0);
+          for (i2 = 0; i2 < b_loop_ub; i2++) {
+            e_X[i2 + e_X.size(0) * i1] = b_X[i2 + b_X.size(0) * i1];
+          }
         }
 
         //  Use this information to update sum_p2 to update N_CR
-        if (DREAMPar.N < 1.0) {
+        if (1.0 > DREAMPar.N) {
           loop_ub = 0;
         } else {
           loop_ub = static_cast<int32_T>(DREAMPar.N);
         }
 
-        coder::blockedSummation(x, x.size(1), b_X);
+        coder::blockedSummation(e_X, e_X.size(1), c_X);
 
         //  Calculate total normalized Euclidean distance for each crossover value
         //  Derive sum_p2 for each different CR value
-        for (int32_T j{0}; j < 3; j++) {
+        for (int32_T b_j{0}; b_j < 3; b_j++) {
           //  Find which chains are updated with j/DREAMPar.nCR
           //  Add the normalized squared distance tot the current delta_tot;
-          varargin_1 = (static_cast<real_T>(j) + 1.0) / 3.0;
+          j = (static_cast<real_T>(b_j) + 1.0) / 3.0;
           for (i1 = 0; i1 < loop_ub; i1++) {
-            CR_data[i1] = (CR[i1 + CR.size(0) * gen] == varargin_1);
+            b_CR_data[i1] = (CR[i1 + CR.size(0) * gen] == j);
           }
 
-          b_CR_data.set(&CR_data[0], loop_ub);
-          coder::eml_find(b_CR_data, r2);
+          CR_data.set(&b_CR_data[0], loop_ub);
+          coder::eml_find(CR_data, r2);
           delta_normX.set_size(r2.size(0));
           b_loop_ub = r2.size(0);
           for (i1 = 0; i1 < b_loop_ub; i1++) {
-            delta_normX[i1] = b_X[r2[i1] - 1];
+            delta_normX[i1] = c_X[r2[i1] - 1];
           }
 
-          delta_tot_data[j] += coder::sum(delta_normX);
+          if (delta_normX.size(0) == 0) {
+            j = 0.0;
+          } else {
+            j = coder::nestedIter(delta_normX, delta_normX.size(0));
+          }
+
+          delta_tot_data[b_j] += j;
         }
       }
 
@@ -646,14 +641,14 @@ namespace RAT
       totaccept += static_cast<real_T>(coder::c_combineVectorElements(accept));
 
       //  Update log_L
-      if (DREAMPar.N < 1.0) {
+      if (1.0 > DREAMPar.N) {
         loop_ub = 0;
       } else {
         loop_ub = static_cast<int32_T>(DREAMPar.N);
       }
 
-      varargin_1 = (static_cast<real_T>(t) + 2.0) * DREAMPar.N;
-      log_L[t + 1] = varargin_1;
+      j = (static_cast<real_T>(t) + 2.0) * DREAMPar.N;
+      log_L[t + 1] = j;
       for (i1 = 0; i1 < loop_ub; i1++) {
         log_L[(t + log_L.size(0) * (i1 + 1)) + 1] = X[i1 + X.size(0) * (
           static_cast<int32_T>(DREAMPar.d + 2.0) - 1)];
@@ -668,15 +663,13 @@ namespace RAT
         int32_T start_idx;
 
         //  Save some important output -- Acceptance Rate
-        output->AR.data[iteration] = varargin_1;
+        output->AR.data[iteration] = j;
         output->AR.data[iteration + output->AR.size[0]] = 100.0 * totaccept /
           (DREAMPar.N * DREAMPar.steps);
 
         //  Check whether to update individual pCR values
         if (static_cast<real_T>(t) + 2.0 <= DREAMPar.T / 10.0) {
           if (DREAMPar.adaptPCR) {
-            real_T b_lCR_data[3];
-
             //  Update pCR values
             for (i1 = 0; i1 < 3; i1++) {
               b_lCR_data[i1] = lCR_data[i1];
@@ -687,7 +680,7 @@ namespace RAT
           }
         } else {
           //  See whether there are any outlier chains, and remove them to current best value of X
-          if (DREAMPar.N + 1.0 < 2.0) {
+          if (2.0 > DREAMPar.N + 1.0) {
             i1 = 0;
             i2 = 0;
           } else {
@@ -696,15 +689,15 @@ namespace RAT
           }
 
           loop_ub = i2 - i1;
-          x.set_size(t + 2, loop_ub);
+          e_X.set_size(t + 2, loop_ub);
           for (i2 = 0; i2 < loop_ub; i2++) {
             for (result = 0; result <= t + 1; result++) {
-              x[result + x.size(0) * i2] = log_L[result + log_L.size(0) * (i1 +
-                i2)];
+              e_X[result + e_X.size(0) * i2] = log_L[result + log_L.size(0) *
+                (i1 + i2)];
             }
           }
 
-          removeOutlier(X, x, output->outlier.data, output->outlier.size,
+          removeOutlier(X, e_X, output->outlier.data, output->outlier.size,
                         &DREAMPar, r1);
           output->outlier.size[0] = r1.size(0);
           output->outlier.size[1] = r1.size(1);
@@ -717,19 +710,19 @@ namespace RAT
             }
           }
 
-          i1 = !(DREAMPar.N + 1.0 < 2.0);
-          loop_ub = x.size(1);
+          i1 = !(2.0 > DREAMPar.N + 1.0);
+          loop_ub = e_X.size(1);
           for (i2 = 0; i2 < loop_ub; i2++) {
-            b_loop_ub = x.size(0);
+            b_loop_ub = e_X.size(0);
             for (result = 0; result < b_loop_ub; result++) {
-              log_L[result + log_L.size(0) * (i1 + i2)] = x[result + x.size(0) *
-                i2];
+              log_L[result + log_L.size(0) * (i1 + i2)] = e_X[result + e_X.size
+                (0) * i2];
             }
           }
         }
 
         //  Store diagnostic information -- Probability of individual crossover values
-        output->CR[iteration] = varargin_1;
+        output->CR[iteration] = j;
         output->CR[iteration + output->CR.size(0)] = pCR_data[0];
         output->CR[iteration + output->CR.size(0) * 2] = pCR_data[1];
         output->CR[iteration + output->CR.size(0) * 3] = pCR_data[2];
@@ -750,13 +743,13 @@ namespace RAT
           i2 = static_cast<int32_T>(iloc);
         }
 
-        if (DREAMPar.d < 1.0) {
+        if (1.0 > DREAMPar.d) {
           loop_ub = 0;
         } else {
           loop_ub = static_cast<int32_T>(DREAMPar.d);
         }
 
-        if (DREAMPar.N < 1.0) {
+        if (1.0 > DREAMPar.N) {
           b_loop_ub = 0;
         } else {
           b_loop_ub = static_cast<int32_T>(DREAMPar.N);
@@ -777,7 +770,7 @@ namespace RAT
         }
 
         gelman(b_chain, &DREAMPar, r);
-        output->R_stat[iteration] = varargin_1;
+        output->R_stat[iteration] = j;
         loop_ub = r.size(1);
         for (i1 = 0; i1 < loop_ub; i1++) {
           output->R_stat[iteration + output->R_stat.size(0) * (i1 + 1)] = r[i1];

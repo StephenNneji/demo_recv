@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xgehrd.cpp
 //
@@ -54,7 +54,7 @@ namespace RAT
             in = (b_i + 1) * n;
             alpha1 = a[(b_i + a.size(0) * b_i) + 1];
             unnamed_idx_0 = b_i + 3;
-            if (unnamed_idx_0 > n) {
+            if (unnamed_idx_0 >= n) {
               unnamed_idx_0 = n;
             }
 

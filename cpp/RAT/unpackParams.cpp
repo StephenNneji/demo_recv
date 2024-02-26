@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // unpackParams.cpp
 //
@@ -17,7 +17,7 @@
 // Function Definitions
 namespace RAT
 {
-  void unpackParams(c_struct_T *problemStruct, const ::coder::array<real_T, 2U>
+  void unpackParams(d_struct_T *problemStruct, const ::coder::array<real_T, 2U>
                     &controls_checks_fitParam, const ::coder::array<real_T, 2U>
                     &controls_checks_fitBackgroundParam, const ::coder::array<
                     real_T, 2U> &controls_checks_fitQzshift, const ::coder::
@@ -29,6 +29,7 @@ namespace RAT
                     &controls_checks_fitDomainRatio)
   {
     ::coder::array<real_T, 2U> uppars;
+    int32_T b_i;
     int32_T i;
     int32_T unnamed_idx_1;
     int32_T uppars_counter;
@@ -48,7 +49,7 @@ namespace RAT
     }
 
     i = controls_checks_fitParam.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       if (controls_checks_fitParam[b_i] == 1.0) {
         uppars[uppars_counter] = problemStruct->fitParams[static_cast<int32_T>
           (unpacked_counter) - 1];
@@ -77,7 +78,7 @@ namespace RAT
 
     uppars_counter = 0;
     i = controls_checks_fitBackgroundParam.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       if (controls_checks_fitBackgroundParam[b_i] == 1.0) {
         uppars[uppars_counter] = problemStruct->fitParams[static_cast<int32_T>
           (unpacked_counter) - 1];
@@ -106,7 +107,7 @@ namespace RAT
 
     uppars_counter = 0;
     i = controls_checks_fitScalefactor.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       if (controls_checks_fitScalefactor[b_i] == 1.0) {
         uppars[uppars_counter] = problemStruct->fitParams[static_cast<int32_T>
           (unpacked_counter) - 1];
@@ -135,7 +136,7 @@ namespace RAT
 
     uppars_counter = 0;
     i = controls_checks_fitQzshift.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       if (controls_checks_fitQzshift[b_i] == 1.0) {
         uppars[uppars_counter] = problemStruct->fitParams[static_cast<int32_T>
           (unpacked_counter) - 1];
@@ -164,7 +165,7 @@ namespace RAT
 
     uppars_counter = 0;
     i = controls_checks_fitBulkIn.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       if (controls_checks_fitBulkIn[b_i] == 1.0) {
         uppars[uppars_counter] = problemStruct->fitParams[static_cast<int32_T>
           (unpacked_counter) - 1];
@@ -193,7 +194,7 @@ namespace RAT
 
     uppars_counter = 0;
     i = controls_checks_fitBulkOut.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       if (controls_checks_fitBulkOut[b_i] == 1.0) {
         uppars[uppars_counter] = problemStruct->fitParams[static_cast<int32_T>
           (unpacked_counter) - 1];
@@ -222,7 +223,7 @@ namespace RAT
 
     uppars_counter = 0;
     i = controls_checks_fitResolutionParam.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       if (controls_checks_fitResolutionParam[b_i] == 1.0) {
         uppars[uppars_counter] = problemStruct->fitParams[static_cast<int32_T>
           (unpacked_counter) - 1];
@@ -251,7 +252,7 @@ namespace RAT
 
     uppars_counter = 0;
     i = controls_checks_fitDomainRatio.size(1);
-    for (int32_T b_i{0}; b_i < i; b_i++) {
+    for (b_i = 0; b_i < i; b_i++) {
       if (controls_checks_fitDomainRatio[b_i] == 1.0) {
         uppars[uppars_counter] = problemStruct->fitParams[static_cast<int32_T>
           (unpacked_counter) - 1];

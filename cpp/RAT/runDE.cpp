@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // runDE.cpp
 //
@@ -27,29 +27,30 @@
 // Function Definitions
 namespace RAT
 {
-  l_struct_T intrafun(const ::coder::array<real_T, 2U> &p, c_struct_T
-                      *problemStruct, const char_T controls_parallel_data[],
-                      const int32_T controls_parallel_size[2], const real_T
-                      controls_resamPars[2], boolean_T controls_calcSldDuringFit,
-                      const struct3_T *controls_checks, const ::coder::array<
-                      cell_wrap_2, 2U> &problemCells_f1, const ::coder::array<
-                      cell_wrap_8, 2U> &problemCells_f2, const ::coder::array<
-                      cell_wrap_2, 2U> &problemCells_f3, const ::coder::array<
-                      cell_wrap_2, 2U> &problemCells_f4, const ::coder::array<
-                      cell_wrap_8, 2U> &problemCells_f5, const ::coder::array<
-                      cell_wrap_8, 1U> &problemCells_f6, const ::coder::array<
-                      cell_wrap_1, 2U> &problemCells_f14, const ::coder::array<
-                      cell_wrap_8, 2U> &problemCells_f19)
+  struct_T intrafun(const ::coder::array<real_T, 2U> &p, d_struct_T
+                    *problemStruct, const char_T controls_parallel_data[], const
+                    int32_T controls_parallel_size[2], const real_T
+                    controls_resamPars[2], boolean_T controls_calcSldDuringFit,
+                    const struct3_T *controls_checks, const ::coder::array<
+                    cell_wrap_2, 2U> &problemCells_f1, const ::coder::array<
+                    cell_wrap_8, 2U> &problemCells_f2, const ::coder::array<
+                    cell_wrap_2, 2U> &problemCells_f3, const ::coder::array<
+                    cell_wrap_2, 2U> &problemCells_f4, const ::coder::array<
+                    cell_wrap_8, 2U> &problemCells_f5, const ::coder::array<
+                    cell_wrap_8, 1U> &problemCells_f6, const ::coder::array<
+                    cell_wrap_1, 2U> &problemCells_f14, const ::coder::array<
+                    cell_wrap_8, 2U> &problemCells_f19)
   {
     cell_11 expl_temp;
     cell_wrap_9 a__2[6];
-    d_struct_T b_problemStruct;
-    l_struct_T S_MSE;
+    e_struct_T b_problemStruct;
     struct2_T b_expl_temp;
+    struct_T S_MSE;
+    int32_T i;
     int32_T loop_ub;
     problemStruct->fitParams.set_size(1, p.size(1));
     loop_ub = p.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       problemStruct->fitParams[problemStruct->fitParams.size(0) * i] = p[i];
     }
 
@@ -61,49 +62,49 @@ namespace RAT
                  controls_checks->fitDomainRatio);
     expl_temp.f19.set_size(1, problemCells_f19.size(1));
     loop_ub = problemCells_f19.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.f19[i] = problemCells_f19[i];
     }
 
     expl_temp.f14.set_size(1, problemCells_f14.size(1));
     loop_ub = problemCells_f14.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.f14[i] = problemCells_f14[i];
     }
 
     expl_temp.f6.set_size(problemCells_f6.size(0));
     loop_ub = problemCells_f6.size(0);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.f6[i] = problemCells_f6[i];
     }
 
     expl_temp.f5.set_size(1, problemCells_f5.size(1));
     loop_ub = problemCells_f5.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.f5[i] = problemCells_f5[i];
     }
 
     expl_temp.f4.set_size(1, problemCells_f4.size(1));
     loop_ub = problemCells_f4.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.f4[i] = problemCells_f4[i];
     }
 
     expl_temp.f3.set_size(1, problemCells_f3.size(1));
     loop_ub = problemCells_f3.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.f3[i] = problemCells_f3[i];
     }
 
     expl_temp.f2.set_size(1, problemCells_f2.size(1));
     loop_ub = problemCells_f2.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.f2[i] = problemCells_f2[i];
     }
 
     expl_temp.f1.set_size(1, problemCells_f1.size(1));
     loop_ub = problemCells_f1.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.f1[i] = problemCells_f1[i];
     }
 
@@ -114,7 +115,7 @@ namespace RAT
     b_expl_temp.parallel.size[0] = 1;
     b_expl_temp.parallel.size[1] = controls_parallel_size[1];
     loop_ub = controls_parallel_size[1];
-    if (loop_ub - 1 >= 0) {
+    if (0 <= loop_ub - 1) {
       std::copy(&controls_parallel_data[0], &controls_parallel_data[loop_ub],
                 &b_expl_temp.parallel.data[0]);
     }
@@ -122,8 +123,11 @@ namespace RAT
     reflectivityCalculation(problemStruct, &expl_temp, &b_expl_temp,
       &b_problemStruct, a__2);
     S_MSE.FVr_oa = b_problemStruct.calculations.sumChi;
+    S_MSE.I_nc = 0.0;
 
     // no constraints                 THESE FIRST FEW VALS MAY BE WRONG
+    S_MSE.FVr_ca = 0.0;
+
     // no constraint array
     S_MSE.I_no = 1.0;
 
@@ -131,8 +135,8 @@ namespace RAT
     return S_MSE;
   }
 
-  void runDE(c_struct_T *problemStruct, const cell_11 *problemCells, const
-             struct1_T *problemLimits, const struct2_T *controls, d_struct_T
+  void runDE(d_struct_T *problemStruct, const cell_11 *problemCells, const
+             struct1_T *problemLimits, const struct2_T *controls, e_struct_T
              *contrastParams, cell_wrap_9 result[6])
   {
     static const real_T FVr_x[50]{ -1.0, -0.95918367346938771,
@@ -156,7 +160,9 @@ namespace RAT
     ::coder::array<cell_wrap_1, 1U> b_problemStruct;
     ::coder::array<real_T, 2U> res;
     ::coder::array<int8_T, 2U> S_struct_FM_pop;
-    j_struct_T expl_temp;
+    k_struct_T expl_temp;
+    int32_T i;
+    int32_T i1;
     int32_T loop_ub;
     packParams(problemStruct, problemCells->f7, problemCells->f8,
                problemCells->f9, problemCells->f10, problemCells->f11,
@@ -164,15 +170,15 @@ namespace RAT
                problemLimits, &controls->checks, b_problemStruct);
 
     // Value to reach
-    expl_temp.FVr_minbound.set_size(1, problemStruct->fitLimits.size(0));
     loop_ub = problemStruct->fitLimits.size(0);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    expl_temp.FVr_minbound.set_size(1, loop_ub);
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.FVr_minbound[i] = problemStruct->fitLimits[i];
     }
 
-    expl_temp.FVr_maxbound.set_size(1, problemStruct->fitLimits.size(0));
     loop_ub = problemStruct->fitLimits.size(0);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    expl_temp.FVr_maxbound.set_size(1, loop_ub);
+    for (i = 0; i < loop_ub; i++) {
       expl_temp.FVr_maxbound[i] = problemStruct->fitLimits[i +
         problemStruct->fitLimits.size(0)];
     }
@@ -216,8 +222,8 @@ namespace RAT
     loop_ub = static_cast<int32_T>(controls->populationSize);
     S_struct_FM_pop.set_size(loop_ub, 2);
     expl_temp.FVr_bestmem.set_size(1, 2);
-    for (int32_T i{0}; i < 2; i++) {
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+    for (i = 0; i < 2; i++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         S_struct_FM_pop[i1 + S_struct_FM_pop.size(0) * i] = 0;
       }
 
@@ -226,8 +232,8 @@ namespace RAT
 
     expl_temp.FM_pop.set_size(S_struct_FM_pop.size(0), 2);
     loop_ub = S_struct_FM_pop.size(0);
-    for (int32_T i{0}; i < 2; i++) {
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+    for (i = 0; i < 2; i++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         expl_temp.FM_pop[i1 + expl_temp.FM_pop.size(0) * i] = 0.0;
       }
     }
@@ -247,7 +253,7 @@ namespace RAT
     expl_temp.FVr_lim_lo.size[1] = 50;
     expl_temp.FVr_lim_up.size[0] = 1;
     expl_temp.FVr_lim_up.size[1] = 50;
-    for (int32_T i{0}; i < 50; i++) {
+    for (i = 0; i < 50; i++) {
       expl_temp.FVr_lim_lo.data[i] = -1.0;
       expl_temp.FVr_lim_up.data[i] = 1.0;
     }
@@ -262,7 +268,7 @@ namespace RAT
           controls->display.size, &controls->checks, &expl_temp, res);
     problemStruct->fitParams.set_size(1, res.size(1));
     loop_ub = res.size(1);
-    for (int32_T i{0}; i < loop_ub; i++) {
+    for (i = 0; i < loop_ub; i++) {
       problemStruct->fitParams[problemStruct->fitParams.size(0) * i] = res[i];
     }
 
@@ -274,7 +280,7 @@ namespace RAT
                  controls->checks.fitDomainRatio);
     reflectivityCalculation(problemStruct, problemCells, controls,
       contrastParams, result);
-    if (!coder::internal::d_strcmp(controls->display.data,
+    if (!coder::internal::q_strcmp(controls->display.data,
          controls->display.size)) {
       printf("Final chi squared is %g\n", contrastParams->calculations.sumChi);
       fflush(stdout);

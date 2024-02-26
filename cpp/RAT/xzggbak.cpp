@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xzggbak.cpp
 //
@@ -27,16 +27,18 @@ namespace RAT
         {
           real_T tmp_im;
           real_T tmp_re;
+          int32_T i;
+          int32_T j;
           int32_T k;
           int32_T m;
           int32_T n;
           n = V.size(0);
           m = V.size(1) - 1;
           if (ilo > 1) {
-            for (int32_T i{ilo - 2}; i + 1 >= 1; i--) {
+            for (i = ilo - 2; i + 1 >= 1; i--) {
               k = rscale[i] - 1;
               if (rscale[i] != i + 1) {
-                for (int32_T j{0}; j <= m; j++) {
+                for (j = 0; j <= m; j++) {
                   tmp_re = V[i + V.size(0) * j].re;
                   tmp_im = V[i + V.size(0) * j].im;
                   V[i + V.size(0) * j] = V[k + V.size(0) * j];
@@ -47,13 +49,13 @@ namespace RAT
             }
           }
 
-          if (ihi < V.size(0)) {
+          if (ihi < n) {
             k = ihi + 1;
-            for (int32_T i{k}; i <= n; i++) {
+            for (i = k; i <= n; i++) {
               int32_T b_i;
               b_i = rscale[i - 1];
               if (b_i != i) {
-                for (int32_T j{0}; j <= m; j++) {
+                for (j = 0; j <= m; j++) {
                   tmp_re = V[(i + V.size(0) * j) - 1].re;
                   tmp_im = V[(i + V.size(0) * j) - 1].im;
                   V[(i + V.size(0) * j) - 1] = V[(b_i + V.size(0) * j) - 1];

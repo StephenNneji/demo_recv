@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // kmeans.cpp
 //
@@ -19,130 +19,26 @@
 #include "coder_array.h"
 #include <cmath>
 
-// Function Declarations
-namespace RAT
-{
-  static real_T binary_expand_op(const ::coder::array<real_T, 2U> &in1, int32_T
-    in2, const ::coder::array<real_T, 2U> &in3, int32_T in4);
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const int32_T
-    in2_data[], real_T in3, const ::coder::array<real_T, 2U> &in4, int32_T in5);
-  static real_T binary_expand_op(const ::coder::array<real_T, 2U> &in1, int32_T
-    in2, const ::coder::array<real_T, 2U> &in3);
-}
-
 // Function Definitions
 namespace RAT
 {
-  static real_T binary_expand_op(const ::coder::array<real_T, 2U> &in1, int32_T
-    in2, const ::coder::array<real_T, 2U> &in3, int32_T in4)
-  {
-    ::coder::array<real_T, 2U> b_in1;
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_1;
-    int32_T stride_1_1;
-    if (in3.size(1) == 1) {
-      i = in1.size(1);
-    } else {
-      i = in3.size(1);
-    }
-
-    b_in1.set_size(1, i);
-    stride_0_1 = (in1.size(1) != 1);
-    stride_1_1 = (in3.size(1) != 1);
-    if (in3.size(1) == 1) {
-      loop_ub = in1.size(1);
-    } else {
-      loop_ub = in3.size(1);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      b_in1[i] = in1[in2 + in1.size(0) * (i * stride_0_1)] - in3[in4 + 2 * (i *
-        stride_1_1)];
-    }
-
-    return coder::c_norm(b_in1);
-  }
-
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const int32_T
-    in2_data[], real_T in3, const ::coder::array<real_T, 2U> &in4, int32_T in5)
-  {
-    ::coder::array<real_T, 2U> b_in1;
-    int32_T i;
-    int32_T in2_tmp;
-    int32_T loop_ub;
-    int32_T stride_0_1;
-    int32_T stride_1_1;
-    in2_tmp = in2_data[static_cast<int32_T>(in3) - 1];
-    if (in4.size(1) == 1) {
-      i = in1.size(1);
-    } else {
-      i = in4.size(1);
-    }
-
-    b_in1.set_size(1, i);
-    stride_0_1 = (in1.size(1) != 1);
-    stride_1_1 = (in4.size(1) != 1);
-    if (in4.size(1) == 1) {
-      loop_ub = in1.size(1);
-    } else {
-      loop_ub = in4.size(1);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      b_in1[i] = in1[(in2_tmp + 2 * (i * stride_0_1)) - 1] + in4[in5 + in4.size
-        (0) * (i * stride_1_1)];
-    }
-
-    loop_ub = b_in1.size(1);
-    for (i = 0; i < loop_ub; i++) {
-      in1[(in2_tmp + 2 * i) - 1] = b_in1[i];
-    }
-  }
-
-  static real_T binary_expand_op(const ::coder::array<real_T, 2U> &in1, int32_T
-    in2, const ::coder::array<real_T, 2U> &in3)
-  {
-    ::coder::array<real_T, 2U> b_in1;
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_1;
-    int32_T stride_1_1;
-    if (in3.size(1) == 1) {
-      i = in1.size(1);
-    } else {
-      i = in3.size(1);
-    }
-
-    b_in1.set_size(1, i);
-    stride_0_1 = (in1.size(1) != 1);
-    stride_1_1 = (in3.size(1) != 1);
-    if (in3.size(1) == 1) {
-      loop_ub = in1.size(1);
-    } else {
-      loop_ub = in3.size(1);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      b_in1[i] = in1[in2 + 2 * (i * stride_0_1)] - in3[in2 + 2 * (i * stride_1_1)];
-    }
-
-    return coder::c_norm(b_in1);
-  }
-
   void kmeans(const ::coder::array<real_T, 2U> &X, ::coder::array<real_T, 2U>
               &means, real_T Nmeans[2])
   {
     ::coder::array<real_T, 2U> b_X;
     ::coder::array<real_T, 2U> b_class;
     ::coder::array<real_T, 2U> c_X;
+    real_T dist[2];
     real_T cmp;
     int32_T index_min_data[2];
+    int32_T index_min_size[2];
     int32_T b_loop_ub;
+    int32_T c_loop_ub;
     int32_T i;
     int32_T i1;
-    int32_T index_min_tmp;
+    int32_T index_min_tmp_tmp;
     int32_T loop_ub;
+    boolean_T b_dist[2];
 
     //    Finds K prototypes representing the samples in data matrix X,
     //    where each row of X represents a sample.
@@ -181,7 +77,7 @@ namespace RAT
       means[2 * i] = X[X.size(0) * i];
     }
 
-    if (X.size(0) < 2) {
+    if (2 > X.size(0)) {
       i = 0;
       i1 = 0;
     } else {
@@ -189,13 +85,14 @@ namespace RAT
       i1 = X.size(0);
     }
 
-    loop_ub = i1 - i;
-    b_X.set_size(loop_ub, X.size(1));
-    b_loop_ub = X.size(1);
-    for (i1 = 0; i1 < b_loop_ub; i1++) {
-      for (index_min_tmp = 0; index_min_tmp < loop_ub; index_min_tmp++) {
-        b_X[index_min_tmp + b_X.size(0) * i1] = X[(i + index_min_tmp) + X.size(0)
-          * i1];
+    loop_ub = X.size(1);
+    b_loop_ub = i1 - i;
+    b_X.set_size(b_loop_ub, X.size(1));
+    for (i1 = 0; i1 < loop_ub; i1++) {
+      for (index_min_tmp_tmp = 0; index_min_tmp_tmp < b_loop_ub;
+           index_min_tmp_tmp++) {
+        b_X[index_min_tmp_tmp + b_X.size(0) * i1] = X[(i + index_min_tmp_tmp) +
+          X.size(0) * i1];
       }
     }
 
@@ -207,8 +104,14 @@ namespace RAT
 
     loop_ub = X.size(1);
     i = X.size(0);
+    if (0 <= i - 1) {
+      c_loop_ub = X.size(1);
+    }
+
     cmp = 1.0;
     while (cmp > 0.0) {
+      int32_T b_i;
+
       //  Sums (class) and data counters (Nclass) initialization
       b_class.set_size(2, X.size(1));
       for (i1 = 0; i1 < loop_ub; i1++) {
@@ -220,28 +123,23 @@ namespace RAT
       Nmeans[1] = 0.0;
 
       //  Groups each elements to the nearest prototype
-      for (int32_T b_i{0}; b_i < i; b_i++) {
-        real_T dist[2];
+      for (b_i = 0; b_i < i; b_i++) {
         real_T a;
-        b_loop_ub = X.size(1);
         for (int32_T j{0}; j < 2; j++) {
           //  Euclidean distance from data to each prototype
-          if (X.size(1) == means.size(1)) {
-            c_X.set_size(1, X.size(1));
-            for (i1 = 0; i1 < b_loop_ub; i1++) {
-              c_X[i1] = X[b_i + X.size(0) * i1] - means[j + 2 * i1];
-            }
+          c_X.set_size(1, c_loop_ub);
+          for (i1 = 0; i1 < c_loop_ub; i1++) {
+            c_X[i1] = X[b_i + X.size(0) * i1] - means[j + 2 * i1];
+          }
 
-            a = coder::c_norm(c_X);
+          if (c_X.size(1) == 0) {
+            a = 0.0;
           } else {
-            a = binary_expand_op(X, b_i, means, j);
+            a = coder::b_genpnorm(c_X);
           }
 
           dist[j] = a * a;
         }
-
-        int32_T index_min_size[2];
-        boolean_T b_dist[2];
 
         //  Find indices of minimum distance
         a = coder::internal::minimum(dist);
@@ -252,31 +150,26 @@ namespace RAT
         //  If there are multiple min distances, decide randomly
         a = static_cast<real_T>(index_min_size[1]) * coder::b_rand();
         a = std::ceil(a);
-        b_loop_ub = b_class.size(1);
-        if (b_class.size(1) == X.size(1)) {
-          index_min_tmp = index_min_data[static_cast<int32_T>(a) - 1];
-          c_X.set_size(1, b_class.size(1));
-          for (i1 = 0; i1 < b_loop_ub; i1++) {
-            c_X[i1] = b_class[(index_min_tmp + 2 * i1) - 1] + X[b_i + X.size(0) *
-              i1];
-          }
-
-          b_loop_ub = c_X.size(1);
-          for (i1 = 0; i1 < b_loop_ub; i1++) {
-            b_class[(index_min_tmp + 2 * i1) - 1] = c_X[i1];
-          }
-        } else {
-          binary_expand_op(b_class, index_min_data, a, X, b_i);
+        b_loop_ub = b_class.size(1) - 1;
+        index_min_tmp_tmp = index_min_data[static_cast<int32_T>(a) - 1];
+        c_X.set_size(1, b_class.size(1));
+        for (i1 = 0; i1 <= b_loop_ub; i1++) {
+          c_X[i1] = b_class[(index_min_tmp_tmp + 2 * i1) - 1] + X[b_i + X.size(0)
+            * i1];
         }
 
-        index_min_tmp = index_min_data[static_cast<int32_T>(a) - 1] - 1;
-        Nmeans[index_min_tmp]++;
+        b_loop_ub = c_X.size(1);
+        for (i1 = 0; i1 < b_loop_ub; i1++) {
+          b_class[(index_min_tmp_tmp + 2 * i1) - 1] = c_X[i1];
+        }
+
+        Nmeans[index_min_tmp_tmp - 1]++;
       }
 
-      for (int32_T b_i{0}; b_i < 2; b_i++) {
-        b_loop_ub = b_class.size(1);
+      for (b_i = 0; b_i < 2; b_i++) {
+        b_loop_ub = b_class.size(1) - 1;
         c_X.set_size(1, b_class.size(1));
-        for (i1 = 0; i1 < b_loop_ub; i1++) {
+        for (i1 = 0; i1 <= b_loop_ub; i1++) {
           c_X[i1] = b_class[b_i + 2 * i1] / Nmeans[b_i];
         }
 
@@ -289,16 +182,16 @@ namespace RAT
       //  Compare results with previous iteration
       cmp = 0.0;
       b_loop_ub = b_class.size(1);
-      for (int32_T b_i{0}; b_i < 2; b_i++) {
-        if (b_class.size(1) == means.size(1)) {
-          c_X.set_size(1, b_class.size(1));
-          for (i1 = 0; i1 < b_loop_ub; i1++) {
-            c_X[i1] = b_class[b_i + 2 * i1] - means[b_i + 2 * i1];
-          }
+      for (b_i = 0; b_i < 2; b_i++) {
+        c_X.set_size(1, b_loop_ub);
+        for (i1 = 0; i1 < b_loop_ub; i1++) {
+          c_X[i1] = b_class[b_i + 2 * i1] - means[b_i + 2 * i1];
+        }
 
-          cmp = coder::c_norm(c_X);
+        if (c_X.size(1) == 0) {
+          cmp = 0.0;
         } else {
-          cmp = binary_expand_op(b_class, b_i, means);
+          cmp = coder::b_genpnorm(c_X);
         }
       }
 

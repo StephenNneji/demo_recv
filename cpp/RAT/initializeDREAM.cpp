@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // initializeDREAM.cpp
 //
@@ -21,154 +21,15 @@
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 
-// Function Declarations
-namespace RAT
-{
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3, const
-    struct13_T *in4);
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3, const ::coder::
-    array<real_T, 2U> &in4);
-}
-
 // Function Definitions
 namespace RAT
 {
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3, const
-    struct13_T *in4)
-  {
-    ::coder::array<real_T, 2U> b_in2;
-    int32_T i;
-    int32_T loop_ub;
-    int32_T stride_0_1;
-    int32_T stride_1_1;
-    if (in3.size(1) == 1) {
-      i = in2.size(1);
-    } else {
-      i = in3.size(1);
-    }
-
-    b_in2.set_size(1, i);
-    stride_0_1 = (in2.size(1) != 1);
-    stride_1_1 = (in3.size(1) != 1);
-    if (in3.size(1) == 1) {
-      loop_ub = in2.size(1);
-    } else {
-      loop_ub = in3.size(1);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      b_in2[i] = in2[i * stride_0_1] - in3[i * stride_1_1];
-    }
-
-    coder::repmat(b_in2, in4->N, in1);
-  }
-
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<real_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3, const ::coder::
-    array<real_T, 2U> &in4)
-  {
-    int32_T aux_0_1;
-    int32_T aux_1_1;
-    int32_T aux_2_1;
-    int32_T i;
-    int32_T i1;
-    int32_T loop_ub;
-    int32_T stride_0_0;
-    int32_T stride_0_1;
-    int32_T stride_1_0;
-    int32_T stride_1_1;
-    int32_T stride_2_0;
-    int32_T stride_2_1;
-    if (in4.size(0) == 1) {
-      i = in3.size(0);
-    } else {
-      i = in4.size(0);
-    }
-
-    if (i == 1) {
-      i = in2.size(0);
-    } else if (in4.size(0) == 1) {
-      i = in3.size(0);
-    } else {
-      i = in4.size(0);
-    }
-
-    if (in4.size(1) == 1) {
-      i1 = in3.size(1);
-    } else {
-      i1 = in4.size(1);
-    }
-
-    if (i1 == 1) {
-      i1 = in2.size(1);
-    } else if (in4.size(1) == 1) {
-      i1 = in3.size(1);
-    } else {
-      i1 = in4.size(1);
-    }
-
-    in1.set_size(i, i1);
-    stride_0_0 = (in2.size(0) != 1);
-    stride_0_1 = (in2.size(1) != 1);
-    stride_1_0 = (in3.size(0) != 1);
-    stride_1_1 = (in3.size(1) != 1);
-    stride_2_0 = (in4.size(0) != 1);
-    stride_2_1 = (in4.size(1) != 1);
-    aux_0_1 = 0;
-    aux_1_1 = 0;
-    aux_2_1 = 0;
-    if (in4.size(1) == 1) {
-      i = in3.size(1);
-    } else {
-      i = in4.size(1);
-    }
-
-    if (i == 1) {
-      loop_ub = in2.size(1);
-    } else if (in4.size(1) == 1) {
-      loop_ub = in3.size(1);
-    } else {
-      loop_ub = in4.size(1);
-    }
-
-    for (i = 0; i < loop_ub; i++) {
-      int32_T b_loop_ub;
-      int32_T i2;
-      i1 = in4.size(0);
-      b_loop_ub = in3.size(0);
-      if (i1 == 1) {
-        i2 = b_loop_ub;
-      } else {
-        i2 = i1;
-      }
-
-      if (i2 == 1) {
-        b_loop_ub = in2.size(0);
-      } else if (i1 != 1) {
-        b_loop_ub = i1;
-      }
-
-      for (i1 = 0; i1 < b_loop_ub; i1++) {
-        in1[i1 + in1.size(0) * i] = in2[i1 * stride_0_0 + in2.size(0) * aux_0_1]
-          + in3[i1 * stride_1_0 + in3.size(0) * aux_1_1] * in4[i1 * stride_2_0 +
-          in4.size(0) * aux_2_1];
-      }
-
-      aux_2_1 += stride_2_1;
-      aux_1_1 += stride_1_1;
-      aux_0_1 += stride_0_1;
-    }
-  }
-
   void initializeDREAM(const struct13_T *DREAMPar, const ::coder::array<real_T,
                        2U> &Par_info_min, const ::coder::array<real_T, 2U>
                        &Par_info_max, const char_T Par_info_boundhandling_data[],
                        const int32_T Par_info_boundhandling_size[2], ::coder::
                        array<real_T, 3U> &chain, struct12_T *output, ::coder::
-                       array<real_T, 2U> &log_L, const c_struct_T
+                       array<real_T, 2U> &log_L, const d_struct_T
                        *ratInputs_problemStruct, const cell_11
                        *ratInputs_problemCells, const struct2_T
                        *ratInputs_controls, const ::coder::array<real_T, 2U>
@@ -185,6 +46,7 @@ namespace RAT
     ::coder::array<real_T, 2U> x;
     ::coder::array<real_T, 1U> log_L_x;
     ::coder::array<real_T, 1U> log_PR_x;
+    int32_T iv[2];
     int32_T b_loop_ub;
     int32_T i;
     int32_T i1;
@@ -201,18 +63,13 @@ namespace RAT
     //      case {'uniform'}
     //  Random sampling
     coder::b_rand(DREAMPar->N, DREAMPar->d, b_X);
-    if (Par_info_max.size(1) == Par_info_min.size(1)) {
-      b_Par_info_max.set_size(1, Par_info_max.size(1));
-      loop_ub = Par_info_max.size(1);
-      for (i = 0; i < loop_ub; i++) {
-        b_Par_info_max[i] = Par_info_max[i] - Par_info_min[i];
-      }
-
-      coder::repmat(b_Par_info_max, DREAMPar->N, r);
-    } else {
-      binary_expand_op(r, Par_info_max, Par_info_min, DREAMPar);
+    b_Par_info_max.set_size(1, Par_info_max.size(1));
+    loop_ub = Par_info_max.size(1);
+    for (i = 0; i < loop_ub; i++) {
+      b_Par_info_max[i] = Par_info_max[i] - Par_info_min[i];
     }
 
+    coder::repmat(b_Par_info_max, DREAMPar->N, r);
     coder::repmat(Par_info_min, DREAMPar->N, r1);
 
     //      case {'latin'}
@@ -241,31 +98,14 @@ namespace RAT
     //          error('unknown initial sampling method');
     //  end
     //  If specified do boundary handling ( "Bound","Reflect","Fold")
-    if (b_X.size(0) == 1) {
-      i = r.size(0);
-    } else {
-      i = b_X.size(0);
-    }
-
-    if (b_X.size(1) == 1) {
-      i1 = r.size(1);
-    } else {
-      i1 = b_X.size(1);
-    }
-
-    if ((b_X.size(0) == r.size(0)) && (b_X.size(1) == r.size(1)) && (r1.size(0) ==
-         i) && (r1.size(1) == i1)) {
-      x.set_size(r1.size(0), r1.size(1));
-      loop_ub = r1.size(1);
-      for (i = 0; i < loop_ub; i++) {
-        b_loop_ub = r1.size(0);
-        for (i1 = 0; i1 < b_loop_ub; i1++) {
-          x[i1 + x.size(0) * i] = r1[i1 + r1.size(0) * i] + b_X[i1 + b_X.size(0)
-            * i] * r[i1 + r.size(0) * i];
-        }
+    x.set_size(r1.size(0), r1.size(1));
+    loop_ub = r1.size(1);
+    for (i = 0; i < loop_ub; i++) {
+      b_loop_ub = r1.size(0);
+      for (i1 = 0; i1 < b_loop_ub; i1++) {
+        x[i1 + x.size(0) * i] = r1[i1 + r1.size(0) * i] + b_X[i1 + b_X.size(0) *
+          i] * r[i1 + r.size(0) * i];
       }
-    } else {
-      binary_expand_op(x, r1, b_X, r);
     }
 
     boundaryHandling(x, Par_info_min, Par_info_max, Par_info_boundhandling_data,
@@ -352,8 +192,6 @@ namespace RAT
           b_loop_ub * i];
       }
     }
-
-    int32_T iv[2];
 
     //  Define selection probability of each crossover
     b_Par_info_max.set_size(1, 3);

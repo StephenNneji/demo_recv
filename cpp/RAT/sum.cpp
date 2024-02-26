@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // sum.cpp
 //
@@ -41,30 +41,6 @@ namespace RAT
         y.im = 0.0;
       } else {
         y = nestedIter(x, x.size(1));
-      }
-
-      return y;
-    }
-
-    real_T sum(const ::coder::array<real_T, 2U> &x)
-    {
-      real_T y;
-      if (x.size(1) == 0) {
-        y = 0.0;
-      } else {
-        y = nestedIter(x, x.size(1));
-      }
-
-      return y;
-    }
-
-    real_T sum(const ::coder::array<real_T, 1U> &x)
-    {
-      real_T y;
-      if (x.size(0) == 0) {
-        y = 0.0;
-      } else {
-        y = nestedIter(x, x.size(0));
       }
 
       return y;

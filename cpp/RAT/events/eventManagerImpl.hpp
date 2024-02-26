@@ -51,9 +51,6 @@ struct plotEvent : baseEvent {
     const plotData* data;
     plotEvent(const plotData* data) : baseEvent(EventTypes::Plot),  data(data) {}
 };
-
-
-typedef void (*callback) (const baseEvent&);
 		     
 		     	      
 class eventManager

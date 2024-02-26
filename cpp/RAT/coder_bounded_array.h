@@ -1,6 +1,5 @@
 /* Copyright 2020 The Mathworks, Inc. */
-/* Copied from fullfile(matlabroot,'extern','include','coder','coder_array','coder_bounded_array.h')
- */
+/* Copied from fullfile(matlabroot,'extern','include','coder','coder_array','coder_bounded_array.h') */
 
 #ifndef _mw_coder_bounded_array_h
 #define _mw_coder_bounded_array_h
@@ -13,12 +12,10 @@
 
 namespace coder {
 
-#ifndef CODER_ARRAY_SIZE_TYPE_DEFINED
 #if __cplusplus >= 201103L
-using SizeType = int;
+using SizeType = int32_T;
 #else
-typedef int SizeType;
-#endif
+typedef int32_T SizeType;
 #endif
 
 // Bounded array

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // resampleLayersReIm.cpp
 //
@@ -47,20 +47,20 @@ namespace RAT
 
     //  Now interpolate the imaginary profile so that it is on the same x points
     //  as the resampled real one....
-    b_sldProfileIm.set_size(sldProfileIm.size(0));
     loop_ub = sldProfileIm.size(0);
+    b_sldProfileIm.set_size(sldProfileIm.size(0));
     for (i = 0; i < loop_ub; i++) {
       b_sldProfileIm[i] = sldProfileIm[i];
     }
 
-    c_sldProfileIm.set_size(sldProfileIm.size(0));
     loop_ub = sldProfileIm.size(0);
+    c_sldProfileIm.set_size(sldProfileIm.size(0));
     for (i = 0; i < loop_ub; i++) {
       c_sldProfileIm[i] = sldProfileIm[i + sldProfileIm.size(0)];
     }
 
-    b_expl_temp.set_size(expl_temp.f1.size(0));
     loop_ub = expl_temp.f1.size(0);
+    b_expl_temp.set_size(expl_temp.f1.size(0));
     for (i = 0; i < loop_ub; i++) {
       b_expl_temp[i] = expl_temp.f1[i];
     }
@@ -75,8 +75,8 @@ namespace RAT
     }
 
     //  Now build a layer model from these resampled points
-    i = expl_temp.f1.size(0);
-    for (int32_T n{0}; n <= i - 2; n++) {
+    i = expl_temp.f1.size(0) - 2;
+    for (int32_T n{0}; n <= i; n++) {
       real_T d;
       real_T d1;
       real_T thisLayRho;
@@ -131,20 +131,20 @@ namespace RAT
 
     //  Now interpolate the imaginary profile so that it is on the same x points
     //  as the resampled real one....
-    b_sldProfileIm.set_size(sldProfileIm.size(0));
     loop_ub = sldProfileIm.size(0);
+    b_sldProfileIm.set_size(sldProfileIm.size(0));
     for (i = 0; i < loop_ub; i++) {
       b_sldProfileIm[i] = sldProfileIm[i];
     }
 
-    c_sldProfileIm.set_size(sldProfileIm.size(0));
     loop_ub = sldProfileIm.size(0);
+    c_sldProfileIm.set_size(sldProfileIm.size(0));
     for (i = 0; i < loop_ub; i++) {
       c_sldProfileIm[i] = sldProfileIm[i + sldProfileIm.size(0)];
     }
 
-    b_expl_temp.set_size(expl_temp.f1.size(0));
     loop_ub = expl_temp.f1.size(0);
+    b_expl_temp.set_size(expl_temp.f1.size(0));
     for (i = 0; i < loop_ub; i++) {
       b_expl_temp[i] = expl_temp.f1[i];
     }
@@ -159,8 +159,8 @@ namespace RAT
     }
 
     //  Now build a layer model from these resampled points
-    i = expl_temp.f1.size(0);
-    for (int32_T n{0}; n <= i - 2; n++) {
+    i = expl_temp.f1.size(0) - 2;
+    for (int32_T n{0}; n <= i; n++) {
       real_T d;
       real_T d1;
       real_T thisLayRho;

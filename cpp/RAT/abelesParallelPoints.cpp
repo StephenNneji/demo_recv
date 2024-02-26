@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // abelesParallelPoints.cpp
 //
@@ -16,7 +16,6 @@
 #include "rt_nonfinite.h"
 #include "sqrt.h"
 #include "coder_array.h"
-#include "omp.h"
 #include <cmath>
 
 // Function Declarations
@@ -94,14 +93,14 @@ namespace RAT
     creal_T r_n_np1;
     creal_T sld_1;
     creal_T sld_np1;
-    real_T M_tot_re_tmp;
     real_T R;
-    real_T b_M_tot_re_tmp;
     real_T brm;
-    real_T c_M_tot_re_tmp;
     real_T d;
     real_T d1;
-    real_T d_M_tot_re_tmp;
+    real_T d2;
+    real_T d3;
+    real_T d4;
+    real_T d5;
     real_T im;
     real_T k0;
     real_T nom_n_re;
@@ -111,6 +110,7 @@ namespace RAT
     int32_T i2;
     int32_T loop_ub;
     int32_T n;
+    int32_T points;
     ref.set_size(q.size(0));
     loop_ub = q.size(0);
     for (int32_T i{0}; i < loop_ub; i++) {
@@ -121,9 +121,9 @@ namespace RAT
 
 #pragma omp parallel for \
  num_threads(omp_get_max_threads()) \
- private(beta,r_n_np1,err_n,sigmasqrd,denom_n,nom_n,knp1,sld_np1,r01,err1,denom1,nom1,k1,sld_1,R,k0,bulk_in_SLD,kn_ptr,M_res,M_n,M_tot,i1,n,nom_n_re,sigmasqrd_tmp,brm,im,M_n_tmp,d,d1,i2,M_tot_re_tmp,b_M_tot_re_tmp,c_M_tot_re_tmp,d_M_tot_re_tmp)
+ private(beta,r_n_np1,err_n,sigmasqrd,denom_n,nom_n,knp1,sld_np1,r01,err1,denom1,nom1,k1,sld_1,R,k0,bulk_in_SLD,kn_ptr,M_res,M_n,M_tot,points,i1,n,nom_n_re,sigmasqrd_tmp,brm,im,M_n_tmp,d,d1,i2,d2,d3,d4,d5)
 
-    for (int32_T points = 0; points <= loop_ub; points++) {
+    for (points = 0; points <= loop_ub; points++) {
       M_tot[0][0].re = 0.0;
       M_tot[0][0].im = 0.0;
       M_res[0][0].re = 0.0;
@@ -143,7 +143,7 @@ namespace RAT
       k0 = q[points] / 2.0;
       i1 = static_cast<int32_T>(N - 1.0);
       for (n = 0; n < i1; n++) {
-        if (static_cast<uint32_T>(n) + 1U == 1U) {
+        if (n + 1U == 1U) {
           //  Find k1..
           sld_1.re = layers_rho[1].re - bulk_in_SLD.re;
           sld_1.im = layers_rho[1].im - bulk_in_SLD.im;
@@ -214,7 +214,7 @@ namespace RAT
           M_tot[1][1].im = 0.0;
           kn_ptr = k1;
         } else {
-          //  Find kn and k_n+1 (ex. k1 and k2 for n=1): _/
+          //  Find kn and k_n+1 (ex. k1 and k2 for n=1): $/
           sld_np1.re = layers_rho[n + 1].re - bulk_in_SLD.re;
           sld_np1.im = layers_rho[n + 1].im - bulk_in_SLD.im;
           knp1 = findkn(k0, sld_np1);
@@ -293,7 +293,7 @@ namespace RAT
           beta.re = sigmasqrd_tmp * 0.0 - im;
           beta.im = sigmasqrd_tmp + im * 0.0;
 
-          //  Create the M_n matrix: _/
+          //  Create the M_n matrix: $/
           M_n_tmp = beta;
           coder::b_exp(&M_n_tmp);
           M_n[0][0] = M_n_tmp;
@@ -313,20 +313,18 @@ namespace RAT
           d = M_n[1][0].re;
           d1 = M_n[1][0].im;
           for (i2 = 0; i2 < 2; i2++) {
-            M_tot_re_tmp = M_tot[0][i2].re;
-            b_M_tot_re_tmp = M_tot[0][i2].im;
-            c_M_tot_re_tmp = M_tot[1][i2].re;
-            d_M_tot_re_tmp = M_tot[1][i2].im;
-            M_res[0][i2].re = (M_tot_re_tmp * sigmasqrd_tmp - b_M_tot_re_tmp *
-                               im) + (c_M_tot_re_tmp * brm - d_M_tot_re_tmp *
+            d2 = M_tot[0][i2].re;
+            d3 = M_tot[0][i2].im;
+            d4 = M_tot[1][i2].re;
+            d5 = M_tot[1][i2].im;
+            M_res[0][i2].re = (d2 * sigmasqrd_tmp - d3 * im) + (d4 * brm - d5 *
               nom_n_re);
-            M_res[0][i2].im = (M_tot_re_tmp * im + b_M_tot_re_tmp *
-                               sigmasqrd_tmp) + (c_M_tot_re_tmp * nom_n_re +
-              d_M_tot_re_tmp * brm);
-            M_res[1][i2].re = (M_tot_re_tmp * d - b_M_tot_re_tmp * d1) +
-              (c_M_tot_re_tmp * M_n_tmp.re - d_M_tot_re_tmp * M_n_tmp.im);
-            M_res[1][i2].im = (M_tot_re_tmp * d1 + b_M_tot_re_tmp * d) +
-              (c_M_tot_re_tmp * M_n_tmp.im + d_M_tot_re_tmp * M_n_tmp.re);
+            M_res[0][i2].im = (d2 * im + d3 * sigmasqrd_tmp) + (d4 * nom_n_re +
+              d5 * brm);
+            M_res[1][i2].re = (d2 * d - d3 * d1) + (d4 * M_n_tmp.re - d5 *
+              M_n_tmp.im);
+            M_res[1][i2].im = (d2 * d1 + d3 * d) + (d4 * M_n_tmp.im + d5 *
+              M_n_tmp.re);
           }
 
           //  Reassign the values back to M_tot:

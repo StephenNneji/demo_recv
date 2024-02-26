@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // adaptPCR.cpp
 //
@@ -11,9 +11,9 @@
 // Include files
 #include "adaptPCR.h"
 #include "RATMain_types.h"
+#include "blockedSummation.h"
 #include "find.h"
 #include "rt_nonfinite.h"
-#include "sum.h"
 #include "coder_array.h"
 
 // Function Definitions
@@ -29,6 +29,7 @@ namespace RAT
     ::coder::array<boolean_T, 1U> c_CR;
     real_T b_zz;
     int32_T b_CR;
+    int32_T i;
 
     //  Updates the probabilities of the various crossover values
     //  Make CR to be a single vector
@@ -44,7 +45,7 @@ namespace RAT
       //  This is used to weight delta_tot
       b_zz = (static_cast<real_T>(zz) + 1.0) / 3.0;
       c_CR.set_size(b_CR);
-      for (int32_T i{0}; i < b_CR; i++) {
+      for (i = 0; i < b_CR; i++) {
         c_CR[i] = (CR[i] == b_zz);
       }
 
@@ -56,10 +57,15 @@ namespace RAT
 
     //  / sum(delta_tot);
     //  Normalize pCR so that selection probabilities add up to 1
-    b_zz = coder::sum(y);
+    if (y.size(1) == 0) {
+      b_zz = 0.0;
+    } else {
+      b_zz = coder::nestedIter(y, y.size(1));
+    }
+
     pCR_size[0] = 1;
     pCR_size[1] = 3;
-    for (int32_T i{0}; i < 3; i++) {
+    for (i = 0; i < 3; i++) {
       pCR_data[i] = y[i] / b_zz;
     }
   }

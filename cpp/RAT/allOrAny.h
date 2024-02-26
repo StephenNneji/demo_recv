@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // allOrAny.h
 //
@@ -13,6 +13,7 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -23,11 +24,9 @@ namespace RAT
   {
     namespace internal
     {
-      boolean_T allOrAny_anonFcn2(int32_T n, const boolean_T X_data[]);
-      boolean_T allOrAny_anonFcn3(int32_T n, const ::coder::array<boolean_T, 1U>
-        &X);
-      void b_allOrAny_anonFcn2(int32_T n, const boolean_T X_data[], boolean_T
-        Y_data[]);
+      boolean_T c_anon(int32_T n, const ::coder::array<boolean_T, 1U> &X);
+      boolean_T d_anon(int32_T n, const boolean_T X_data[]);
+      void e_anon(int32_T n, const boolean_T X_data[], boolean_T Y_data[]);
     }
   }
 }

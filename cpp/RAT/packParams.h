@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // packParams.h
 //
@@ -11,22 +11,25 @@
 #define PACKPARAMS_H
 
 // Include files
-#include "RATMain_types.h"
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Type Declarations
 namespace RAT
 {
-  struct c_struct_T;
+  struct d_struct_T;
+  struct cell_wrap_1;
+  struct struct1_T;
+  struct struct3_T;
 }
 
 // Function Declarations
 namespace RAT
 {
-  void packParams(c_struct_T *problemStruct, const ::coder::array<cell_wrap_1,
+  void packParams(d_struct_T *problemStruct, const ::coder::array<cell_wrap_1,
                   2U> &problemCells_f7, const ::coder::array<cell_wrap_1, 2U>
                   &problemCells_f8, const ::coder::array<cell_wrap_1, 2U>
                   &problemCells_f9, const ::coder::array<cell_wrap_1, 2U>

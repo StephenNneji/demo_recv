@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // coreLayersCalculation.cpp
 //
@@ -43,11 +43,13 @@ namespace RAT
       ::coder::array<real_T, 2U> b_data;
       ::coder::array<real_T, 2U> b_theseLayers;
       ::coder::array<real_T, 2U> c_theseLayers;
+      ::coder::array<real_T, 2U> d_theseLayers;
+      ::coder::array<real_T, 2U> e_theseLayers;
       ::coder::array<real_T, 2U> layerSld;
       ::coder::array<real_T, 2U> sldProfileIm;
       ::coder::array<real_T, 2U> thisSldLays;
       ::coder::array<real_T, 2U> thisSldLaysIm;
-      ::coder::array<real_T, 1U> d_theseLayers;
+      ::coder::array<real_T, 1U> f_theseLayers;
       int32_T b_loop_ub;
       int32_T i;
       int32_T i1;
@@ -93,6 +95,8 @@ namespace RAT
       //
       //  Outputs:
       //
+      //
+      //
       //  ------------------------------------------------------------------------
       //
       //        (c) Arwel Hughes  -   12/1/21
@@ -111,24 +115,24 @@ namespace RAT
       //  Bulid up the layers matrix for this contrast
       if (!useImaginary) {
         groupLayersMod(contrastLayers, rough, geometry_data, geometry_size,
-                       bulkIn, bulkOut, layerSld, ssubs);
-        theseLayers.set_size(layerSld.size(0), 3);
-        loop_ub = layerSld.size(0);
+                       bulkIn, bulkOut, c_theseLayers, ssubs);
+        theseLayers.set_size(c_theseLayers.size(0), 3);
+        loop_ub = c_theseLayers.size(0);
         for (i = 0; i < 3; i++) {
           for (i1 = 0; i1 < loop_ub; i1++) {
-            theseLayers[i1 + theseLayers.size(0) * i] = layerSld[i1 +
-              layerSld.size(0) * i];
+            theseLayers[i1 + theseLayers.size(0) * i] = c_theseLayers[i1 +
+              c_theseLayers.size(0) * i];
           }
         }
       } else {
         groupLayersModImaginary(contrastLayers, rough, geometry_data,
-          geometry_size, bulkIn, bulkOut, layerSld, ssubs);
-        theseLayers.set_size(layerSld.size(0), 4);
-        loop_ub = layerSld.size(0);
+          geometry_size, bulkIn, bulkOut, b_theseLayers, ssubs);
+        theseLayers.set_size(b_theseLayers.size(0), 4);
+        loop_ub = b_theseLayers.size(0);
         for (i = 0; i < 4; i++) {
           for (i1 = 0; i1 < loop_ub; i1++) {
-            theseLayers[i1 + theseLayers.size(0) * i] = layerSld[i1 +
-              layerSld.size(0) * i];
+            theseLayers[i1 + theseLayers.size(0) * i] = b_theseLayers[i1 +
+              b_theseLayers.size(0) * i];
           }
         }
       }
@@ -145,16 +149,17 @@ namespace RAT
         //  If we need them both, we process real and imaginary parts of the SLD
         //  seperately...
         if (useImaginary) {
+          int32_T i2;
           int32_T result;
           int8_T input_sizes_idx_1;
           int8_T sizes_idx_1;
           boolean_T empty_non_axis_sizes;
-          if (theseLayers.size(1) < 4) {
-            i = 0;
-            i1 = 0;
+          if (4 > theseLayers.size(1)) {
+            i = -1;
+            i1 = -1;
           } else {
-            i = 3;
-            i1 = 4;
+            i = 2;
+            i1 = 3;
           }
 
           if (theseLayers.size(0) != 0) {
@@ -177,22 +182,22 @@ namespace RAT
             sizes_idx_1 = 0;
           }
 
-          b_theseLayers.set_size(theseLayers.size(0), 2);
           loop_ub = theseLayers.size(0);
-          for (int32_T i2{0}; i2 < 2; i2++) {
+          d_theseLayers.set_size(theseLayers.size(0), 2);
+          for (i2 = 0; i2 < 2; i2++) {
             for (b_loop_ub = 0; b_loop_ub < loop_ub; b_loop_ub++) {
-              b_theseLayers[b_loop_ub + b_theseLayers.size(0) * i2] =
+              d_theseLayers[b_loop_ub + d_theseLayers.size(0) * i2] =
                 theseLayers[b_loop_ub + theseLayers.size(0) * i2];
             }
           }
 
-          loop_ub = i1 - i;
-          c_theseLayers.set_size(theseLayers.size(0), loop_ub);
-          for (i1 = 0; i1 < loop_ub; i1++) {
-            b_loop_ub = theseLayers.size(0);
-            for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
-              c_theseLayers[i2 + c_theseLayers.size(0) * i1] = theseLayers[i2 +
-                theseLayers.size(0) * (i + i1)];
+          loop_ub = theseLayers.size(0);
+          b_loop_ub = i1 - i;
+          e_theseLayers.set_size(theseLayers.size(0), b_loop_ub);
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
+            for (i2 = 0; i2 < loop_ub; i2++) {
+              e_theseLayers[i2 + e_theseLayers.size(0) * i1] = theseLayers[i2 +
+                theseLayers.size(0) * ((i + i1) + 1)];
             }
           }
 
@@ -200,7 +205,7 @@ namespace RAT
           loop_ub = input_sizes_idx_1;
           for (i = 0; i < loop_ub; i++) {
             for (i1 = 0; i1 < result; i1++) {
-              thisSldLays[i1 + thisSldLays.size(0) * i] = b_theseLayers[i1 +
+              thisSldLays[i1 + thisSldLays.size(0) * i] = d_theseLayers[i1 +
                 result * i];
             }
           }
@@ -209,7 +214,7 @@ namespace RAT
           for (i = 0; i < loop_ub; i++) {
             for (i1 = 0; i1 < result; i1++) {
               thisSldLays[i1 + thisSldLays.size(0) * (i + input_sizes_idx_1)] =
-                c_theseLayers[i1 + result * i];
+                e_theseLayers[i1 + result * i];
             }
           }
 
@@ -232,18 +237,18 @@ namespace RAT
             sizes_idx_1 = 0;
           }
 
-          d_theseLayers.set_size(theseLayers.size(0));
           loop_ub = theseLayers.size(0);
+          f_theseLayers.set_size(theseLayers.size(0));
           for (i = 0; i < loop_ub; i++) {
-            d_theseLayers[i] = theseLayers[i];
+            f_theseLayers[i] = theseLayers[i];
           }
 
-          c_theseLayers.set_size(theseLayers.size(0), theseLayers.size(1) - 2);
-          loop_ub = theseLayers.size(1);
-          b_loop_ub = theseLayers.size(0);
-          for (i = 0; i <= loop_ub - 3; i++) {
-            for (i1 = 0; i1 < b_loop_ub; i1++) {
-              c_theseLayers[i1 + c_theseLayers.size(0) * i] = theseLayers[i1 +
+          loop_ub = theseLayers.size(0);
+          b_loop_ub = theseLayers.size(1) - 3;
+          e_theseLayers.set_size(theseLayers.size(0), theseLayers.size(1) - 2);
+          for (i = 0; i <= b_loop_ub; i++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
+              e_theseLayers[i1 + e_theseLayers.size(0) * i] = theseLayers[i1 +
                 theseLayers.size(0) * (i + 2)];
             }
           }
@@ -252,7 +257,7 @@ namespace RAT
           loop_ub = input_sizes_idx_1;
           for (i = 0; i < loop_ub; i++) {
             for (i1 = 0; i1 < result; i1++) {
-              thisSldLaysIm[i1] = d_theseLayers[i1];
+              thisSldLaysIm[i1] = f_theseLayers[i1];
             }
           }
 
@@ -260,14 +265,14 @@ namespace RAT
           for (i = 0; i < loop_ub; i++) {
             for (i1 = 0; i1 < result; i1++) {
               thisSldLaysIm[i1 + thisSldLaysIm.size(0) * (i + input_sizes_idx_1)]
-                = c_theseLayers[i1 + result * i];
+                = e_theseLayers[i1 + result * i];
             }
           }
         } else {
           thisSldLays.set_size(theseLayers.size(0), theseLayers.size(1));
           loop_ub = theseLayers.size(1);
-          b_loop_ub = theseLayers.size(0);
           for (i = 0; i < loop_ub; i++) {
+            b_loop_ub = theseLayers.size(0);
             for (i1 = 0; i1 < b_loop_ub; i1++) {
               thisSldLays[i1 + thisSldLays.size(0) * i] = theseLayers[i1 +
                 theseLayers.size(0) * i];
@@ -276,13 +281,13 @@ namespace RAT
         }
 
         makeSLDProfiles(bulkIn, bulkOut, thisSldLays, *ssubs, repeatLayers,
-                        b_theseLayers);
-        sldProfile.set_size(b_theseLayers.size(0), 2);
-        loop_ub = b_theseLayers.size(0);
+                        d_theseLayers);
+        sldProfile.set_size(d_theseLayers.size(0), 2);
+        loop_ub = d_theseLayers.size(0);
         for (i = 0; i < 2; i++) {
           for (i1 = 0; i1 < loop_ub; i1++) {
-            sldProfile[i1 + sldProfile.size(0) * i] = b_theseLayers[i1 +
-              b_theseLayers.size(0) * i];
+            sldProfile[i1 + sldProfile.size(0) * i] = d_theseLayers[i1 +
+              d_theseLayers.size(0) * i];
           }
         }
 
@@ -291,13 +296,13 @@ namespace RAT
         if (useImaginary) {
           //  Note bulkIn and bulkOut = 0 since there is never any imaginary part for
           //  the bulk phases..
-          makeSLDProfiles(thisSldLaysIm, *ssubs, repeatLayers, b_theseLayers);
-          sldProfileIm.set_size(b_theseLayers.size(0), 2);
-          loop_ub = b_theseLayers.size(0);
+          makeSLDProfiles(thisSldLaysIm, *ssubs, repeatLayers, d_theseLayers);
+          sldProfileIm.set_size(d_theseLayers.size(0), 2);
+          loop_ub = d_theseLayers.size(0);
           for (i = 0; i < 2; i++) {
             for (i1 = 0; i1 < loop_ub; i1++) {
-              sldProfileIm[i1 + sldProfileIm.size(0) * i] = b_theseLayers[i1 +
-                b_theseLayers.size(0) * i];
+              sldProfileIm[i1 + sldProfileIm.size(0) * i] = d_theseLayers[i1 +
+                d_theseLayers.size(0) * i];
             }
           }
         }
@@ -310,21 +315,47 @@ namespace RAT
       //  If required, then resample the SLD
       if (resample == 1.0) {
         if (!useImaginary) {
-          resampleLayers(sldProfile, resamPars, layerSld);
+          resampleLayers(sldProfile, resamPars, c_theseLayers);
+          layerSld.set_size(c_theseLayers.size(0), 3);
+          loop_ub = c_theseLayers.size(0);
+          for (i = 0; i < 3; i++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
+              layerSld[i1 + layerSld.size(0) * i] = c_theseLayers[i1 +
+                c_theseLayers.size(0) * i];
+            }
+          }
         } else {
-          resampleLayersReIm(sldProfile, sldProfileIm, resamPars, layerSld);
+          resampleLayersReIm(sldProfile, sldProfileIm, resamPars, b_theseLayers);
+          layerSld.set_size(b_theseLayers.size(0), 4);
+          loop_ub = b_theseLayers.size(0);
+          for (i = 0; i < 4; i++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
+              layerSld[i1 + layerSld.size(0) * i] = b_theseLayers[i1 +
+                b_theseLayers.size(0) * i];
+            }
+          }
         }
 
         resamLayers.set_size(layerSld.size(0), layerSld.size(1));
         loop_ub = layerSld.size(1);
-        b_loop_ub = layerSld.size(0);
         for (i = 0; i < loop_ub; i++) {
+          b_loop_ub = layerSld.size(0);
           for (i1 = 0; i1 < b_loop_ub; i1++) {
             resamLayers[i1 + resamLayers.size(0) * i] = layerSld[i1 +
               layerSld.size(0) * i];
           }
         }
       } else {
+        layerSld.set_size(theseLayers.size(0), theseLayers.size(1));
+        loop_ub = theseLayers.size(1);
+        for (i = 0; i < loop_ub; i++) {
+          b_loop_ub = theseLayers.size(0);
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
+            layerSld[i1 + layerSld.size(0) * i] = theseLayers[i1 +
+              theseLayers.size(0) * i];
+          }
+        }
+
         resamLayers.set_size(1, 3);
         resamLayers[0] = 0.0;
         resamLayers[resamLayers.size(0)] = 0.0;
@@ -373,11 +404,13 @@ namespace RAT
       ::coder::array<real_T, 2U> b_data;
       ::coder::array<real_T, 2U> b_theseLayers;
       ::coder::array<real_T, 2U> c_theseLayers;
+      ::coder::array<real_T, 2U> d_theseLayers;
+      ::coder::array<real_T, 2U> e_theseLayers;
       ::coder::array<real_T, 2U> layerSld;
       ::coder::array<real_T, 2U> sldProfileIm;
       ::coder::array<real_T, 2U> thisSldLays;
       ::coder::array<real_T, 2U> thisSldLaysIm;
-      ::coder::array<real_T, 1U> d_theseLayers;
+      ::coder::array<real_T, 1U> f_theseLayers;
       int32_T b_loop_ub;
       int32_T i;
       int32_T i1;
@@ -423,6 +456,8 @@ namespace RAT
       //
       //  Outputs:
       //
+      //
+      //
       //  ------------------------------------------------------------------------
       //
       //        (c) Arwel Hughes  -   12/1/21
@@ -441,24 +476,24 @@ namespace RAT
       //  Bulid up the layers matrix for this contrast
       if (!useImaginary) {
         groupLayersMod(contrastLayers, rough, geometry_data, geometry_size,
-                       bulkIn, bulkOut, layerSld, ssubs);
-        theseLayers.set_size(layerSld.size(0), 3);
-        loop_ub = layerSld.size(0);
+                       bulkIn, bulkOut, c_theseLayers, ssubs);
+        theseLayers.set_size(c_theseLayers.size(0), 3);
+        loop_ub = c_theseLayers.size(0);
         for (i = 0; i < 3; i++) {
           for (i1 = 0; i1 < loop_ub; i1++) {
-            theseLayers[i1 + theseLayers.size(0) * i] = layerSld[i1 +
-              layerSld.size(0) * i];
+            theseLayers[i1 + theseLayers.size(0) * i] = c_theseLayers[i1 +
+              c_theseLayers.size(0) * i];
           }
         }
       } else {
         groupLayersModImaginary(contrastLayers, rough, geometry_data,
-          geometry_size, bulkIn, bulkOut, layerSld, ssubs);
-        theseLayers.set_size(layerSld.size(0), 4);
-        loop_ub = layerSld.size(0);
+          geometry_size, bulkIn, bulkOut, b_theseLayers, ssubs);
+        theseLayers.set_size(b_theseLayers.size(0), 4);
+        loop_ub = b_theseLayers.size(0);
         for (i = 0; i < 4; i++) {
           for (i1 = 0; i1 < loop_ub; i1++) {
-            theseLayers[i1 + theseLayers.size(0) * i] = layerSld[i1 +
-              layerSld.size(0) * i];
+            theseLayers[i1 + theseLayers.size(0) * i] = b_theseLayers[i1 +
+              b_theseLayers.size(0) * i];
           }
         }
       }
@@ -475,16 +510,17 @@ namespace RAT
         //  If we need them both, we process real and imaginary parts of the SLD
         //  seperately...
         if (useImaginary) {
+          int32_T i2;
           int32_T result;
           int8_T input_sizes_idx_1;
           int8_T sizes_idx_1;
           boolean_T empty_non_axis_sizes;
-          if (theseLayers.size(1) < 4) {
-            i = 0;
-            i1 = 0;
+          if (4 > theseLayers.size(1)) {
+            i = -1;
+            i1 = -1;
           } else {
-            i = 3;
-            i1 = 4;
+            i = 2;
+            i1 = 3;
           }
 
           if (theseLayers.size(0) != 0) {
@@ -507,22 +543,22 @@ namespace RAT
             sizes_idx_1 = 0;
           }
 
-          b_theseLayers.set_size(theseLayers.size(0), 2);
           loop_ub = theseLayers.size(0);
-          for (int32_T i2{0}; i2 < 2; i2++) {
+          d_theseLayers.set_size(theseLayers.size(0), 2);
+          for (i2 = 0; i2 < 2; i2++) {
             for (b_loop_ub = 0; b_loop_ub < loop_ub; b_loop_ub++) {
-              b_theseLayers[b_loop_ub + b_theseLayers.size(0) * i2] =
+              d_theseLayers[b_loop_ub + d_theseLayers.size(0) * i2] =
                 theseLayers[b_loop_ub + theseLayers.size(0) * i2];
             }
           }
 
-          loop_ub = i1 - i;
-          c_theseLayers.set_size(theseLayers.size(0), loop_ub);
-          for (i1 = 0; i1 < loop_ub; i1++) {
-            b_loop_ub = theseLayers.size(0);
-            for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
-              c_theseLayers[i2 + c_theseLayers.size(0) * i1] = theseLayers[i2 +
-                theseLayers.size(0) * (i + i1)];
+          loop_ub = theseLayers.size(0);
+          b_loop_ub = i1 - i;
+          e_theseLayers.set_size(theseLayers.size(0), b_loop_ub);
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
+            for (i2 = 0; i2 < loop_ub; i2++) {
+              e_theseLayers[i2 + e_theseLayers.size(0) * i1] = theseLayers[i2 +
+                theseLayers.size(0) * ((i + i1) + 1)];
             }
           }
 
@@ -530,7 +566,7 @@ namespace RAT
           loop_ub = input_sizes_idx_1;
           for (i = 0; i < loop_ub; i++) {
             for (i1 = 0; i1 < result; i1++) {
-              thisSldLays[i1 + thisSldLays.size(0) * i] = b_theseLayers[i1 +
+              thisSldLays[i1 + thisSldLays.size(0) * i] = d_theseLayers[i1 +
                 result * i];
             }
           }
@@ -539,7 +575,7 @@ namespace RAT
           for (i = 0; i < loop_ub; i++) {
             for (i1 = 0; i1 < result; i1++) {
               thisSldLays[i1 + thisSldLays.size(0) * (i + input_sizes_idx_1)] =
-                c_theseLayers[i1 + result * i];
+                e_theseLayers[i1 + result * i];
             }
           }
 
@@ -562,18 +598,18 @@ namespace RAT
             sizes_idx_1 = 0;
           }
 
-          d_theseLayers.set_size(theseLayers.size(0));
           loop_ub = theseLayers.size(0);
+          f_theseLayers.set_size(theseLayers.size(0));
           for (i = 0; i < loop_ub; i++) {
-            d_theseLayers[i] = theseLayers[i];
+            f_theseLayers[i] = theseLayers[i];
           }
 
-          c_theseLayers.set_size(theseLayers.size(0), theseLayers.size(1) - 2);
-          loop_ub = theseLayers.size(1);
-          b_loop_ub = theseLayers.size(0);
-          for (i = 0; i <= loop_ub - 3; i++) {
-            for (i1 = 0; i1 < b_loop_ub; i1++) {
-              c_theseLayers[i1 + c_theseLayers.size(0) * i] = theseLayers[i1 +
+          loop_ub = theseLayers.size(0);
+          b_loop_ub = theseLayers.size(1) - 3;
+          e_theseLayers.set_size(theseLayers.size(0), theseLayers.size(1) - 2);
+          for (i = 0; i <= b_loop_ub; i++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
+              e_theseLayers[i1 + e_theseLayers.size(0) * i] = theseLayers[i1 +
                 theseLayers.size(0) * (i + 2)];
             }
           }
@@ -582,7 +618,7 @@ namespace RAT
           loop_ub = input_sizes_idx_1;
           for (i = 0; i < loop_ub; i++) {
             for (i1 = 0; i1 < result; i1++) {
-              thisSldLaysIm[i1] = d_theseLayers[i1];
+              thisSldLaysIm[i1] = f_theseLayers[i1];
             }
           }
 
@@ -590,14 +626,14 @@ namespace RAT
           for (i = 0; i < loop_ub; i++) {
             for (i1 = 0; i1 < result; i1++) {
               thisSldLaysIm[i1 + thisSldLaysIm.size(0) * (i + input_sizes_idx_1)]
-                = c_theseLayers[i1 + result * i];
+                = e_theseLayers[i1 + result * i];
             }
           }
         } else {
           thisSldLays.set_size(theseLayers.size(0), theseLayers.size(1));
           loop_ub = theseLayers.size(1);
-          b_loop_ub = theseLayers.size(0);
           for (i = 0; i < loop_ub; i++) {
+            b_loop_ub = theseLayers.size(0);
             for (i1 = 0; i1 < b_loop_ub; i1++) {
               thisSldLays[i1 + thisSldLays.size(0) * i] = theseLayers[i1 +
                 theseLayers.size(0) * i];
@@ -606,13 +642,13 @@ namespace RAT
         }
 
         makeSLDProfiles(bulkIn, bulkOut, thisSldLays, *ssubs, repeatLayers,
-                        b_theseLayers);
-        sldProfile.set_size(b_theseLayers.size(0), 2);
-        loop_ub = b_theseLayers.size(0);
+                        d_theseLayers);
+        sldProfile.set_size(d_theseLayers.size(0), 2);
+        loop_ub = d_theseLayers.size(0);
         for (i = 0; i < 2; i++) {
           for (i1 = 0; i1 < loop_ub; i1++) {
-            sldProfile[i1 + sldProfile.size(0) * i] = b_theseLayers[i1 +
-              b_theseLayers.size(0) * i];
+            sldProfile[i1 + sldProfile.size(0) * i] = d_theseLayers[i1 +
+              d_theseLayers.size(0) * i];
           }
         }
 
@@ -621,13 +657,13 @@ namespace RAT
         if (useImaginary) {
           //  Note bulkIn and bulkOut = 0 since there is never any imaginary part for
           //  the bulk phases..
-          makeSLDProfiles(thisSldLaysIm, *ssubs, repeatLayers, b_theseLayers);
-          sldProfileIm.set_size(b_theseLayers.size(0), 2);
-          loop_ub = b_theseLayers.size(0);
+          makeSLDProfiles(thisSldLaysIm, *ssubs, repeatLayers, d_theseLayers);
+          sldProfileIm.set_size(d_theseLayers.size(0), 2);
+          loop_ub = d_theseLayers.size(0);
           for (i = 0; i < 2; i++) {
             for (i1 = 0; i1 < loop_ub; i1++) {
-              sldProfileIm[i1 + sldProfileIm.size(0) * i] = b_theseLayers[i1 +
-                b_theseLayers.size(0) * i];
+              sldProfileIm[i1 + sldProfileIm.size(0) * i] = d_theseLayers[i1 +
+                d_theseLayers.size(0) * i];
             }
           }
         }
@@ -640,21 +676,47 @@ namespace RAT
       //  If required, then resample the SLD
       if (resample == 1.0) {
         if (!useImaginary) {
-          resampleLayers(sldProfile, resamPars, layerSld);
+          resampleLayers(sldProfile, resamPars, c_theseLayers);
+          layerSld.set_size(c_theseLayers.size(0), 3);
+          loop_ub = c_theseLayers.size(0);
+          for (i = 0; i < 3; i++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
+              layerSld[i1 + layerSld.size(0) * i] = c_theseLayers[i1 +
+                c_theseLayers.size(0) * i];
+            }
+          }
         } else {
-          resampleLayersReIm(sldProfile, sldProfileIm, resamPars, layerSld);
+          resampleLayersReIm(sldProfile, sldProfileIm, resamPars, b_theseLayers);
+          layerSld.set_size(b_theseLayers.size(0), 4);
+          loop_ub = b_theseLayers.size(0);
+          for (i = 0; i < 4; i++) {
+            for (i1 = 0; i1 < loop_ub; i1++) {
+              layerSld[i1 + layerSld.size(0) * i] = b_theseLayers[i1 +
+                b_theseLayers.size(0) * i];
+            }
+          }
         }
 
         resamLayers.set_size(layerSld.size(0), layerSld.size(1));
         loop_ub = layerSld.size(1);
-        b_loop_ub = layerSld.size(0);
         for (i = 0; i < loop_ub; i++) {
+          b_loop_ub = layerSld.size(0);
           for (i1 = 0; i1 < b_loop_ub; i1++) {
             resamLayers[i1 + resamLayers.size(0) * i] = layerSld[i1 +
               layerSld.size(0) * i];
           }
         }
       } else {
+        layerSld.set_size(theseLayers.size(0), theseLayers.size(1));
+        loop_ub = theseLayers.size(1);
+        for (i = 0; i < loop_ub; i++) {
+          b_loop_ub = theseLayers.size(0);
+          for (i1 = 0; i1 < b_loop_ub; i1++) {
+            layerSld[i1 + layerSld.size(0) * i] = theseLayers[i1 +
+              theseLayers.size(0) * i];
+          }
+        }
+
         resamLayers.set_size(1, 3);
         resamLayers[0] = 0.0;
         resamLayers[resamLayers.size(0)] = 0.0;

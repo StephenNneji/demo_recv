@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // makeSLDProfiles.cpp
 //
@@ -21,28 +21,29 @@ namespace RAT
                        real_T, 2U> &sld, real_T ssub, const real_T repeats[2], ::
                        coder::array<real_T, 2U> &sldProfile)
   {
-    real_T d;
+    real_T b_repeats;
     if (repeats[0] == 0.0) {
-      d = 1.0;
+      b_repeats = 1.0;
     } else {
-      d = repeats[1];
+      b_repeats = repeats[1];
     }
 
     makeSLDProfileXY(bulkIn, bulkOut, ssub, sld, static_cast<real_T>(sld.size(0)),
-                     d, sldProfile);
+                     b_repeats, sldProfile);
   }
 
   void makeSLDProfiles(const ::coder::array<real_T, 2U> &sld, real_T ssub, const
                        real_T repeats[2], ::coder::array<real_T, 2U> &sldProfile)
   {
-    real_T d;
+    real_T b_repeats;
     if (repeats[0] == 0.0) {
-      d = 1.0;
+      b_repeats = 1.0;
     } else {
-      d = repeats[1];
+      b_repeats = repeats[1];
     }
 
-    makeSLDProfileXY(ssub, sld, static_cast<real_T>(sld.size(0)), d, sldProfile);
+    makeSLDProfileXY(ssub, sld, static_cast<real_T>(sld.size(0)), b_repeats,
+                     sldProfile);
   }
 }
 

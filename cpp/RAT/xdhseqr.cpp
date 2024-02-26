@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xdhseqr.cpp
 //
@@ -29,6 +29,7 @@ namespace RAT
         int32_T eml_dlahqr(::coder::array<real_T, 2U> &h, ::coder::array<real_T,
                            2U> &z)
         {
+          real_T v[3];
           real_T aa;
           real_T ab;
           real_T ba;
@@ -46,32 +47,33 @@ namespace RAT
           ldh = h.size(0);
           ldz = z.size(0);
           info = 0;
-          if ((n != 0) && (n != 1)) {
-            real_T v[3];
+          if ((n != 0) && (1 != n)) {
             real_T SMLNUM;
             int32_T i;
             int32_T itmax;
+            int32_T j;
             int32_T kdefl;
+            int32_T nr;
             boolean_T exitg1;
             v[0] = 0.0;
             v[1] = 0.0;
             v[2] = 0.0;
-            for (int32_T j{0}; j <= n - 4; j++) {
+            for (j = 0; j <= n - 4; j++) {
               h[(j + h.size(0) * j) + 2] = 0.0;
               h[(j + h.size(0) * j) + 3] = 0.0;
             }
 
-            if (n - 2 >= 1) {
+            if (1 <= n - 2) {
               h[(n + h.size(0) * (n - 3)) - 1] = 0.0;
             }
 
-            if (n <= 10) {
-              itmax = 10;
+            if (10 > n) {
+              nr = 10;
             } else {
-              itmax = n;
+              nr = n;
             }
 
-            itmax *= 30;
+            itmax = 30 * nr;
             kdefl = 0;
             SMLNUM = 2.2250738585072014E-308 * (static_cast<real_T>(n) /
               2.2204460492503131E-16);
@@ -80,7 +82,6 @@ namespace RAT
             while ((!exitg1) && (i + 1 >= 1)) {
               int32_T L;
               int32_T its;
-              int32_T nr;
               boolean_T exitg2;
               boolean_T goto150;
               L = 1;
@@ -238,20 +239,20 @@ namespace RAT
 
                   for (int32_T b_k{m}; b_k <= i; b_k++) {
                     nr = (i - b_k) + 2;
-                    if (nr >= 3) {
+                    if (3 < nr) {
                       nr = 3;
                     }
 
                     if (b_k > m) {
                       int32_T hoffset;
                       hoffset = (b_k + ldh * (b_k - 2)) - 1;
-                      for (int32_T j{0}; j < nr; j++) {
+                      for (j = 0; j < nr; j++) {
                         v[j] = h[j + hoffset];
                       }
                     }
 
                     tst = v[0];
-                    rt2r = xzlarfg(nr, &tst, v);
+                    bb = xzlarfg(nr, &tst, v);
                     v[0] = tst;
                     if (b_k > m) {
                       h[(b_k + h.size(0) * (b_k - 2)) - 1] = tst;
@@ -261,87 +262,77 @@ namespace RAT
                       }
                     } else if (m > k + 1) {
                       h[(b_k + h.size(0) * (b_k - 2)) - 1] = h[(b_k + h.size(0) *
-                        (b_k - 2)) - 1] * (1.0 - rt2r);
+                        (b_k - 2)) - 1] * (1.0 - bb);
                     }
 
-                    rt1r = v[1];
-                    tst = rt2r * v[1];
+                    s = v[1];
+                    tst = bb * v[1];
                     if (nr == 3) {
-                      s = v[2];
-                      aa = rt2r * v[2];
-                      for (int32_T j{b_k}; j <= n; j++) {
-                        d = h[(b_k + h.size(0) * (j - 1)) - 1];
-                        ba = h[b_k + h.size(0) * (j - 1)];
-                        bb = h[(b_k + h.size(0) * (j - 1)) + 1];
-                        ab = (d + rt1r * ba) + s * bb;
-                        d -= ab * rt2r;
-                        h[(b_k + h.size(0) * (j - 1)) - 1] = d;
-                        ba -= ab * tst;
-                        h[b_k + h.size(0) * (j - 1)] = ba;
-                        bb -= ab * aa;
-                        h[(b_k + h.size(0) * (j - 1)) + 1] = bb;
+                      d = v[2];
+                      ba = bb * v[2];
+                      for (j = b_k; j <= n; j++) {
+                        aa = (h[(b_k + h.size(0) * (j - 1)) - 1] + s * h[b_k +
+                              h.size(0) * (j - 1)]) + d * h[(b_k + h.size(0) *
+                          (j - 1)) + 1];
+                        h[(b_k + h.size(0) * (j - 1)) - 1] = h[(b_k + h.size(0) *
+                          (j - 1)) - 1] - aa * bb;
+                        h[b_k + h.size(0) * (j - 1)] = h[b_k + h.size(0) * (j -
+                          1)] - aa * tst;
+                        h[(b_k + h.size(0) * (j - 1)) + 1] = h[(b_k + h.size(0) *
+                          (j - 1)) + 1] - aa * ba;
                       }
 
-                      if (b_k + 3 <= i + 1) {
+                      if (b_k + 3 < i + 1) {
                         nr = b_k + 2;
                       } else {
                         nr = i;
                       }
 
-                      for (int32_T j{0}; j <= nr; j++) {
-                        d = h[j + h.size(0) * (b_k - 1)];
-                        ba = h[j + h.size(0) * b_k];
-                        bb = h[j + h.size(0) * (b_k + 1)];
-                        ab = (d + rt1r * ba) + s * bb;
-                        d -= ab * rt2r;
-                        h[j + h.size(0) * (b_k - 1)] = d;
-                        ba -= ab * tst;
-                        h[j + h.size(0) * b_k] = ba;
-                        bb -= ab * aa;
-                        h[j + h.size(0) * (b_k + 1)] = bb;
+                      for (j = 0; j <= nr; j++) {
+                        aa = (h[j + h.size(0) * (b_k - 1)] + s * h[j + h.size(0)
+                              * b_k]) + d * h[j + h.size(0) * (b_k + 1)];
+                        h[j + h.size(0) * (b_k - 1)] = h[j + h.size(0) * (b_k -
+                          1)] - aa * bb;
+                        h[j + h.size(0) * b_k] = h[j + h.size(0) * b_k] - aa *
+                          tst;
+                        h[j + h.size(0) * (b_k + 1)] = h[j + h.size(0) * (b_k +
+                          1)] - aa * ba;
                       }
 
-                      for (int32_T j{0}; j < n; j++) {
-                        d = z[j + z.size(0) * (b_k - 1)];
-                        ba = z[j + z.size(0) * b_k];
-                        bb = z[j + z.size(0) * (b_k + 1)];
-                        ab = (d + rt1r * ba) + s * bb;
-                        d -= ab * rt2r;
-                        z[j + z.size(0) * (b_k - 1)] = d;
-                        ba -= ab * tst;
-                        z[j + z.size(0) * b_k] = ba;
-                        bb -= ab * aa;
-                        z[j + z.size(0) * (b_k + 1)] = bb;
+                      for (j = 0; j < n; j++) {
+                        ab = z[j + z.size(0) * (b_k - 1)];
+                        aa = (ab + s * z[j + z.size(0) * b_k]) + d * z[j +
+                          z.size(0) * (b_k + 1)];
+                        z[j + z.size(0) * (b_k - 1)] = ab - aa * bb;
+                        z[j + z.size(0) * b_k] = z[j + z.size(0) * b_k] - aa *
+                          tst;
+                        z[j + z.size(0) * (b_k + 1)] = z[j + z.size(0) * (b_k +
+                          1)] - aa * ba;
                       }
                     } else if (nr == 2) {
-                      for (int32_T j{b_k}; j <= n; j++) {
-                        s = h[(b_k + h.size(0) * (j - 1)) - 1];
-                        d = h[b_k + h.size(0) * (j - 1)];
-                        ab = s + rt1r * d;
-                        s -= ab * rt2r;
-                        h[(b_k + h.size(0) * (j - 1)) - 1] = s;
-                        d -= ab * tst;
-                        h[b_k + h.size(0) * (j - 1)] = d;
+                      for (j = b_k; j <= n; j++) {
+                        ab = h[(b_k + h.size(0) * (j - 1)) - 1];
+                        aa = ab + s * h[b_k + h.size(0) * (j - 1)];
+                        h[(b_k + h.size(0) * (j - 1)) - 1] = ab - aa * bb;
+                        h[b_k + h.size(0) * (j - 1)] = h[b_k + h.size(0) * (j -
+                          1)] - aa * tst;
                       }
 
-                      for (int32_T j{0}; j <= i; j++) {
-                        s = h[j + h.size(0) * (b_k - 1)];
-                        d = h[j + h.size(0) * b_k];
-                        ab = s + rt1r * d;
-                        s -= ab * rt2r;
-                        h[j + h.size(0) * (b_k - 1)] = s;
-                        d -= ab * tst;
-                        h[j + h.size(0) * b_k] = d;
+                      for (j = 0; j <= i; j++) {
+                        aa = h[j + h.size(0) * (b_k - 1)] + s * h[j + h.size(0) *
+                          b_k];
+                        h[j + h.size(0) * (b_k - 1)] = h[j + h.size(0) * (b_k -
+                          1)] - aa * bb;
+                        h[j + h.size(0) * b_k] = h[j + h.size(0) * b_k] - aa *
+                          tst;
                       }
 
-                      for (int32_T j{0}; j < n; j++) {
-                        s = z[j + z.size(0) * (b_k - 1)];
-                        d = z[j + z.size(0) * b_k];
-                        ab = s + rt1r * d;
-                        s -= ab * rt2r;
-                        z[j + z.size(0) * (b_k - 1)] = s;
-                        d -= ab * tst;
-                        z[j + z.size(0) * b_k] = d;
+                      for (j = 0; j < n; j++) {
+                        ab = z[j + z.size(0) * (b_k - 1)];
+                        aa = ab + s * z[j + z.size(0) * b_k];
+                        z[j + z.size(0) * (b_k - 1)] = ab - aa * bb;
+                        z[j + z.size(0) * b_k] = z[j + z.size(0) * b_k] - aa *
+                          tst;
                       }
                     }
                   }
@@ -355,21 +346,22 @@ namespace RAT
                 exitg1 = true;
               } else {
                 if ((L != i + 1) && (L == i)) {
-                  rt1r = h[(i + h.size(0) * i) - 1];
-                  s = h[i + h.size(0) * (i - 1)];
-                  d = h[i + h.size(0) * i];
-                  xdlanv2(&h[(i + h.size(0) * (i - 1)) - 1], &rt1r, &s, &d, &tst,
-                          &ab, &aa, &ba, &bb, &rt2r);
-                  h[(i + h.size(0) * i) - 1] = rt1r;
-                  h[i + h.size(0) * (i - 1)] = s;
-                  h[i + h.size(0) * i] = d;
+                  s = h[(i + h.size(0) * i) - 1];
+                  d = h[i + h.size(0) * (i - 1)];
+                  tst = h[i + h.size(0) * i];
+                  xdlanv2(&h[(i + h.size(0) * (i - 1)) - 1], &s, &d, &tst, &ab,
+                          &aa, &ba, &bb, &rt2r, &rt1r);
+                  h[(i + h.size(0) * i) - 1] = s;
+                  h[i + h.size(0) * (i - 1)] = d;
+                  h[i + h.size(0) * i] = tst;
                   if (n > i + 1) {
                     nr = i + (i + 1) * ldh;
-                    blas::xrot((n - i) - 1, h, nr, ldh, nr + 1, ldh, bb, rt2r);
+                    blas::xrot((n - i) - 1, h, nr, ldh, nr + 1, ldh, rt2r, rt1r);
                   }
 
-                  blas::xrot(i - 1, h, (i - 1) * ldh + 1, i * ldh + 1, bb, rt2r);
-                  blas::xrot(n, z, (i - 1) * ldz + 1, i * ldz + 1, bb, rt2r);
+                  blas::xrot(i - 1, h, (i - 1) * ldh + 1, i * ldh + 1, rt2r,
+                             rt1r);
+                  blas::xrot(n, z, (i - 1) * ldz + 1, i * ldz + 1, rt2r, rt1r);
                 }
 
                 kdefl = 0;

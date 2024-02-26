@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xzlarfg.cpp
 //
@@ -31,7 +31,7 @@ namespace RAT
           tau = 0.0;
           if (n > 0) {
             real_T xnorm;
-            xnorm = blas::b_xnrm2(n - 1, x);
+            xnorm = blas::xnrm2(n - 1, x);
             if (xnorm != 0.0) {
               real_T beta1;
               beta1 = rt_hypotd_snf(*alpha1, xnorm);
@@ -40,11 +40,12 @@ namespace RAT
               }
 
               if (std::abs(beta1) < 1.0020841800044864E-292) {
+                int32_T k;
                 int32_T knt;
                 knt = 0;
                 do {
                   knt++;
-                  for (int32_T k{2}; k <= n; k++) {
+                  for (k = 2; k <= n; k++) {
                     x[k - 1] = 9.9792015476736E+291 * x[k - 1];
                   }
 
@@ -53,18 +54,18 @@ namespace RAT
                 } while ((std::abs(beta1) < 1.0020841800044864E-292) && (knt <
                           20));
 
-                beta1 = rt_hypotd_snf(*alpha1, blas::b_xnrm2(n - 1, x));
+                beta1 = rt_hypotd_snf(*alpha1, blas::xnrm2(n - 1, x));
                 if (*alpha1 >= 0.0) {
                   beta1 = -beta1;
                 }
 
                 tau = (beta1 - *alpha1) / beta1;
                 xnorm = 1.0 / (*alpha1 - beta1);
-                for (int32_T k{2}; k <= n; k++) {
+                for (k = 2; k <= n; k++) {
                   x[k - 1] = xnorm * x[k - 1];
                 }
 
-                for (int32_T k{0}; k < knt; k++) {
+                for (k = 0; k < knt; k++) {
                   beta1 *= 1.0020841800044864E-292;
                 }
 
@@ -101,12 +102,13 @@ namespace RAT
 
               if (std::abs(beta1) < 1.0020841800044864E-292) {
                 int32_T i;
+                int32_T k;
                 int32_T knt;
                 knt = 0;
                 i = (ix0 + n) - 2;
                 do {
                   knt++;
-                  for (int32_T k{ix0}; k <= i; k++) {
+                  for (k = ix0; k <= i; k++) {
                     x[k - 1] = 9.9792015476736E+291 * x[k - 1];
                   }
 
@@ -122,11 +124,11 @@ namespace RAT
 
                 tau = (beta1 - *alpha1) / beta1;
                 xnorm = 1.0 / (*alpha1 - beta1);
-                for (int32_T k{ix0}; k <= i; k++) {
+                for (k = ix0; k <= i; k++) {
                   x[k - 1] = xnorm * x[k - 1];
                 }
 
-                for (int32_T k{0}; k < knt; k++) {
+                for (k = 0; k < knt; k++) {
                   beta1 *= 1.0020841800044864E-292;
                 }
 
@@ -163,11 +165,12 @@ namespace RAT
               }
 
               if (std::abs(beta1) < 1.0020841800044864E-292) {
+                int32_T k;
                 int32_T knt;
                 knt = 0;
                 do {
                   knt++;
-                  for (int32_T k{2}; k <= n; k++) {
+                  for (k = 2; k <= n; k++) {
                     x[k - 1] *= 9.9792015476736E+291;
                   }
 
@@ -183,11 +186,11 @@ namespace RAT
 
                 tau = (beta1 - *alpha1) / beta1;
                 xnorm = 1.0 / (*alpha1 - beta1);
-                for (int32_T k{2}; k <= n; k++) {
+                for (k = 2; k <= n; k++) {
                   x[k - 1] *= xnorm;
                 }
 
-                for (int32_T k{0}; k < knt; k++) {
+                for (k = 0; k < knt; k++) {
                   beta1 *= 1.0020841800044864E-292;
                 }
 

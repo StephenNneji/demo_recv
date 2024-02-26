@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // str2double1.cpp
 //
@@ -46,13 +46,13 @@ namespace RAT
       static void b_readfloat(char_T s1_data[], int32_T *idx, const char_T
         s_data[], int32_T *k, int32_T n, boolean_T *isimag, boolean_T *b_finite,
         real_T *nfv, boolean_T *foundsign, boolean_T *success);
+      static void b_skipspaces(const char_T s_data[], int32_T *k, int32_T n);
       static boolean_T copydigits(char_T s1_data[], int32_T *idx, const char_T
         s_data[], int32_T *k, int32_T n, boolean_T allowpoint);
       static boolean_T copyexponent(char_T s1_data[], int32_T *idx, const char_T
         s_data[], int32_T *k, int32_T n);
       static boolean_T isUnitImag(const char_T s_data[], int32_T k, int32_T n);
       static boolean_T readNonFinite(const char_T s_data[], int32_T k, int32_T n);
-      static void skipspaces(const char_T s_data[], int32_T *k, int32_T n);
     }
   }
 }
@@ -184,10 +184,10 @@ namespace RAT
               *nfv = -*nfv;
             }
 
-            skipspaces(s_data, k, n);
+            b_skipspaces(s_data, k, n);
             if ((*k <= n) && (s_data[*k - 1] == '*')) {
               (*k)++;
-              skipspaces(s_data, k, n);
+              b_skipspaces(s_data, k, n);
             }
 
             if (*k <= n) {
@@ -200,7 +200,23 @@ namespace RAT
             }
           }
 
-          skipspaces(s_data, k, n);
+          b_skipspaces(s_data, k, n);
+        }
+      }
+
+      static void b_skipspaces(const char_T s_data[], int32_T *k, int32_T n)
+      {
+        boolean_T exitg1;
+        exitg1 = false;
+        while ((!exitg1) && (*k <= n)) {
+          char_T c;
+          c = s_data[*k - 1];
+          if (bv[static_cast<uint8_T>(c) & 127] || (c == '\x00') || (c == ','))
+          {
+            (*k)++;
+          } else {
+            exitg1 = true;
+          }
         }
       }
 
@@ -293,11 +309,7 @@ namespace RAT
           if (c == 'j') {
             p = true;
           } else if (c == 'i') {
-            if (k >= n - 1) {
-              p = true;
-            } else {
-              p = readNonFinite(s_data, k, n);
-            }
+            p = ((k >= n - 1) || readNonFinite(s_data, k, n));
           }
         }
 
@@ -355,22 +367,6 @@ namespace RAT
         return b_finite;
       }
 
-      static void skipspaces(const char_T s_data[], int32_T *k, int32_T n)
-      {
-        boolean_T exitg1;
-        exitg1 = false;
-        while ((!exitg1) && (*k <= n)) {
-          char_T c;
-          c = s_data[*k - 1];
-          if (bv[static_cast<uint8_T>(c) & 127] || (c == '\x00') || (c == ','))
-          {
-            (*k)++;
-          } else {
-            exitg1 = true;
-          }
-        }
-      }
-
       void readfloat(char_T s1_data[], int32_T *idx, const char_T s_data[],
                      int32_T *k, int32_T n, boolean_T *isimag, boolean_T
                      *b_finite, real_T *nfv, boolean_T *foundsign, boolean_T
@@ -389,7 +385,7 @@ namespace RAT
           if (isUnitImag(s_data, *k, n)) {
             *isimag = true;
             (*k)++;
-            skipspaces(s_data, k, n);
+            b_skipspaces(s_data, k, n);
             if ((*k <= n) && (s_data[*k - 1] == '*')) {
               (*k)++;
               b_readfloat(s1_data, idx, s_data, k, n, &a__2, b_finite, nfv,
@@ -411,10 +407,10 @@ namespace RAT
               *nfv = -*nfv;
             }
 
-            skipspaces(s_data, k, n);
+            b_skipspaces(s_data, k, n);
             if ((*k <= n) && (s_data[*k - 1] == '*')) {
               (*k)++;
-              skipspaces(s_data, k, n);
+              b_skipspaces(s_data, k, n);
             }
 
             if (*k <= n) {
@@ -427,27 +423,24 @@ namespace RAT
             }
           }
 
-          skipspaces(s_data, k, n);
+          b_skipspaces(s_data, k, n);
         }
       }
 
-      int32_T skipspaces(const char_T s_data[], int32_T n)
+      void skipspaces(const char_T s_data[], int32_T *k, int32_T n)
       {
-        int32_T k;
         boolean_T exitg1;
-        k = 1;
+        *k = 1;
         exitg1 = false;
-        while ((!exitg1) && (k <= n)) {
+        while ((!exitg1) && (*k <= n)) {
           char_T c;
-          c = s_data[k - 1];
+          c = s_data[*k - 1];
           if (bv[static_cast<uint8_T>(c) & 127] || (c == '\x00')) {
-            k++;
+            (*k)++;
           } else {
             exitg1 = true;
           }
         }
-
-        return k;
       }
 
       real_T sscanfd(const char_T s_data[])

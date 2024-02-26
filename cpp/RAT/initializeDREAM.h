@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // initializeDREAM.h
 //
@@ -13,6 +13,7 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -21,7 +22,7 @@ namespace RAT
 {
   struct struct13_T;
   struct struct12_T;
-  struct c_struct_T;
+  struct d_struct_T;
   struct cell_11;
   struct struct2_T;
 }
@@ -34,7 +35,7 @@ namespace RAT
                        &Par_info_max, const char_T Par_info_boundhandling_data[],
                        const int32_T Par_info_boundhandling_size[2], ::coder::
                        array<real_T, 3U> &chain, struct12_T *output, ::coder::
-                       array<real_T, 2U> &log_L, const c_struct_T
+                       array<real_T, 2U> &log_L, const d_struct_T
                        *ratInputs_problemStruct, const cell_11
                        *ratInputs_problemCells, const struct2_T
                        *ratInputs_controls, const ::coder::array<real_T, 2U>

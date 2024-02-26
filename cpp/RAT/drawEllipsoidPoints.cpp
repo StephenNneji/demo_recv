@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // drawEllipsoidPoints.cpp
 //
@@ -14,8 +14,8 @@
 #include "blockedSummation.h"
 #include "diag.h"
 #include "eig.h"
-#include "eml_mtimes_helper.h"
 #include "mtimes.h"
+#include "power.h"
 #include "rand.h"
 #include "randn.h"
 #include "rt_nonfinite.h"
@@ -23,35 +23,9 @@
 #include "coder_array.h"
 #include <cmath>
 
-// Function Declarations
-namespace RAT
-{
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<creal_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3);
-}
-
 // Function Definitions
 namespace RAT
 {
-  static void binary_expand_op(::coder::array<real_T, 2U> &in1, const ::coder::
-    array<creal_T, 2U> &in2, const ::coder::array<real_T, 2U> &in3)
-  {
-    int32_T loop_ub;
-    int32_T stride_0_1;
-    int32_T stride_1_1;
-    stride_0_1 = (in2.size(1) != 1);
-    stride_1_1 = (in3.size(1) != 1);
-    if (in3.size(1) == 1) {
-      loop_ub = in2.size(1);
-    } else {
-      loop_ub = in3.size(1);
-    }
-
-    for (int32_T i{0}; i < loop_ub; i++) {
-      in1[i] = in2[i * stride_0_1].re + in3[i * stride_1_1];
-    }
-  }
-
   void drawEllipsoidPoints(const ::coder::array<real_T, 2U> &B, const ::coder::
     array<real_T, 2U> &mu, ::coder::array<real_T, 2U> &pnts)
   {
@@ -85,13 +59,7 @@ namespace RAT
     coder::randn(static_cast<real_T>(B.size(0)), pt);
 
     //  get scalings for each point onto the surface of a unit hypersphere
-    x.set_size(1, pt.size(1));
-    k = pt.size(1);
-    for (i = 0; i < k; i++) {
-      real_T varargin_1;
-      varargin_1 = pt[i];
-      x[i] = rt_powd_snf(varargin_1, 2.0);
-    }
+    coder::power(pt, x);
 
     //  calculate scaling for each point to be within the unit hypersphere
     //  with radii rs
@@ -119,26 +87,17 @@ namespace RAT
       coder::internal::scalar::d_sqrt(&r[k]);
     }
 
-    if (r.size(0) == pnts.size(1)) {
-      b_pnts.set_size(1, pnts.size(1));
-      k = pnts.size(1);
-      for (i = 0; i < k; i++) {
-        b_pnts[i].re = pnts[i] * r[i].re;
-        b_pnts[i].im = pnts[i] * -r[i].im;
-      }
-
-      coder::internal::blas::mtimes(b_pnts, V, r1);
-    } else {
-      binary_expand_op(r1, pnts, r, V);
+    k = pnts.size(1);
+    b_pnts.set_size(1, pnts.size(1));
+    for (i = 0; i < k; i++) {
+      b_pnts[i].re = pnts[i] * r[i].re;
+      b_pnts[i].im = pnts[i] * -r[i].im;
     }
 
-    if (r1.size(1) == mu.size(1)) {
-      k = r1.size(1);
-      for (i = 0; i < k; i++) {
-        pnts[i] = r1[i].re + mu[i];
-      }
-    } else {
-      binary_expand_op(pnts, r1, mu);
+    coder::internal::blas::mtimes(b_pnts, V, r1);
+    k = r1.size(1);
+    for (i = 0; i < k; i++) {
+      pnts[i] = r1[i].re + mu[i];
     }
   }
 }

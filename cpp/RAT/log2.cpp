@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // log2.cpp
 //
@@ -13,6 +13,7 @@
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include <cmath>
+#include <math.h>
 
 // Function Definitions
 namespace RAT
@@ -37,7 +38,7 @@ namespace RAT
     {
       int32_T eint;
       if ((!std::isinf(x)) && (!std::isnan(x))) {
-        *f = std::frexp(x, &eint);
+        *f = frexp(x, &eint);
         *e = eint;
       } else {
         *f = x;

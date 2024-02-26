@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // sum.h
 //
@@ -13,6 +13,7 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -23,8 +24,6 @@ namespace RAT
   {
     void sum(const ::coder::array<real_T, 2U> &x, ::coder::array<real_T, 2U> &y);
     creal_T sum(const ::coder::array<creal_T, 2U> &x);
-    real_T sum(const ::coder::array<real_T, 2U> &x);
-    real_T sum(const ::coder::array<real_T, 1U> &x);
   }
 }
 

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // setupDREAM.cpp
 //
@@ -23,8 +23,8 @@ namespace RAT
 {
   void setupDREAM(real_T DREAMPar_d, real_T DREAMPar_N, real_T DREAMPar_T,
                   real_T DREAMPar_lambda, real_T DREAMPar_pUnitGamma, boolean_T
-                  DREAMPar_adaptPCR, struct13_T *outDREAMPar, struct14_T
-                  *Meas_info, ::coder::array<real_T, 3U> &chain, struct12_T
+                  DREAMPar_adaptPCR, struct14_T *Meas_info, struct13_T
+                  *outDREAMPar, ::coder::array<real_T, 3U> &chain, struct12_T
                   *output, ::coder::array<real_T, 2U> &log_L, ::coder::array<
                   real_T, 2U> &Table_gamma)
   {
@@ -35,11 +35,10 @@ namespace RAT
     real_T value_f3_tmp;
     int32_T b_loop_ub_tmp;
     int32_T i;
+    int32_T i1;
     int32_T k;
     int32_T loop_ub;
     int32_T loop_ub_tmp;
-    Meas_info->Y = 0.0;
-    Meas_info->N = 0.0;
 
     //  Initializes the main variables used in DREAM
     //  To keep coder happy, we have to define the full version of DREAMPar here
@@ -50,7 +49,7 @@ namespace RAT
     loop_ub_tmp = static_cast<int32_T>(DREAMPar_N);
     outDREAMPar->R.set_size(loop_ub_tmp, loop_ub_tmp);
     for (i = 0; i < loop_ub_tmp; i++) {
-      for (int32_T i1{0}; i1 < loop_ub_tmp; i1++) {
+      for (i1 = 0; i1 < loop_ub_tmp; i1++) {
         outDREAMPar->R[i1 + outDREAMPar->R.size(0) * i] = 0.0;
       }
     }
@@ -133,12 +132,15 @@ namespace RAT
     outDREAMPar->save = false;
 
     //  Matrix DREAMPar.R: Store for each chain (as row) the index of all other chains available for DE
-    if (static_cast<int32_T>(DREAMPar_N) - 1 >= 0) {
+    if (0 <= static_cast<int32_T>(DREAMPar_N) - 1) {
       if (DREAMPar_N < 1.0) {
         y.set_size(1, 0);
+      } else if (std::isinf(DREAMPar_N) && (1.0 == DREAMPar_N)) {
+        y.set_size(1, 1);
+        y[0] = rtNaN;
       } else {
-        y.set_size(1, static_cast<int32_T>(DREAMPar_N - 1.0) + 1);
-        loop_ub = static_cast<int32_T>(DREAMPar_N - 1.0);
+        loop_ub = static_cast<int32_T>(std::floor(DREAMPar_N - 1.0));
+        y.set_size(1, loop_ub + 1);
         for (i = 0; i <= loop_ub; i++) {
           y[i] = static_cast<real_T>(i) + 1.0;
         }
@@ -173,7 +175,7 @@ namespace RAT
     b_loop_ub_tmp = static_cast<int32_T>(DREAMPar_N + 1.0);
     log_L.set_size(loop_ub, b_loop_ub_tmp);
     for (i = 0; i < b_loop_ub_tmp; i++) {
-      for (int32_T i1{0}; i1 < loop_ub; i1++) {
+      for (i1 = 0; i1 < loop_ub; i1++) {
         log_L[i1 + log_L.size(0) * i] = rtNaN;
       }
     }
@@ -185,7 +187,7 @@ namespace RAT
       value_f3_tmp) + 1.0);
     output->AR.size[1] = 2;
     for (i = 0; i < 2; i++) {
-      for (int32_T i1{0}; i1 < b_loop_ub_tmp; i1++) {
+      for (i1 = 0; i1 < b_loop_ub_tmp; i1++) {
         output->AR.data[i1 + output->AR.size[0] * i] = rtNaN;
       }
     }
@@ -197,7 +199,7 @@ namespace RAT
     k = static_cast<int32_T>(DREAMPar_d + 1.0);
     output->R_stat.set_size(b_loop_ub_tmp, k);
     for (i = 0; i < k; i++) {
-      for (int32_T i1{0}; i1 < b_loop_ub_tmp; i1++) {
+      for (i1 = 0; i1 < b_loop_ub_tmp; i1++) {
         output->R_stat[i1 + output->R_stat.size(0) * i] = rtNaN;
       }
     }
@@ -205,7 +207,7 @@ namespace RAT
     //  Initialize matix with crossover values
     output->CR.set_size(b_loop_ub_tmp, 4);
     for (i = 0; i < 4; i++) {
-      for (int32_T i1{0}; i1 < b_loop_ub_tmp; i1++) {
+      for (i1 = 0; i1 < b_loop_ub_tmp; i1++) {
         output->CR[i1 + output->CR.size(0) * i] = rtNaN;
       }
     }
@@ -214,7 +216,7 @@ namespace RAT
     b_loop_ub_tmp = static_cast<int32_T>(DREAMPar_d + 2.0);
     chain.set_size(loop_ub, b_loop_ub_tmp, loop_ub_tmp);
     for (i = 0; i < loop_ub_tmp; i++) {
-      for (int32_T i1{0}; i1 < b_loop_ub_tmp; i1++) {
+      for (i1 = 0; i1 < b_loop_ub_tmp; i1++) {
         for (k = 0; k < loop_ub; k++) {
           chain[(k + chain.size(0) * i1) + chain.size(0) * chain.size(1) * i] =
             rtNaN;
@@ -227,7 +229,7 @@ namespace RAT
     loop_ub_tmp = static_cast<int32_T>(DREAMPar_d);
     Table_gamma.set_size(loop_ub_tmp, 3);
     for (i = 0; i < 3; i++) {
-      for (int32_T i1{0}; i1 < loop_ub_tmp; i1++) {
+      for (i1 = 0; i1 < loop_ub_tmp; i1++) {
         Table_gamma[i1 + Table_gamma.size(0) * i] = 0.0;
       }
     }
@@ -237,9 +239,12 @@ namespace RAT
       y[0] = rtNaN;
     } else if (DREAMPar_d < 1.0) {
       y.set_size(1, 0);
+    } else if (std::isinf(DREAMPar_d) && (1.0 == DREAMPar_d)) {
+      y.set_size(1, 1);
+      y[0] = rtNaN;
     } else {
-      y.set_size(1, static_cast<int32_T>(DREAMPar_d - 1.0) + 1);
-      loop_ub = static_cast<int32_T>(DREAMPar_d - 1.0);
+      loop_ub = static_cast<int32_T>(std::floor(DREAMPar_d - 1.0));
+      y.set_size(1, loop_ub + 1);
       for (i = 0; i <= loop_ub; i++) {
         y[i] = static_cast<real_T>(i) + 1.0;
       }

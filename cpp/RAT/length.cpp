@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // length.cpp
 //
@@ -24,7 +24,7 @@ namespace RAT
         int32_T n;
         if ((varargin_1 == 0) || (varargin_2 == 0)) {
           n = 0;
-        } else if (varargin_1 >= varargin_2) {
+        } else if (varargin_1 > varargin_2) {
           n = varargin_1;
         } else {
           n = varargin_2;

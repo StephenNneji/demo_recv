@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // makeCell.cpp
 //
@@ -29,17 +29,11 @@ namespace RAT
     i = static_cast<int32_T>(m);
     x.set_size(i, 2);
     for (int32_T b_i{0}; b_i < i; b_i++) {
-      real_T d;
-      real_T d1;
-      real_T d2;
-      d = vals_data[0];
-      d1 = vals_data[1];
-      d2 = vals_data[2];
       for (int32_T j{0}; j < 2; j++) {
         x[b_i + x.size(0) * j].f1.set_size(1, 3);
-        x[b_i + x.size(0) * j].f1[0] = d;
-        x[b_i + x.size(0) * j].f1[1] = d1;
-        x[b_i + x.size(0) * j].f1[2] = d2;
+        x[b_i + x.size(0) * j].f1[0] = vals_data[0];
+        x[b_i + x.size(0) * j].f1[1] = vals_data[1];
+        x[b_i + x.size(0) * j].f1[2] = vals_data[2];
       }
     }
   }
@@ -56,17 +50,13 @@ namespace RAT
     i = static_cast<int32_T>(m);
     x.set_size(i, 2);
     for (int32_T b_i{0}; b_i < i; b_i++) {
-      real_T d;
-      real_T d1;
-      real_T d2;
-      d = vals_data[0];
-      d1 = vals_data[1];
-      d2 = vals_data[2];
       for (int32_T j{0}; j < 2; j++) {
         x[b_i + x.size(0) * j].f1.set_size(1, 3);
-        x[b_i + x.size(0) * j].f1[0] = d;
-        x[b_i + x.size(0) * j].f1[x[b_i + x.size(0) * j].f1.size(0)] = d1;
-        x[b_i + x.size(0) * j].f1[x[b_i + x.size(0) * j].f1.size(0) * 2] = d2;
+        x[b_i + x.size(0) * j].f1[0] = vals_data[0];
+        x[b_i + x.size(0) * j].f1[x[b_i + x.size(0) * j].f1.size(0)] =
+          vals_data[1];
+        x[b_i + x.size(0) * j].f1[x[b_i + x.size(0) * j].f1.size(0) * 2] =
+          vals_data[2];
       }
     }
   }

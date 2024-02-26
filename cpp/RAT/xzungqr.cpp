@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xzungqr.cpp
 //
@@ -29,31 +29,31 @@ namespace RAT
         {
           ::coder::array<real_T, 1U> work;
           if (n >= 1) {
+            int32_T b_i;
             int32_T i;
             int32_T ia;
             int32_T iaii;
             int32_T itau;
+            int32_T j;
             i = n - 1;
-            for (int32_T j{k}; j <= i; j++) {
+            for (j = k; j <= i; j++) {
               ia = (ia0 + j * lda) - 1;
               iaii = m - 1;
-              for (int32_T b_i{0}; b_i <= iaii; b_i++) {
+              for (b_i = 0; b_i <= iaii; b_i++) {
                 A[ia + b_i] = 0.0;
               }
 
               A[ia + j] = 1.0;
             }
 
-            uint32_T unnamed_idx_0;
             itau = k - 1;
-            unnamed_idx_0 = static_cast<uint32_T>(A.size(1));
-            work.set_size(static_cast<int32_T>(unnamed_idx_0));
-            ia = static_cast<int32_T>(unnamed_idx_0);
+            ia = A.size(1);
+            work.set_size(ia);
             for (i = 0; i < ia; i++) {
               work[i] = 0.0;
             }
 
-            for (int32_T b_i{k}; b_i >= 1; b_i--) {
+            for (b_i = k; b_i >= 1; b_i--) {
               iaii = ((ia0 + b_i) + (b_i - 1) * lda) - 1;
               if (b_i < n) {
                 A[iaii - 1] = 1.0;
@@ -64,13 +64,13 @@ namespace RAT
               if (b_i < m) {
                 ia = iaii + 1;
                 i = (iaii + m) - b_i;
-                for (int32_T j{ia}; j <= i; j++) {
+                for (j = ia; j <= i; j++) {
                   A[j - 1] = -tau[itau] * A[j - 1];
                 }
               }
 
               A[iaii - 1] = 1.0 - tau[itau];
-              for (int32_T j{0}; j <= b_i - 2; j++) {
+              for (j = 0; j <= b_i - 2; j++) {
                 A[(iaii - j) - 2] = 0.0;
               }
 

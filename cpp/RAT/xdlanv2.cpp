@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xdlanv2.cpp
 //
@@ -51,8 +51,8 @@ namespace RAT
               real_T p;
               real_T scale;
               real_T z;
+              int32_T b_c;
               int32_T count;
-              int32_T i;
               p = 0.5 * temp;
               bcmis = std::abs(*b);
               scale = std::abs(*c);
@@ -64,13 +64,13 @@ namespace RAT
               }
 
               if (!(*c < 0.0)) {
-                i = 1;
+                b_c = 1;
               } else {
-                i = -1;
+                b_c = -1;
               }
 
               bcmis = std::fmin(bcmis, scale) * static_cast<real_T>(count) *
-                static_cast<real_T>(i);
+                static_cast<real_T>(b_c);
               scale = std::fmax(std::abs(p), bcmax);
               z = p / scale * p + bcmax / scale * bcmis;
               if (z >= 8.8817841970012523E-16) {

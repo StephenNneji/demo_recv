@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xzggev.cpp
 //
@@ -35,6 +35,8 @@ namespace RAT
                     &beta1, ::coder::array<creal_T, 2U> &V)
         {
           ::coder::array<int32_T, 1U> rscale;
+          int32_T i;
+          int32_T i1;
           int32_T ihi;
           int32_T ilo;
           int32_T n;
@@ -42,14 +44,14 @@ namespace RAT
           n = A.size(0) - 1;
           ilo = A.size(0);
           alpha1.set_size(ilo);
-          for (int32_T i{0}; i < ilo; i++) {
+          for (i = 0; i < ilo; i++) {
             alpha1[i].re = 0.0;
             alpha1[i].im = 0.0;
           }
 
           ilo = A.size(0);
           beta1.set_size(ilo);
-          for (int32_T i{0}; i < ilo; i++) {
+          for (i = 0; i < ilo; i++) {
             beta1[i].re = 0.0;
             beta1[i].im = 0.0;
           }
@@ -57,8 +59,8 @@ namespace RAT
           ilo = A.size(0);
           ihi = A.size(0);
           V.set_size(ilo, ihi);
-          for (int32_T i{0}; i < ihi; i++) {
-            for (int32_T i1{0}; i1 < ilo; i1++) {
+          for (i = 0; i < ihi; i++) {
+            for (i1 = 0; i1 < ilo; i1++) {
               V[i1 + V.size(0) * i].re = 0.0;
               V[i1 + V.size(0) * i].im = 0.0;
             }
@@ -70,14 +72,14 @@ namespace RAT
             if (std::isinf(anrm) || std::isnan(anrm)) {
               ilo = A.size(0);
               alpha1.set_size(ilo);
-              for (int32_T i{0}; i < ilo; i++) {
+              for (i = 0; i < ilo; i++) {
                 alpha1[i].re = rtNaN;
                 alpha1[i].im = 0.0;
               }
 
               ilo = A.size(0);
               beta1.set_size(ilo);
-              for (int32_T i{0}; i < ilo; i++) {
+              for (i = 0; i < ilo; i++) {
                 beta1[i].re = rtNaN;
                 beta1[i].im = 0.0;
               }
@@ -85,8 +87,8 @@ namespace RAT
               ilo = A.size(0);
               ihi = A.size(0);
               V.set_size(ilo, ihi);
-              for (int32_T i{0}; i < ihi; i++) {
-                for (int32_T i1{0}; i1 < ilo; i1++) {
+              for (i = 0; i < ihi; i++) {
+                for (i1 = 0; i1 < ilo; i1++) {
                   V[i1 + V.size(0) * i].re = rtNaN;
                   V[i1 + V.size(0) * i].im = 0.0;
                 }

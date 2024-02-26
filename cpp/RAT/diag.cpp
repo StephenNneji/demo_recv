@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // diag.cpp
 //
@@ -33,11 +33,11 @@ namespace RAT
     static void calclen(const ::coder::array<creal_T, 2U> &A, int32_T *dlen,
                         int32_T *i, int32_T *j)
     {
-      if (A.size(1) > 0) {
+      if (0 < A.size(1)) {
         int32_T u0;
         u0 = A.size(0);
         *dlen = A.size(1);
-        if (u0 <= *dlen) {
+        if (u0 < *dlen) {
           *dlen = u0;
         }
 
@@ -53,11 +53,11 @@ namespace RAT
     static void calclen(const ::coder::array<real_T, 2U> &A, int32_T *dlen,
                         int32_T *i, int32_T *j)
     {
-      if (A.size(1) > 0) {
+      if (0 < A.size(1)) {
         int32_T u0;
         u0 = A.size(0);
         *dlen = A.size(1);
-        if (u0 <= *dlen) {
+        if (u0 < *dlen) {
           *dlen = u0;
         }
 

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // sqrt.cpp
 //
@@ -26,45 +26,44 @@ namespace RAT
         void d_sqrt(creal_T *x)
         {
           real_T absxi;
-          real_T absxr;
           real_T xi;
           real_T xr;
           xr = x->re;
           xi = x->im;
           if (xi == 0.0) {
             if (xr < 0.0) {
-              absxr = 0.0;
-              absxi = std::sqrt(-xr);
-            } else {
-              absxr = std::sqrt(xr);
               absxi = 0.0;
+              xr = std::sqrt(-xr);
+            } else {
+              absxi = std::sqrt(xr);
+              xr = 0.0;
             }
           } else if (xr == 0.0) {
             if (xi < 0.0) {
-              absxr = std::sqrt(-xi / 2.0);
-              absxi = -absxr;
+              absxi = std::sqrt(-xi / 2.0);
+              xr = -absxi;
             } else {
-              absxr = std::sqrt(xi / 2.0);
-              absxi = absxr;
+              absxi = std::sqrt(xi / 2.0);
+              xr = absxi;
             }
           } else if (std::isnan(xr)) {
-            absxr = rtNaN;
-            absxi = rtNaN;
+            absxi = xr;
           } else if (std::isnan(xi)) {
-            absxr = rtNaN;
-            absxi = rtNaN;
-          } else if (std::isinf(xi)) {
-            absxr = std::abs(xi);
             absxi = xi;
+            xr = xi;
+          } else if (std::isinf(xi)) {
+            absxi = std::abs(xi);
+            xr = xi;
           } else if (std::isinf(xr)) {
             if (xr < 0.0) {
-              absxr = 0.0;
-              absxi = xi * -xr;
-            } else {
-              absxr = xr;
               absxi = 0.0;
+              xr = xi * -xr;
+            } else {
+              absxi = xr;
+              xr = 0.0;
             }
           } else {
+            real_T absxr;
             absxr = std::abs(xr);
             absxi = std::abs(xi);
             if ((absxr > 4.4942328371557893E+307) || (absxi >
@@ -72,29 +71,29 @@ namespace RAT
               absxr *= 0.5;
               absxi = rt_hypotd_snf(absxr, absxi * 0.5);
               if (absxi > absxr) {
-                absxr = std::sqrt(absxi) * std::sqrt(absxr / absxi + 1.0);
+                absxi = std::sqrt(absxi) * std::sqrt(absxr / absxi + 1.0);
               } else {
-                absxr = std::sqrt(absxi) * 1.4142135623730951;
+                absxi = std::sqrt(absxi) * 1.4142135623730951;
               }
             } else {
-              absxr = std::sqrt((rt_hypotd_snf(absxr, absxi) + absxr) * 0.5);
+              absxi = std::sqrt((rt_hypotd_snf(absxr, absxi) + absxr) * 0.5);
             }
 
             if (xr > 0.0) {
-              absxi = 0.5 * (xi / absxr);
+              xr = 0.5 * (xi / absxi);
             } else {
               if (xi < 0.0) {
-                absxi = -absxr;
+                xr = -absxi;
               } else {
-                absxi = absxr;
+                xr = absxi;
               }
 
-              absxr = 0.5 * (xi / absxi);
+              absxi = 0.5 * (xi / xr);
             }
           }
 
-          x->re = absxr;
-          x->im = absxi;
+          x->re = absxi;
+          x->im = xr;
         }
       }
     }

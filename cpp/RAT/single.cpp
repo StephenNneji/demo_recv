@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // single.cpp
 //
@@ -27,7 +27,7 @@ namespace RAT
   {
     namespace standardLayers
     {
-      void b_single(const c_struct_T *problemStruct, const cell_11 *problemCells,
+      void b_single(const d_struct_T *problemStruct, const cell_11 *problemCells,
                     const struct2_T *controls, ::coder::array<real_T, 1U>
                     &outSsubs, ::coder::array<real_T, 1U> &backgroundParams, ::
                     coder::array<real_T, 1U> &qzshifts, ::coder::array<real_T,
@@ -52,6 +52,7 @@ namespace RAT
         real_T thisQzshift;
         real_T thisResol;
         real_T thisScalefactor;
+        int32_T thisContrastLayers_size[2];
         int32_T i;
         boolean_T useImaginary;
 
@@ -107,11 +108,9 @@ namespace RAT
         allRoughs.set_size(i);
         allLayers.set_size(i);
         for (int32_T b_i{0}; b_i < i; b_i++) {
-          real_T b_dv[2];
-          real_T b_dv1[2];
-          real_T dv2[2];
-          int32_T thisContrastLayers_size[2];
           int32_T b_loop_ub;
+          int32_T i1;
+          int32_T i2;
           int32_T loop_ub;
 
           //  Extract the relevant parameter values for this contrast
@@ -146,20 +145,15 @@ namespace RAT
           //  Call the core layers calculation
           b_thisContrastLayers_data.set(&thisContrastLayers_data[0],
             thisContrastLayers_size[0], thisContrastLayers_size[1]);
-          b_dv[0] = problemCells->f3[b_i].f1[0];
-          b_dv[1] = problemCells->f3[b_i].f1[1];
-          b_dv1[0] = problemCells->f4[b_i].f1[0];
-          b_dv1[1] = problemCells->f4[b_i].f1[1];
-          dv2[0] = problemCells->f1[b_i].f1[0];
-          dv2[1] = problemCells->f1[b_i].f1[1];
           coreLayersCalculation(b_thisContrastLayers_data, problemStruct->
                                 params[0], problemStruct->geometry.data,
                                 problemStruct->geometry.size, thisBulkIn,
                                 thisBulkOut, problemStruct->resample[b_i],
                                 controls->calcSldDuringFit, thisScalefactor,
                                 thisQzshift, problemStruct->dataPresent[b_i],
-                                problemCells->f2[b_i].f1, b_dv, b_dv1, dv2,
-                                thisBackground, thisResol,
+                                problemCells->f2[b_i].f1, problemCells->f3[b_i].
+                                f1, problemCells->f4[b_i].f1, problemCells->
+                                f1[b_i].f1, thisBackground, thisResol,
                                 problemStruct->contrastBackgroundsType[b_i],
                                 static_cast<real_T>(problemStruct->params.size(1)),
                                 controls->resamPars, useImaginary, sldProfile,
@@ -173,9 +167,9 @@ namespace RAT
           //  for future use.
           loop_ub = sldProfile.size(1);
           sldProfiles[b_i].f1.set_size(sldProfile.size(0), sldProfile.size(1));
-          for (int32_T i1{0}; i1 < loop_ub; i1++) {
+          for (i1 = 0; i1 < loop_ub; i1++) {
             b_loop_ub = sldProfile.size(0);
-            for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+            for (i2 = 0; i2 < b_loop_ub; i2++) {
               sldProfiles[b_i].f1[i2 + sldProfiles[b_i].f1.size(0) * i1] =
                 sldProfile[i2 + sldProfile.size(0) * i1];
             }
@@ -183,9 +177,9 @@ namespace RAT
 
           loop_ub = shiftedDat.size(1);
           shiftedData[b_i].f1.set_size(shiftedDat.size(0), shiftedDat.size(1));
-          for (int32_T i1{0}; i1 < loop_ub; i1++) {
+          for (i1 = 0; i1 < loop_ub; i1++) {
             b_loop_ub = shiftedDat.size(0);
-            for (int32_T i2{0}; i2 < b_loop_ub; i2++) {
+            for (i2 = 0; i2 < b_loop_ub; i2++) {
               shiftedData[b_i].f1[i2 + shiftedData[b_i].f1.size(0) * i1] =
                 shiftedDat[i2 + shiftedDat.size(0) * i1];
             }

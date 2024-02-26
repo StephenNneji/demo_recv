@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // calculate1.h
 //
@@ -11,12 +11,22 @@
 #define CALCULATE1_H
 
 // Include files
-#include "RATMain_internal_types.h"
-#include "RATMain_types.h"
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
+
+// Type Declarations
+namespace RAT
+{
+  struct d_struct_T;
+  struct cell_11;
+  struct struct2_T;
+  struct e_struct_T;
+  struct cell_wrap_20;
+  struct cell_wrap_8;
+}
 
 // Function Declarations
 namespace RAT
@@ -25,8 +35,8 @@ namespace RAT
   {
     namespace customLayers
     {
-      void calculate(const c_struct_T *problemStruct, const cell_11
-                     *problemCells, const struct2_T *controls, d_struct_T
+      void calculate(const d_struct_T *problemStruct, const cell_11
+                     *problemCells, const struct2_T *controls, e_struct_T
                      *contrastParams, ::coder::array<cell_wrap_20, 1U>
                      &reflectivity, ::coder::array<cell_wrap_20, 1U> &simulation,
                      ::coder::array<cell_wrap_8, 1U> &shiftedData, ::coder::

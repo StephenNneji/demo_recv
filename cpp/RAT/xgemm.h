@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xgemm.h
 //
@@ -13,6 +13,7 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -29,8 +30,8 @@ namespace RAT
                    array<real_T, 2U> &A, int32_T lda, const ::coder::array<
                    real_T, 2U> &B, int32_T ldb, ::coder::array<real_T, 2U> &C,
                    int32_T ldc);
-        real_T xgemm(int32_T k, real_T alpha1, const ::coder::array<real_T, 1U>
-                     &A, const ::coder::array<real_T, 1U> &B);
+        void xgemm(int32_T k, real_T alpha1, const ::coder::array<real_T, 1U> &A,
+                   const ::coder::array<real_T, 1U> &B, real_T *C);
       }
     }
   }

@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // sprintf.h
 //
@@ -13,6 +13,7 @@
 // Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -23,8 +24,8 @@ namespace RAT
   {
     void b_sprintf(real_T varargin_1, real_T varargin_2, ::coder::array<char_T,
                    2U> &str);
-    void snPrint(real_T varargin_2, const ::coder::array<char_T, 2U> &varargin_3,
-                 ::coder::array<char_T, 2U> &str);
+    void b_sprintf(real_T varargin_2, const ::coder::array<char_T, 2U>
+                   &varargin_3, ::coder::array<char_T, 2U> &str);
   }
 }
 

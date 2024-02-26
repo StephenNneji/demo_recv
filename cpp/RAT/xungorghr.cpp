@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xungorghr.cpp
 //
@@ -28,35 +28,37 @@ namespace RAT
         {
           if (n != 0) {
             int32_T b_i;
+            int32_T i;
             int32_T ia;
-            for (int32_T j{ihi}; j >= 2; j--) {
+            int32_T j;
+            for (j = ihi; j >= 2; j--) {
               int32_T iajm1;
               ia = (j - 1) * lda - 1;
-              for (int32_T i{0}; i <= j - 2; i++) {
+              for (i = 0; i <= j - 2; i++) {
                 A[(ia + i) + 1] = 0.0;
               }
 
               iajm1 = ia - lda;
               b_i = j + 1;
-              for (int32_T i{b_i}; i <= ihi; i++) {
+              for (i = b_i; i <= ihi; i++) {
                 A[ia + i] = A[iajm1 + i];
               }
 
               b_i = ihi + 1;
-              for (int32_T i{b_i}; i <= n; i++) {
+              for (i = b_i; i <= n; i++) {
                 A[ia + i] = 0.0;
               }
             }
 
-            for (int32_T i{0}; i < n; i++) {
+            for (i = 0; i < n; i++) {
               A[i] = 0.0;
             }
 
             A[0] = 1.0;
             b_i = ihi + 1;
-            for (int32_T j{b_i}; j <= n; j++) {
+            for (j = b_i; j <= n; j++) {
               ia = (j - 1) * lda;
-              for (int32_T i{0}; i < n; i++) {
+              for (i = 0; i < n; i++) {
                 A[ia + i] = 0.0;
               }
 

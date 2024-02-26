@@ -1,7 +1,7 @@
 //
 // Non-Degree Granting Education License -- for use at non-degree
-// granting, nonprofit, education, and research organizations only. Not
-// for commercial or industrial use.
+// granting, nonprofit, educational organizations only. Not for
+// government, commercial, or other organizational use.
 //
 // xgetrf.cpp
 //
@@ -32,7 +32,7 @@ namespace RAT
           if ((m >= 1) && (n >= 1)) {
             int32_T u0;
             u0 = m - 1;
-            if (u0 > n) {
+            if (u0 >= n) {
               u0 = n;
             }
 
@@ -67,7 +67,7 @@ namespace RAT
                     lda, ::coder::array<int32_T, 2U> &ipiv)
         {
           int32_T y;
-          if (m <= n) {
+          if (m < n) {
             y = m;
           } else {
             y = n;
@@ -77,7 +77,7 @@ namespace RAT
           if ((m >= 1) && (n >= 1)) {
             int32_T u0;
             u0 = m - 1;
-            if (u0 > n) {
+            if (u0 >= n) {
               u0 = n;
             }
 
@@ -114,7 +114,7 @@ namespace RAT
                     lda, ::coder::array<int32_T, 2U> &ipiv, int32_T *info)
         {
           int32_T y;
-          if (m <= n) {
+          if (m < n) {
             y = m;
           } else {
             y = n;
@@ -125,7 +125,7 @@ namespace RAT
           if ((m >= 1) && (n >= 1)) {
             int32_T u0;
             u0 = m - 1;
-            if (u0 > n) {
+            if (u0 >= n) {
               u0 = n;
             }
 
