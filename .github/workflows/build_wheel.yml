@@ -29,6 +29,8 @@ jobs:
           submodules: true
       - name: Set up Python version ${{ matrix.version }}
         uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
       - name: Install OMP (MacOS Intel) 
         if: matrix.platform == 'macos-latest'
         run: |
