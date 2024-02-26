@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, ubuntu-latest, macos-latest, macos-latest-large]
+        platform: [windows-latest, ubuntu-latest, macos-latest, macos-14]
     env:
       CIBW_SKIP: 'pp*'
       CIBW_ARCHS: 'auto64'
