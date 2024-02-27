@@ -18,7 +18,7 @@ jobs:
       CIBW_ARCHS: 'auto64'
       CIBW_PROJECT_REQUIRES_PYTHON: '>=3.9'
       CIBW_TEST_REQUIRES: 'pytest'
-      CIBW_TEST_COMMAND: 'pytest tmp/tests'
+      CIBW_TEST_COMMAND: 'pytest {project}/tmp/tests'
 
     defaults:
       run:
@@ -63,6 +63,9 @@ jobs:
           # of local package.
           mkdir tmp
           cp -r tests tmp/tests/
+          cd tmp/tests
+          ls
+          cd ../..
           python -m pip install cibuildwheel==2.16.5
           python -m cibuildwheel --output-dir wheelhouse
       - uses: actions/upload-artifact@v4
