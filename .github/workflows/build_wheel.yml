@@ -21,7 +21,7 @@ jobs:
       CIBW_TEST_COMMAND: >
          cd {project} && 
          cd tmp && 
-         python -m pytest tests'
+         python -m pytest tests
       # CIBW_BEFORE_TEST: 'pip3 uninstall pytest'
       # CIBW_TEST_SKIP: 'cp310*'
 
