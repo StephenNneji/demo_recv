@@ -18,10 +18,7 @@ jobs:
       CIBW_ARCHS: 'auto64'
       CIBW_PROJECT_REQUIRES_PYTHON: '>=3.9'
       CIBW_TEST_REQUIRES: 'pytest'
-      CIBW_TEST_COMMAND: >
-         cd {project} && 
-         cd tmp && 
-         python -m pytest tests
+      CIBW_TEST_COMMAND: 'python -m pytest tests'
       # CIBW_BEFORE_TEST: 'pip3 uninstall pytest'
       # CIBW_TEST_SKIP: 'cp310*'
 
@@ -68,10 +65,9 @@ jobs:
           # of local package.
           mkdir tmp
           cp -r tests tmp/tests/
-          pwd
-          ls
+          cd tmp
           python -m pip install cibuildwheel==2.16.5
-          python -m cibuildwheel --output-dir wheelhouse
+          python -m cibuildwheel --output-dir ../wheelhouse
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ runner.os }}-${{ strategy.job-index }}
