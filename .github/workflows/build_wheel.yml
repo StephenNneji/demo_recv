@@ -19,7 +19,7 @@ jobs:
       CIBW_PROJECT_REQUIRES_PYTHON: '>=3.10'
       CIBW_TEST_REQUIRES: 'pytest'
       CIBW_TEST_COMMAND: ' python -m pytest {project}/tmp/tests'
-      # CIBW_BEFORE_TEST: 'rm -rf {project}/RAT'
+      CIBW_BEFORE_TEST: 'pip uninstall pytest'
 
     defaults:
       run:
