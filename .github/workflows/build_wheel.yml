@@ -18,7 +18,7 @@ jobs:
       CIBW_ARCHS: 'auto64'
       CIBW_PROJECT_REQUIRES_PYTHON: '>=3.9'
       CIBW_TEST_REQUIRES: 'pytest'
-      CIBW_TEST_COMMAND: 'pytest {project}/tests'
+      CIBW_TEST_COMMAND: 'pytest {project}/tmp/tests'
 
     defaults:
       run:
@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: "3.x"
       - name: Install OMP (MacOS Intel) 
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'macos-13'
         run: |
           brew install llvm libomp
           echo "export CC=/usr/local/opt/llvm/bin/clang" >> ~/.bashrc
@@ -62,7 +62,8 @@ jobs:
           # Hack to ensure installed RAT package is used for test instead 
           # of local package.
           mkdir tmp
-          cp -r RAT tmp/RAT/
+          cp -r tests tmp/tests/
+          cp tests/__init__.py tmp/tests/__init__.py
           python -m pip install cibuildwheel==2.16.5
           python -m cibuildwheel --output-dir wheelhouse
       - uses: actions/upload-artifact@v4
