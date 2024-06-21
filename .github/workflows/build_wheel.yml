@@ -18,8 +18,8 @@ jobs:
       CIBW_ARCHS: 'auto64'
       CIBW_PROJECT_REQUIRES_PYTHON: '>=3.9'
       CIBW_TEST_REQUIRES: 'pytest'
-      # CIBW_TEST_COMMAND: 'pytest {project}/tests'
-      # CIBW_BEFORE_TEST: 'rm -rf {project}/RAT'
+      CIBW_TEST_COMMAND: 'pytest {project}/tests'
+      CIBW_BEFORE_TEST: 'rm -rf {project}/RAT'
 
     defaults:
       run:
