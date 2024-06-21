@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 import sys
-import RAT
 print(sys.modules)
+import RAT
 import RAT.outputs
 import RAT.rat_core
 
