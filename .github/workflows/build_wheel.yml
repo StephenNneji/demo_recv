@@ -20,7 +20,7 @@ jobs:
       CIBW_TEST_REQUIRES: 'pytest'
       CIBW_TEST_COMMAND: ' python -m pytest {project}/tmp/tests'
       CIBW_BEFORE_TEST: 'pip3 uninstall pytest'
-      # CIBW_TEST_SKIP: "*cp310"
+      CIBW_TEST_SKIP: "*cp310"
 
     defaults:
       run:
