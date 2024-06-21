@@ -19,6 +19,7 @@ jobs:
       CIBW_PROJECT_REQUIRES_PYTHON: '>=3.9'
       CIBW_TEST_REQUIRES: 'pytest'
       CIBW_TEST_COMMAND: 'pytest {project}/tests'
+      CIBW_BEFORE_TEST: 'pip show RAT'
 
     defaults:
       run:
@@ -61,9 +62,9 @@ jobs:
         run: |
           # Hack to ensure installed RAT package is used for test instead 
           # of local package.
-          mkdir tmp
-          cp -r tests tmp/tests/
-          cp tests/__init__.py tmp/__init__.py
+          #mkdir tmp
+          #cp -r tests tmp/tests/
+          #cp tests/__init__.py tmp/__init__.py
           python -m pip install cibuildwheel==2.16.5
           python -m cibuildwheel --output-dir wheelhouse
       - uses: actions/upload-artifact@v4
