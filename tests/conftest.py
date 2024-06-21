@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
 import sys
-print(sys.modules)
+import os
+print(os.path.dirname(sys.executable))
 import RAT
 import RAT.outputs
 import RAT.rat_core
