@@ -15,17 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          merge-multiple: true
       - name: Build sdist
         run: |
+          pip install pybind11
           python setup.py sdist
-          ls
-      
-      # - uses: actions/upload-artifact@v3
-      #   with:
-      #     path: dist/*.tar.gz
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sdist
+          path: dist/*.tar.gz
 
   # upload_pypi:
   #   needs: [build_wheels, build_sdist]
