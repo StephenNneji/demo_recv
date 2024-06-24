@@ -8,7 +8,6 @@ on:
 
 jobs:
   build_wheels:
-    name: Build wheels
     uses: StephenNneji/demo_recv/.github/workflows/build_wheel.yml@main
 
   build_sdist:
