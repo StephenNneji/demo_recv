@@ -32,9 +32,6 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
+          path: artifacts
           merge-multiple: true
-      - name: Build sdist
-        run: |
-          ls
-          cd artifact
-          ls
+      - run: ls -R artifacts
