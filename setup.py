@@ -152,6 +152,8 @@ setup(
     author_email='',
     url='https://github.com/RascalSoftware/python-RAT',
     description='Python extension for the Reflectivity Analysis Toolbox (RAT)',
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     packages=find_packages(),
     include_package_data=True,
     package_data={'': [get_shared_object_name(libevent[0])]},
