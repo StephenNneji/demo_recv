@@ -3,8 +3,8 @@
 from dataclasses import dataclass
 import numpy as np
 from typing import Optional, Union
-from RAT.utils.enums import Procedures
-import RAT.rat_core
+from demo_recv.utils.enums import Procedures
+import demo_recv.rat_core
 
 
 @dataclass
@@ -106,8 +106,8 @@ class BayesResults(Results):
     chain: np.ndarray
 
 
-def make_results(procedure: Procedures, output_results: RAT.rat_core.OutputResult,
-                 bayes_results: Optional[RAT.rat_core.BayesResults] = None) -> Union[Results, BayesResults]:
+def make_results(procedure: Procedures, output_results: demo_recv.rat_core.OutputResult,
+                 bayes_results: Optional[demo_recv.rat_core.BayesResults] = None) -> Union[Results, BayesResults]:
     """Initialise a python Results or BayesResults object using the outputs from a RAT calculation."""
 
     calculation_results = CalculationResults(chiValues=output_results.calculationResults.chiValues,

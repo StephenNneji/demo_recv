@@ -4,18 +4,18 @@ from itertools import chain
 import numpy as np
 import pytest
 
-import RAT
-from RAT.inputs import make_input, make_problem, make_cells, make_controls
-from RAT.utils.enums import (BoundHandling, Calculations, Display, Geometries, LayerModels, Parallel, Procedures,
+import demo_recv
+from demo_recv.inputs import make_input, make_problem, make_cells, make_controls
+from demo_recv.utils.enums import (BoundHandling, Calculations, Display, Geometries, LayerModels, Parallel, Procedures,
                              TypeOptions)
 
-from RAT.rat_core import Cells, Checks, Control, Limits, Priors, ProblemDefinition
+from demo_recv.rat_core import Cells, Checks, Control, Limits, Priors, ProblemDefinition
 
 
 @pytest.fixture
 def standard_layers_project():
     """Add parameters to the default project for a non polarised calculation."""
-    test_project = RAT.Project(data=RAT.ClassList([RAT.models.Data(name='Test Data', data=np.array([[1.0, 1.0, 1.0]]))]))
+    test_project = demo_recv.Project(data=demo_recv.ClassList([demo_recv.models.Data(name='Test Data', data=np.array([[1.0, 1.0, 1.0]]))]))
     test_project.parameters.append(name='Test Thickness')
     test_project.parameters.append(name='Test SLD')
     test_project.parameters.append(name='Test Roughness')
@@ -30,8 +30,8 @@ def standard_layers_project():
 @pytest.fixture
 def domains_project():
     """Add parameters to the default project for a domains calculation."""
-    test_project = RAT.Project(calculation=Calculations.Domains,
-                               data=RAT.ClassList([RAT.models.Data(name='Test Data', data=np.array([[1.0, 1.0, 1.0]]))]))
+    test_project = demo_recv.Project(calculation=Calculations.Domains,
+                               data=demo_recv.ClassList([demo_recv.models.Data(name='Test Data', data=np.array([[1.0, 1.0, 1.0]]))]))
     test_project.parameters.append(name='Test Thickness')
     test_project.parameters.append(name='Test SLD')
     test_project.parameters.append(name='Test Roughness')
@@ -48,7 +48,7 @@ def domains_project():
 @pytest.fixture
 def custom_xy_project():
     """Add parameters to the default project for a non polarised calculation and use the custom xy model."""
-    test_project = RAT.Project(model=LayerModels.CustomXY)
+    test_project = demo_recv.Project(model=LayerModels.CustomXY)
     test_project.parameters.append(name='Test Thickness')
     test_project.parameters.append(name='Test SLD')
     test_project.parameters.append(name='Test Roughness')
@@ -299,16 +299,16 @@ def domains_limits():
 def non_polarised_priors():
     """The expected priors object from "standard_layers_project" and "custom_xy_project"."""
     priors = Priors()
-    priors.param = [['Substrate Roughness', RAT.utils.enums.Priors.Uniform, 0.0, np.inf],
-                    ['Test Thickness', RAT.utils.enums.Priors.Uniform, 0.0, np.inf],
-                    ['Test SLD', RAT.utils.enums.Priors.Uniform, 0.0, np.inf],
-                    ['Test Roughness', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
-    priors.backgroundParam = [['Background Param 1', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.param = [['Substrate Roughness', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf],
+                    ['Test Thickness', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf],
+                    ['Test SLD', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf],
+                    ['Test Roughness', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.backgroundParam = [['Background Param 1', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
     priors.qzshift = []
-    priors.scalefactor = [['Scalefactor 1', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
-    priors.bulkIn = [['SLD Air', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
-    priors.bulkOut = [['SLD D2O', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
-    priors.resolutionParam = [['Resolution Param 1', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.scalefactor = [['Scalefactor 1', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.bulkIn = [['SLD Air', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.bulkOut = [['SLD D2O', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.resolutionParam = [['Resolution Param 1', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
     priors.domainRatio = []
     priors.priorNames = ['Substrate Roughness', 'Test Thickness', 'Test SLD', 'Test Roughness', 'Background Param 1',
                          'Scalefactor 1', 'SLD Air', 'SLD D2O', 'Resolution Param 1']
@@ -322,17 +322,17 @@ def non_polarised_priors():
 def domains_priors():
     """The expected priors object from "domains_project"."""
     priors = Priors()
-    priors.param = [['Substrate Roughness', RAT.utils.enums.Priors.Uniform, 0.0, np.inf],
-                    ['Test Thickness', RAT.utils.enums.Priors.Uniform, 0.0, np.inf],
-                    ['Test SLD', RAT.utils.enums.Priors.Uniform, 0.0, np.inf],
-                    ['Test Roughness', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
-    priors.backgroundParam = [['Background Param 1', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.param = [['Substrate Roughness', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf],
+                    ['Test Thickness', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf],
+                    ['Test SLD', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf],
+                    ['Test Roughness', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.backgroundParam = [['Background Param 1', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
     priors.qzshift = []
-    priors.scalefactor = [['Scalefactor 1', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
-    priors.bulkIn = [['SLD Air', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
-    priors.bulkOut = [['SLD D2O', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
-    priors.resolutionParam = [['Resolution Param 1', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
-    priors.domainRatio = [['Domain Ratio 1', RAT.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.scalefactor = [['Scalefactor 1', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.bulkIn = [['SLD Air', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.bulkOut = [['SLD D2O', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.resolutionParam = [['Resolution Param 1', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
+    priors.domainRatio = [['Domain Ratio 1', demo_recv.utils.enums.Priors.Uniform, 0.0, np.inf]]
     priors.priorNames = ['Substrate Roughness', 'Test Thickness', 'Test SLD', 'Test Roughness', 'Background Param 1',
                          'Scalefactor 1', 'SLD Air', 'SLD D2O', 'Resolution Param 1', 'Domain Ratio 1']
     priors.priorValues = [[1, 0.0, np.inf], [1, 0.0, np.inf], [1, 0.0, np.inf], [1, 0.0, np.inf], [1, 0.0, np.inf],
@@ -466,7 +466,7 @@ def test_make_input(test_project, test_problem, test_cells, test_limits, test_pr
     parameter_fields = ["param", "backgroundParam", "scalefactor", "qzshift", "bulkIn", "bulkOut", "resolutionParam",
                         "domainRatio"]
 
-    problem, cells, limits, priors, controls = make_input(test_project, RAT.set_controls())
+    problem, cells, limits, priors, controls = make_input(test_project, demo_recv.set_controls())
 
     check_problem_equal(problem, test_problem)
     check_cells_equal(cells, test_cells)
@@ -515,7 +515,7 @@ def test_make_controls(standard_layers_controls, test_checks) -> None:
     """The controls object should contain the full set of controls parameters, with the appropriate set defined by the
     input controls.
     """
-    controls = make_controls(RAT.set_controls(), test_checks)
+    controls = make_controls(demo_recv.set_controls(), test_checks)
     check_controls_equal(controls, standard_layers_controls)
 
 

@@ -3,8 +3,8 @@ import prettytable
 from pydantic import BaseModel, Field, field_validator, ValidationError
 from typing import Literal, Union
 
-from RAT.utils.enums import Parallel, Procedures, Display, BoundHandling, Strategies
-from RAT.utils.custom_errors import custom_pydantic_validation_error
+from demo_recv.utils.enums import Parallel, Procedures, Display, BoundHandling, Strategies
+from demo_recv.utils.custom_errors import custom_pydantic_validation_error
 
 
 @dataclass(frozen=True)

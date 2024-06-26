@@ -3,15 +3,15 @@ import pytest
 import sys
 import os
 print(os.path.dirname(sys.executable))
-import RAT
-import RAT.outputs
-import RAT.rat_core
+import demo_recv
+import demo_recv.outputs
+import demo_recv.rat_core
 
 
 @pytest.fixture
 def reflectivity_calculation_output_results():
     """The C++ results object for a reflectivity calculation of the project set out in "DSPC_standard_layers.py"."""
-    results = RAT.rat_core.OutputResult()
+    results = demo_recv.rat_core.OutputResult()
     results.reflectivity = [np.array([[1.14030000e-02, 1.00000223e+00],
                                       [1.38610000e-02, 1.00000223e+00],
                                       [1.68480000e-02, 6.42692703e-02],
@@ -205,10 +205,10 @@ def reflectivity_calculation_output_results():
                                       [2.53000000e+02,  2.21000000e-06],
                                       [2.64000000e+02,  2.21000000e-06]])]]
     results.resampledLayers = [[np.array([[0.0, 0.0, 0.0]])], [np.array([[0.0, 0.0, 0.0]])]]
-    results.calculationResults = RAT.rat_core.Calculation()
+    results.calculationResults = demo_recv.rat_core.Calculation()
     results.calculationResults.chiValues = np.array([202.83057377, 1641.4024969])
     results.calculationResults.sumChi = 1844.2330706690975
-    results.contrastParams = RAT.rat_core.ContrastParams()
+    results.contrastParams = demo_recv.rat_core.ContrastParams()
     results.contrastParams.backgroundParams = np.array([2.23e-06, 3.38e-06])
     results.contrastParams.scalefactors = np.array([0.1, 0.15])
     results.contrastParams.bulkIn = np.array([2.073e-06, 2.073e-06])
@@ -231,7 +231,7 @@ def reflectivity_calculation_output_results():
 @pytest.fixture
 def reflectivity_calculation_results():
     """The python results object for a reflectivity calculation of the project set out in "DSPC_standard_layers.py"."""
-    return RAT.outputs.Results(
+    return demo_recv.outputs.Results(
         reflectivity=[np.array([[1.14030000e-02, 1.00000223e+00],
                                 [1.38610000e-02, 1.00000223e+00],
                                 [1.68480000e-02, 6.42692703e-02],
@@ -425,9 +425,9 @@ def reflectivity_calculation_results():
                                 [2.53000000e+02,  2.21000000e-06],
                                 [2.64000000e+02,  2.21000000e-06]])]],
         resampledLayers=[[np.array([[0.0, 0.0, 0.0]])], [np.array([[0.0, 0.0, 0.0]])]],
-        calculationResults=RAT.outputs.CalculationResults(chiValues=np.array([202.83057377, 1641.4024969]),
+        calculationResults=demo_recv.outputs.CalculationResults(chiValues=np.array([202.83057377, 1641.4024969]),
                                                           sumChi=1844.2330706690975),
-        contrastParams=RAT.outputs.ContrastParams(backgroundParams=np.array([2.23e-06, 3.38e-06]),
+        contrastParams=demo_recv.outputs.ContrastParams(backgroundParams=np.array([2.23e-06, 3.38e-06]),
                                                   scalefactors=np.array([0.1, 0.15]),
                                                   bulkIn=np.array([2.073e-06, 2.073e-06]),
                                                   bulkOut=np.array([5.98e-06, 2.21e-06]),
@@ -452,7 +452,7 @@ def dream_output_results():
     This optimisation used the parameters: nSamples=1, nChains=1. However, the calculationResults, contrastParams,
     and fitParams are taken from an optimisation with the parameters: nSamples=50000, nChains=10.
     """
-    results = RAT.rat_core.OutputResult()
+    results = demo_recv.rat_core.OutputResult()
     results.reflectivity = [np.array([[1.14030000e-02, 1.45891447e+01],
                                       [1.38610000e-02, 1.45739839e+01],
                                       [1.68480000e-02, 1.45684725e+01],
@@ -654,10 +654,10 @@ def dream_output_results():
                                       [2.97000000e+02, 5.26668469e-06],
                                       [3.08000000e+02, 5.26668495e-06]])]]
     results.resampledLayers = [[np.array([[0., 0., 0.]])], [np.array([[0., 0., 0.]])]]
-    results.calculationResults = RAT.rat_core.Calculation()
+    results.calculationResults = demo_recv.rat_core.Calculation()
     results.calculationResults.chiValues = np.array([4.6077885, 7.00028098]),
     results.calculationResults.sumChi = 11.608069475997699
-    results.contrastParams = RAT.rat_core.ContrastParams()
+    results.contrastParams = demo_recv.rat_core.ContrastParams()
     results.contrastParams.backgroundParams = np.array([2.37113128e-06, 1.99006694e-06])
     results.contrastParams.scalefactors = np.array([0.1, 0.15])
     results.contrastParams.bulkIn = np.array([2.073e-06, 2.073e-06])
@@ -685,8 +685,8 @@ def dream_bayes():
 
     This optimisation used the parameters: nSamples=1, nChains=1.
     """
-    bayes = RAT.rat_core.BayesResults()
-    bayes.predictionIntervals = RAT.rat_core.PredictionIntervals()
+    bayes = demo_recv.rat_core.BayesResults()
+    bayes.predictionIntervals = demo_recv.rat_core.PredictionIntervals()
     bayes.predictionIntervals.reflectivity = [np.array([[1.00000560e+00, 7.07687612e-01, 2.08315160e-02, 2.40787966e-03,
                                                          2.17627660e-03, 2.54301700e-03, 1.76309827e-03, 6.15269679e-04,
                                                          3.43679710e-05, 7.93625275e-05, 1.27760549e-04, 3.35799941e-05,
@@ -1031,7 +1031,7 @@ def dream_bayes():
                                                     1.12748255e+06, 1.12748255e+06, 1.12748255e+06, 1.12748255e+06,
                                                     1.46133559e+16, 1.46133559e+16, 1.46133559e+16, 1.46133559e+16,
                                                     1.46133559e+16, 1.12748255e+06, 1.12748255e+06, 1.46133559e+16])
-    bayes.confidenceIntervals = RAT.rat_core.ConfidenceIntervals()
+    bayes.confidenceIntervals = demo_recv.rat_core.ConfidenceIntervals()
     bayes.confidenceIntervals.percentile65 = np.array([[-1.29074586e-231, 8.33251318e+000, 1.75397363e+001, 1.75397363e+001,
                                                         9.85302945e+000, 9.85302945e+000, 8.34197863e+000, 8.34197863e+000,
                                                         1.65750684e+001, 1.45435510e+001, 1.45435510e+001, 1.52609047e+001,
@@ -1057,7 +1057,7 @@ def dream_bayes():
                                                 2.42251646e+01, 1.55593097e+01, 1.49022278e+01, 3.20423080e+01,
                                                 4.85551946e+01, 3.87046084e+01, 1.45612723e+01, 3.15508089e-06,
                                                 3.29384190e-06, 5.26668495e-06]])
-    bayes.dreamParams = RAT.rat_core.DreamParams()
+    bayes.dreamParams = demo_recv.rat_core.DreamParams()
     bayes.dreamParams.nParams = 18.0
     bayes.dreamParams.nChains = 1.0
     bayes.dreamParams.nGenerations = 1.0
@@ -1077,7 +1077,7 @@ def dream_bayes():
     bayes.dreamParams.IO = 0
     bayes.dreamParams.storeOutput = 0
     bayes.dreamParams.R = np.array([[0.]])
-    bayes.dreamOutput = RAT.rat_core.DreamOutput()
+    bayes.dreamOutput = demo_recv.rat_core.DreamOutput()
     bayes.dreamOutput.allChains = np.array([[[8.33251318e+00],
                                              [5.48185565e+01],
                                              [1.75397363e+01],
@@ -1106,7 +1106,7 @@ def dream_bayes():
     bayes.dreamOutput.R_stat = np.array([[1.0, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan,
                                           np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]])
     bayes.dreamOutput.CR = np.array([[1.00000000, 0.33333333, 0.33333333, 0.33333333]])
-    bayes.nestedSamplerOutput = RAT.rat_core.NestedSamplerOutput()
+    bayes.nestedSamplerOutput = demo_recv.rat_core.NestedSamplerOutput()
     bayes.nestedSamplerOutput.logZ = 0.0
     bayes.nestedSamplerOutput.nestSamples = np.array([[0.0, 0.0]])
     bayes.nestedSamplerOutput.postSamples = np.array([[0.0, 0.0]])
@@ -1131,7 +1131,7 @@ def dream_results():
     This optimisation used the parameters: nSamples=1, nChains=1. However, the calculationResults, contrastParams,
     and fitParams are taken from an optimisation with the parameters: nSamples=50000, nChains=10.
     """
-    return RAT.outputs.BayesResults(
+    return demo_recv.outputs.BayesResults(
         reflectivity=[np.array([[1.14030000e-02, 1.45891447e+01],
                                 [1.38610000e-02, 1.45739839e+01],
                                 [1.68480000e-02, 1.45684725e+01],
@@ -1333,11 +1333,11 @@ def dream_results():
                                 [2.97000000e+02, 5.26668469e-06],
                                 [3.08000000e+02, 5.26668495e-06]])]],
         resampledLayers=[[np.array([[0., 0., 0.]])], [np.array([[0., 0., 0.]])]],
-        calculationResults=RAT.outputs.CalculationResults(
+        calculationResults=demo_recv.outputs.CalculationResults(
             chiValues=np.array([4.6077885, 7.00028098]),
             sumChi=11.608069475997699
         ),
-        contrastParams=RAT.outputs.ContrastParams(
+        contrastParams=demo_recv.outputs.ContrastParams(
             backgroundParams=np.array([2.37113128e-06, 1.99006694e-06]),
             scalefactors=np.array([0.1, 0.15]),
             bulkIn=np.array([2.073e-06, 2.073e-06]),
@@ -1356,7 +1356,7 @@ def dream_results():
                   'Bilayer Heads Thickness', 'Bilayer Roughness', 'Bilayer Tails Thickness', 'Bilayer Tails Hydration',
                   'Bilayer Heads Hydration', 'Oxide Hydration', 'Background parameter D2O', 'Background parameter SMW',
                   'D2O', 'SMW'],
-        predictionIntervals=RAT.outputs.PredictionIntervals(
+        predictionIntervals=demo_recv.outputs.PredictionIntervals(
             reflectivity=[np.array([[1.00000560e+00, 7.07687612e-01, 2.08315160e-02, 2.40787966e-03,
                                      2.17627660e-03, 2.54301700e-03, 1.76309827e-03, 6.15269679e-04,
                                      3.43679710e-05, 7.93625275e-05, 1.27760549e-04, 3.35799941e-05,
@@ -1702,7 +1702,7 @@ def dream_results():
                                 1.46133559e+16, 1.46133559e+16, 1.46133559e+16, 1.46133559e+16,
                                 1.46133559e+16, 1.12748255e+06, 1.12748255e+06, 1.46133559e+16])
         ),
-        confidenceIntervals=RAT.outputs.ConfidenceIntervals(
+        confidenceIntervals=demo_recv.outputs.ConfidenceIntervals(
             percentile65=np.array([[-1.29074586e-231, 8.33251318e+000, 1.75397363e+001, 1.75397363e+001,
                                     9.85302945e+000, 9.85302945e+000, 8.34197863e+000, 8.34197863e+000,
                                     1.65750684e+001, 1.45435510e+001, 1.45435510e+001, 1.52609047e+001,
@@ -1729,7 +1729,7 @@ def dream_results():
                             4.85551946e+01, 3.87046084e+01, 1.45612723e+01, 3.15508089e-06,
                             3.29384190e-06, 5.26668495e-06]])
         ),
-        dreamParams=RAT.outputs.DreamParams(
+        dreamParams=demo_recv.outputs.DreamParams(
             nParams=18.0,
             nChains=1.0,
             nGenerations=1.0,
@@ -1750,7 +1750,7 @@ def dream_results():
             storeOutput=False,
             R=np.array([[0.]]),
         ),
-        dreamOutput=RAT.outputs.DreamOutput(
+        dreamOutput=demo_recv.outputs.DreamOutput(
             allChains=np.array([[[8.33251318e+00],
                                  [5.48185565e+01],
                                  [1.75397363e+01],
@@ -1780,7 +1780,7 @@ def dream_results():
                               np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]]),
             CR=np.array([[1.,         0.33333333, 0.33333333, 0.33333333]]),
         ),
-        nestedSamplerOutput=RAT.outputs.NestedSamplerOutput(
+        nestedSamplerOutput=demo_recv.outputs.NestedSamplerOutput(
             logZ=0.0,
             nestSamples=np.array([[0.0, 0.0]]),
             postSamples=np.array([[0.0, 0.0]])

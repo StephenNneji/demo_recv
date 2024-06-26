@@ -4,7 +4,7 @@ import numpy as np
 from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 from typing import Any
 
-from RAT.utils.enums import BackgroundActions, Hydration, Languages, Priors, TypeOptions
+from demo_recv.utils.enums import BackgroundActions, Hydration, Languages, Priors, TypeOptions
 
 try:
     from enum import StrEnum
@@ -44,7 +44,7 @@ class RATModel(BaseModel, validate_assignment=True, extra='forbid'):
 
 
 class Background(RATModel):
-    """Defines the Backgrounds in RAT."""
+    """Defines the Backgrounds in demo_recv."""
     name: str = Field(default_factory=lambda: 'New Background ' + next(background_number), min_length=1)
     type: TypeOptions = TypeOptions.Constant
     value_1: str = ''
@@ -231,7 +231,7 @@ class ProtectedParameter(Parameter):
 
 
 class Resolution(RATModel):
-    """Defines Resolutions in RAT."""
+    """Defines Resolutions in demo_recv."""
     name: str = Field(default_factory=lambda: 'New Resolution ' + next(resolution_number), min_length=1)
     type: TypeOptions = TypeOptions.Constant
     value_1: str = ''

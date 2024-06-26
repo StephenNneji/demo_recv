@@ -9,8 +9,8 @@ import shutil
 from typing import Callable
 import tempfile
 
-import RAT
-from RAT.utils.enums import Calculations, LayerModels
+import demo_recv
+from demo_recv.utils.enums import Calculations, LayerModels
 
 
 layer_params = {'thickness': 'Test Thickness', 'SLD': 'Test SLD', 'roughness': 'Test Roughness'}
@@ -20,7 +20,7 @@ absorption_layer_params = {'thickness': 'Test Thickness', 'SLD_real': 'Test SLD'
 @pytest.fixture
 def test_project():
     """Add parameters to the default project, so each ClassList can be tested properly."""
-    test_project = RAT.Project(data=RAT.ClassList([RAT.models.Data(name='Simulation', data=np.array([[1.0, 1.0, 1.0]]))]))
+    test_project = demo_recv.Project(data=demo_recv.ClassList([demo_recv.models.Data(name='Simulation', data=np.array([[1.0, 1.0, 1.0]]))]))
     test_project.parameters.append(name='Test Thickness')
     test_project.parameters.append(name='Test SLD')
     test_project.parameters.append(name='Test Roughness')
@@ -102,23 +102,23 @@ def default_project_repr():
 def test_project_script():
     return (
         "# THIS FILE IS GENERATED FROM RAT VIA THE \"WRITE_SCRIPT\" ROUTINE. IT IS NOT PART OF THE RAT CODE.\n\n"
-        "import RAT\nfrom RAT.models import *\nfrom numpy import array, inf\n\n"
-        "problem = RAT.Project(\n    name='', calculation='non polarised', model='standard layers', geometry='air/substrate', absorption=False,\n"
-        "    parameters=RAT.ClassList([ProtectedParameter(name='Substrate Roughness', min=1.0, value=3.0, max=5.0, fit=True, prior_type='uniform', mu=0.0, sigma=inf),"
+        "import demo_recv\nfrom demo_recv.models import *\nfrom numpy import array, inf\n\n"
+        "problem = demo_recv.Project(\n    name='', calculation='non polarised', model='standard layers', geometry='air/substrate', absorption=False,\n"
+        "    parameters=demo_recv.ClassList([ProtectedParameter(name='Substrate Roughness', min=1.0, value=3.0, max=5.0, fit=True, prior_type='uniform', mu=0.0, sigma=inf),"
         " Parameter(name='Test Thickness', min=0.0, value=0.0, max=0.0, fit=False, prior_type='uniform', mu=0.0, sigma=inf),"
         " Parameter(name='Test SLD', min=0.0, value=0.0, max=0.0, fit=False, prior_type='uniform', mu=0.0, sigma=inf),"
         " Parameter(name='Test Roughness', min=0.0, value=0.0, max=0.0, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
-        "    background_parameters=RAT.ClassList([Parameter(name='Background Param 1', min=1e-07, value=1e-06, max=1e-05, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
-        "    scalefactors=RAT.ClassList([Parameter(name='Scalefactor 1', min=0.02, value=0.23, max=0.25, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
-        "    bulk_in=RAT.ClassList([Parameter(name='SLD Air', min=0.0, value=0.0, max=0.0, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
-        "    bulk_out=RAT.ClassList([Parameter(name='SLD D2O', min=6.2e-06, value=6.35e-06, max=6.35e-06, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
-        "    resolution_parameters=RAT.ClassList([Parameter(name='Resolution Param 1', min=0.01, value=0.03, max=0.05, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
-        "    backgrounds=RAT.ClassList([Background(name='Background 1', type='constant', value_1='Background Param 1', value_2='', value_3='', value_4='', value_5='')]),\n"
-        "    resolutions=RAT.ClassList([Resolution(name='Resolution 1', type='constant', value_1='Resolution Param 1', value_2='', value_3='', value_4='', value_5='')]),\n"
-        "    custom_files=RAT.ClassList([CustomFile(name='Test Custom File', filename='', language='python', path='pwd')]),\n"
-        "    data=RAT.ClassList([Data(name='Simulation', data=array([[1., 1., 1.]]), data_range=[1.0, 1.0], simulation_range=[1.0, 1.0])]),\n"
-        "    layers=RAT.ClassList([Layer(name='Test Layer', thickness='Test Thickness', SLD='Test SLD', roughness='Test Roughness', hydration='', hydrate_with='bulk out')]),\n"
-        "    contrasts=RAT.ClassList([Contrast(name='Test Contrast', data='Simulation', background='Background 1', background_action='add', bulk_in='SLD Air', bulk_out='SLD D2O', scalefactor='Scalefactor 1', resolution='Resolution 1', resample=False, model=['Test Layer'])]),\n"
+        "    background_parameters=demo_recv.ClassList([Parameter(name='Background Param 1', min=1e-07, value=1e-06, max=1e-05, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
+        "    scalefactors=demo_recv.ClassList([Parameter(name='Scalefactor 1', min=0.02, value=0.23, max=0.25, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
+        "    bulk_in=demo_recv.ClassList([Parameter(name='SLD Air', min=0.0, value=0.0, max=0.0, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
+        "    bulk_out=demo_recv.ClassList([Parameter(name='SLD D2O', min=6.2e-06, value=6.35e-06, max=6.35e-06, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
+        "    resolution_parameters=demo_recv.ClassList([Parameter(name='Resolution Param 1', min=0.01, value=0.03, max=0.05, fit=False, prior_type='uniform', mu=0.0, sigma=inf)]),\n"
+        "    backgrounds=demo_recv.ClassList([Background(name='Background 1', type='constant', value_1='Background Param 1', value_2='', value_3='', value_4='', value_5='')]),\n"
+        "    resolutions=demo_recv.ClassList([Resolution(name='Resolution 1', type='constant', value_1='Resolution Param 1', value_2='', value_3='', value_4='', value_5='')]),\n"
+        "    custom_files=demo_recv.ClassList([CustomFile(name='Test Custom File', filename='', language='python', path='pwd')]),\n"
+        "    data=demo_recv.ClassList([Data(name='Simulation', data=array([[1., 1., 1.]]), data_range=[1.0, 1.0], simulation_range=[1.0, 1.0])]),\n"
+        "    layers=demo_recv.ClassList([Layer(name='Test Layer', thickness='Test Thickness', SLD='Test SLD', roughness='Test Roughness', hydration='', hydrate_with='bulk out')]),\n"
+        "    contrasts=demo_recv.ClassList([Contrast(name='Test Contrast', data='Simulation', background='Background 1', background_action='add', bulk_in='SLD Air', bulk_out='SLD D2O', scalefactor='Scalefactor 1', resolution='Resolution 1', resample=False, model=['Test Layer'])]),\n"
         "    )\n"
     )
 
@@ -134,7 +134,7 @@ def test_classlists(test_project) -> None:
     """The ClassLists in the "Project" model should contain instances of the models given by the dictionary
     "model_in_classlist".
     """
-    for key, value in RAT.project.model_in_classlist.items():
+    for key, value in demo_recv.project.model_in_classlist.items():
         class_list = getattr(test_project, key)
         assert class_list._class_handle.__name__ == value
 
@@ -143,33 +143,33 @@ def test_classlists_specific_cases() -> None:
     """The ClassLists in the "Project" model should contain instances of specific models given various non-default
     options.
     """
-    project = RAT.Project(calculation=Calculations.Domains, absorption=True)
+    project = demo_recv.Project(calculation=Calculations.Domains, absorption=True)
     assert project.layers._class_handle.__name__ == 'AbsorptionLayer'
     assert project.contrasts._class_handle.__name__ == 'ContrastWithRatio'
 
 
 @pytest.mark.parametrize(["input_model", "model_params"], [
-    (RAT.models.Background, {}),
-    (RAT.models.Contrast, {}),
-    (RAT.models.ContrastWithRatio, {}),
-    (RAT.models.CustomFile, {}),
-    (RAT.models.Data, {}),
-    (RAT.models.DomainContrast, {}),
-    (RAT.models.Layer, layer_params),
-    (RAT.models.AbsorptionLayer, absorption_layer_params),
-    (RAT.models.Resolution, {}),
+    (demo_recv.models.Background, {}),
+    (demo_recv.models.Contrast, {}),
+    (demo_recv.models.ContrastWithRatio, {}),
+    (demo_recv.models.CustomFile, {}),
+    (demo_recv.models.Data, {}),
+    (demo_recv.models.DomainContrast, {}),
+    (demo_recv.models.Layer, layer_params),
+    (demo_recv.models.AbsorptionLayer, absorption_layer_params),
+    (demo_recv.models.Resolution, {}),
 ])
 def test_initialise_wrong_classes(input_model: Callable, model_params: dict) -> None:
     """If the "Project" model is initialised with incorrect classes, we should raise a ValidationError."""
     with pytest.raises(pydantic.ValidationError, match='1 validation error for Project\nparameters\n  Value error, '
                                                        '"parameters" ClassList contains objects other than '
                                                        '"Parameter"'):
-        RAT.Project(parameters=RAT.ClassList(input_model(**model_params)))
+        demo_recv.Project(parameters=demo_recv.ClassList(input_model(**model_params)))
 
 
 @pytest.mark.parametrize(["input_model", "model_params", "absorption", "actual_model_name"], [
-    (RAT.models.Layer, layer_params, True, "AbsorptionLayer"),
-    (RAT.models.AbsorptionLayer, absorption_layer_params, False, "Layer"),
+    (demo_recv.models.Layer, layer_params, True, "AbsorptionLayer"),
+    (demo_recv.models.AbsorptionLayer, absorption_layer_params, False, "Layer"),
 ])
 def test_initialise_wrong_layers(input_model: Callable, model_params: dict, absorption: bool,
                                  actual_model_name: str) -> None:
@@ -179,12 +179,12 @@ def test_initialise_wrong_layers(input_model: Callable, model_params: dict, abso
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\nlayers\n  Value error, '
                                                        f'"layers" ClassList contains objects other than '
                                                        f'"{actual_model_name}"'):
-        RAT.Project(absorption=absorption, layers=RAT.ClassList(input_model(**model_params)))
+        demo_recv.Project(absorption=absorption, layers=demo_recv.ClassList(input_model(**model_params)))
 
 
 @pytest.mark.parametrize(["input_model", "calculation", "actual_model_name"], [
-    (RAT.models.Contrast, Calculations.Domains, "ContrastWithRatio"),
-    (RAT.models.ContrastWithRatio, Calculations.NonPolarised, "Contrast"),
+    (demo_recv.models.Contrast, Calculations.Domains, "ContrastWithRatio"),
+    (demo_recv.models.ContrastWithRatio, Calculations.NonPolarised, "Contrast"),
 ])
 def test_initialise_wrong_contrasts(input_model: Callable, calculation: Calculations,
                                     actual_model_name: str) -> None:
@@ -194,64 +194,64 @@ def test_initialise_wrong_contrasts(input_model: Callable, calculation: Calculat
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\ncontrasts\n  Value error, '
                                                        f'"contrasts" ClassList contains objects other than '
                                                        f'"{actual_model_name}"'):
-        RAT.Project(calculation=calculation, contrasts=RAT.ClassList(input_model()))
+        demo_recv.Project(calculation=calculation, contrasts=demo_recv.ClassList(input_model()))
 
 
 @pytest.mark.parametrize("input_parameter", [
-    (RAT.models.Parameter(name='Test Parameter')),
-    (RAT.models.Parameter(name='Substrate Roughness')),
+    (demo_recv.models.Parameter(name='Test Parameter')),
+    (demo_recv.models.Parameter(name='Substrate Roughness')),
 ])
 def test_initialise_without_substrate_roughness(input_parameter: Callable) -> None:
     """If the "Project" model is initialised without "Substrate Roughness as a protected parameter, add it to the front
     of the "parameters" ClassList.
     """
-    project = RAT.Project(parameters=RAT.ClassList(RAT.models.Parameter(name='Substrate Roughness')))
-    assert project.parameters[0] == RAT.models.ProtectedParameter(name='Substrate Roughness')
+    project = demo_recv.Project(parameters=demo_recv.ClassList(demo_recv.models.Parameter(name='Substrate Roughness')))
+    assert project.parameters[0] == demo_recv.models.ProtectedParameter(name='Substrate Roughness')
 
 
 @pytest.mark.parametrize(["field", "wrong_input_model", "model_params"], [
-    ('backgrounds', RAT.models.Resolution, {}),
-    ('contrasts', RAT.models.Layer, layer_params),
-    ('domain_contrasts', RAT.models.Parameter, {}),
-    ('custom_files', RAT.models.Data, {}),
-    ('data', RAT.models.Contrast, {}),
-    ('layers', RAT.models.DomainContrast, {}),
-    ('parameters', RAT.models.CustomFile, {}),
-    ('resolutions', RAT.models.Background, {}),
+    ('backgrounds', demo_recv.models.Resolution, {}),
+    ('contrasts', demo_recv.models.Layer, layer_params),
+    ('domain_contrasts', demo_recv.models.Parameter, {}),
+    ('custom_files', demo_recv.models.Data, {}),
+    ('data', demo_recv.models.Contrast, {}),
+    ('layers', demo_recv.models.DomainContrast, {}),
+    ('parameters', demo_recv.models.CustomFile, {}),
+    ('resolutions', demo_recv.models.Background, {}),
 ])
 def test_assign_wrong_classes(test_project, field: str, wrong_input_model: Callable, model_params: dict) -> None:
     """If we assign incorrect classes to the "Project" model, we should raise a ValidationError."""
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n{field}\n  Value error, '
                                                        f'"{field}" ClassList contains objects other than '
-                                                       f'"{RAT.project.model_in_classlist[field]}"'):
-        setattr(test_project, field, RAT.ClassList(wrong_input_model(**model_params)))
+                                                       f'"{demo_recv.project.model_in_classlist[field]}"'):
+        setattr(test_project, field, demo_recv.ClassList(wrong_input_model(**model_params)))
 
 
 @pytest.mark.parametrize(["wrong_input_model", "model_params", "absorption", "actual_model_name"], [
-    (RAT.models.Layer, layer_params, True, "AbsorptionLayer"),
-    (RAT.models.AbsorptionLayer, absorption_layer_params, False, "Layer"),
+    (demo_recv.models.Layer, layer_params, True, "AbsorptionLayer"),
+    (demo_recv.models.AbsorptionLayer, absorption_layer_params, False, "Layer"),
 ])
 def test_assign_wrong_layers(wrong_input_model: Callable, model_params: dict, absorption: bool,
                              actual_model_name: str) -> None:
     """If we assign incorrect classes to the "Project" model, we should raise a ValidationError."""
-    project = RAT.Project(absorption=absorption)
+    project = demo_recv.Project(absorption=absorption)
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\nlayers\n  Value error, '
                                                        f'"layers" ClassList contains objects other than '
                                                        f'"{actual_model_name}"'):
-        setattr(project, 'layers', RAT.ClassList(wrong_input_model(**model_params)))
+        setattr(project, 'layers', demo_recv.ClassList(wrong_input_model(**model_params)))
 
 
 @pytest.mark.parametrize(["wrong_input_model", "calculation", "actual_model_name"], [
-    (RAT.models.Contrast, Calculations.Domains, "ContrastWithRatio"),
-    (RAT.models.ContrastWithRatio, Calculations.NonPolarised, "Contrast"),
+    (demo_recv.models.Contrast, Calculations.Domains, "ContrastWithRatio"),
+    (demo_recv.models.ContrastWithRatio, Calculations.NonPolarised, "Contrast"),
 ])
 def test_assign_wrong_contrasts(wrong_input_model: Callable, calculation: Calculations, actual_model_name: str) -> None:
     """If we assign incorrect classes to the "Project" model, we should raise a ValidationError."""
-    project = RAT.Project(calculation=calculation)
+    project = demo_recv.Project(calculation=calculation)
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\ncontrasts\n  Value error, '
                                                        f'"contrasts" ClassList contains objects other than '
                                                        f'"{actual_model_name}"'):
-        setattr(project, 'contrasts', RAT.ClassList(wrong_input_model()))
+        setattr(project, 'contrasts', demo_recv.ClassList(wrong_input_model()))
 
 
 @pytest.mark.parametrize(["field", "model_params"], [
@@ -265,7 +265,7 @@ def test_assign_wrong_contrasts(wrong_input_model: Callable, calculation: Calcul
 ])
 def test_assign_models(test_project, field: str, model_params: dict) -> None:
     """If the "Project" model is initialised with models rather than ClassLists, we should raise a ValidationError."""
-    input_model = getattr(RAT.models, RAT.project.model_in_classlist[field])
+    input_model = getattr(demo_recv.models, demo_recv.project.model_in_classlist[field])
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n{field}\n  Input should be '
                                                        f'an instance of ClassList'):
         setattr(test_project, field, input_model(**model_params))
@@ -275,7 +275,7 @@ def test_wrapped_routines(test_project) -> None:
     """When initialising a project, several ClassList routines should be wrapped."""
     wrapped_methods = ['_setitem', '_delitem', '_iadd', 'append', 'insert', 'pop', 'remove', 'clear', 'extend',
                        'set_fields']
-    for class_list in RAT.project.class_lists:
+    for class_list in demo_recv.project.class_lists:
         attribute = getattr(test_project, class_list)
         for methodName in wrapped_methods:
             assert hasattr(getattr(attribute, methodName), '__wrapped__')
@@ -299,7 +299,7 @@ def test_set_domain_contrasts(project_parameters: dict) -> None:
     """If we are not running a domains calculation with standard layers, the "domain_contrasts" field of the model
     should always be empty.
     """
-    project = RAT.Project(**project_parameters)
+    project = demo_recv.Project(**project_parameters)
     assert project.domain_contrasts == []
     project.domain_contrasts.append(name='New Domain Contrast')
     assert project.domain_contrasts == []
@@ -311,7 +311,7 @@ def test_set_domain_contrasts(project_parameters: dict) -> None:
 ])
 def test_set_layers(project_parameters: dict) -> None:
     """If we are not using a standard layers model, the "layers" field of the model should always be empty."""
-    project = RAT.Project(**project_parameters)
+    project = demo_recv.Project(**project_parameters)
     assert project.layers == []
     project.layers.append(name='New Layer', thickness='Test Thickness', SLD='Test SLD', roughness='Test Roughness')
     assert project.layers == []
@@ -319,15 +319,15 @@ def test_set_layers(project_parameters: dict) -> None:
 
 @pytest.mark.parametrize(["input_calculation", "input_contrast", "new_calculation", "new_contrast_model",
                           "num_domain_ratios"], [
-    (Calculations.NonPolarised, RAT.models.Contrast, Calculations.Domains, "ContrastWithRatio", 1),
-    (Calculations.Domains, RAT.models.ContrastWithRatio, Calculations.NonPolarised, "Contrast", 0),
+    (Calculations.NonPolarised, demo_recv.models.Contrast, Calculations.Domains, "ContrastWithRatio", 1),
+    (Calculations.Domains, demo_recv.models.ContrastWithRatio, Calculations.NonPolarised, "Contrast", 0),
 ])
 def test_set_calculation(input_calculation: Calculations, input_contrast: Callable, new_calculation: Calculations,
                          new_contrast_model: str, num_domain_ratios: int) -> None:
     """When changing the value of the calculation option, the "contrasts" ClassList should switch to using the
     appropriate Contrast model.
     """
-    project = RAT.Project(calculation=input_calculation, contrasts=RAT.ClassList(input_contrast()))
+    project = demo_recv.Project(calculation=input_calculation, contrasts=demo_recv.ClassList(input_contrast()))
     project.calculation = new_calculation
 
     assert project.calculation is new_calculation
@@ -367,27 +367,27 @@ def test_check_contrast_model_length(test_project, input_model: LayerModels, tes
     """If we are not running a domains calculation with standard layers, the "domain_contrasts" field of the model
     should always be empty.
     """
-    test_domain_ratios = RAT.ClassList(RAT.models.Parameter(name='Test Domain Ratio'))
-    test_contrasts = RAT.ClassList(RAT.models.ContrastWithRatio(model=test_contrast_model))
+    test_domain_ratios = demo_recv.ClassList(demo_recv.models.Parameter(name='Test Domain Ratio'))
+    test_contrasts = demo_recv.ClassList(demo_recv.models.ContrastWithRatio(model=test_contrast_model))
     with pytest.raises(pydantic.ValidationError,
                        match=f'1 validation error for Project\n  Value error, {error_message}'):
-        RAT.Project(calculation=Calculations.Domains, model=input_model, domain_ratios=test_domain_ratios,
+        demo_recv.Project(calculation=Calculations.Domains, model=input_model, domain_ratios=test_domain_ratios,
                     contrasts=test_contrasts)
 
 
 @pytest.mark.parametrize(["input_layer", "model_params", "input_absorption", "new_layer_model"], [
-    (RAT.models.Layer, layer_params, False, "AbsorptionLayer"),
-    (RAT.models.AbsorptionLayer, absorption_layer_params, True, "Layer"),
+    (demo_recv.models.Layer, layer_params, False, "AbsorptionLayer"),
+    (demo_recv.models.AbsorptionLayer, absorption_layer_params, True, "Layer"),
 ])
 def test_set_absorption(input_layer: Callable, model_params: dict, input_absorption: bool, new_layer_model: str) -> None:
     """When changing the value of the absorption option, the "layers" ClassList should switch to using the appropriate
     Layer model.
     """
-    project = RAT.Project(absorption=input_absorption,
-                          parameters=RAT.ClassList([RAT.models.Parameter(name='Test Thickness'),
-                                                    RAT.models.Parameter(name='Test SLD'),
-                                                    RAT.models.Parameter(name='Test Roughness')]),
-                          layers=RAT.ClassList(input_layer(**model_params)))
+    project = demo_recv.Project(absorption=input_absorption,
+                          parameters=demo_recv.ClassList([demo_recv.models.Parameter(name='Test Thickness'),
+                                                    demo_recv.models.Parameter(name='Test SLD'),
+                                                    demo_recv.models.Parameter(name='Test Roughness')]),
+                          layers=demo_recv.ClassList(input_layer(**model_params)))
     project.absorption = not input_absorption
 
     assert project.absorption is not input_absorption
@@ -403,7 +403,7 @@ def test_set_absorption(input_layer: Callable, model_params: dict, input_absorpt
 ])
 def test_check_protected_parameters(delete_operation) -> None:
     """If we try to remove a protected parameter, we should raise an error."""
-    project = RAT.Project()
+    project = demo_recv.Project()
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, Can\'t delete'
                                                        f' the protected parameters: Substrate Roughness'):
@@ -429,7 +429,7 @@ def test_rename_models(test_project, model: str, field: str) -> None:
     in the project.
     """
     getattr(test_project, model).set_fields(-1, name='New Name')
-    attribute = RAT.project.model_names_used_in[model].attribute
+    attribute = demo_recv.project.model_names_used_in[model].attribute
     assert getattr(getattr(test_project, attribute)[-1], field) == 'New Name'
 
 
@@ -444,11 +444,11 @@ def test_allowed_backgrounds(field: str) -> None:
     """If the "value" fields of the Background model are set to values that are not specified in the background
     parameters, we should raise a ValidationError.
     """
-    test_background = RAT.models.Background(**{field: 'undefined'})
+    test_background = demo_recv.models.Background(**{field: 'undefined'})
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "backgrounds" must be '
                                                        f'defined in "background_parameters".'):
-        RAT.Project(backgrounds=RAT.ClassList(test_background))
+        demo_recv.Project(backgrounds=demo_recv.ClassList(test_background))
 
 
 @pytest.mark.parametrize("field", [
@@ -460,15 +460,15 @@ def test_allowed_layers(field: str) -> None:
     """If the "thickness", "SLD", or "roughness" fields of the Layer model are set to values that are not specified in
     the parameters, we should raise a ValidationError.
     """
-    test_layer = RAT.models.Layer(**{**layer_params, field: 'undefined'})
+    test_layer = demo_recv.models.Layer(**{**layer_params, field: 'undefined'})
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "layers" must be '
                                                        f'defined in "parameters".'):
-        RAT.Project(absorption=False, parameters=RAT.ClassList([RAT.models.Parameter(name='Test Thickness'),
-                                                                RAT.models.Parameter(name='Test SLD'),
-                                                                RAT.models.Parameter(name='Test Roughness')]),
-                    layers=RAT.ClassList(test_layer))
+        demo_recv.Project(absorption=False, parameters=demo_recv.ClassList([demo_recv.models.Parameter(name='Test Thickness'),
+                                                                demo_recv.models.Parameter(name='Test SLD'),
+                                                                demo_recv.models.Parameter(name='Test Roughness')]),
+                    layers=demo_recv.ClassList(test_layer))
 
 
 @pytest.mark.parametrize("field", [
@@ -481,15 +481,15 @@ def test_allowed_absorption_layers(field: str) -> None:
     """If the "thickness", "SLD_real", "SLD_imaginary", or "roughness" fields of the AbsorptionLayer model are set to
     values that are not specified in the parameters, we should raise a ValidationError.
     """
-    test_layer = RAT.models.AbsorptionLayer(**{**absorption_layer_params, field: 'undefined'})
+    test_layer = demo_recv.models.AbsorptionLayer(**{**absorption_layer_params, field: 'undefined'})
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "layers" must be '
                                                        f'defined in "parameters".'):
-        RAT.Project(absorption=True, parameters=RAT.ClassList([RAT.models.Parameter(name='Test Thickness'),
-                                                               RAT.models.Parameter(name='Test SLD'),
-                                                               RAT.models.Parameter(name='Test Roughness')]),
-                    layers=RAT.ClassList(test_layer))
+        demo_recv.Project(absorption=True, parameters=demo_recv.ClassList([demo_recv.models.Parameter(name='Test Thickness'),
+                                                               demo_recv.models.Parameter(name='Test SLD'),
+                                                               demo_recv.models.Parameter(name='Test Roughness')]),
+                    layers=demo_recv.ClassList(test_layer))
 
 
 @pytest.mark.parametrize("field", [
@@ -503,11 +503,11 @@ def test_allowed_resolutions(field: str) -> None:
     """If the "value" fields of the Resolution model are set to values that are not specified in the background
     parameters, we should raise a ValidationError.
     """
-    test_resolution = RAT.models.Resolution(**{field: 'undefined'})
+    test_resolution = demo_recv.models.Resolution(**{field: 'undefined'})
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "resolutions" must be '
                                                        f'defined in "resolution_parameters".'):
-        RAT.Project(resolutions=RAT.ClassList(test_resolution))
+        demo_recv.Project(resolutions=demo_recv.ClassList(test_resolution))
 
 
 @pytest.mark.parametrize(["field", "model_name"], [
@@ -522,11 +522,11 @@ def test_allowed_contrasts(field: str, model_name: str) -> None:
     """If the fields of the Contrast model are set to values not specified in the other respective models of the
     project, we should raise a ValidationError.
     """
-    test_contrast = RAT.models.Contrast(**{field: 'undefined'})
+    test_contrast = demo_recv.models.Contrast(**{field: 'undefined'})
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "contrasts" must be '
                                                        f'defined in "{model_name}".'):
-        RAT.Project(calculation=Calculations.NonPolarised, contrasts=RAT.ClassList(test_contrast))
+        demo_recv.Project(calculation=Calculations.NonPolarised, contrasts=demo_recv.ClassList(test_contrast))
 
 
 @pytest.mark.parametrize(["field", "model_name"], [
@@ -542,28 +542,28 @@ def test_allowed_contrasts_with_ratio(field: str, model_name: str) -> None:
     """If the fields of the ContrastWithRatio model are set to values not specified in the other respective models of
     the project, we should raise a ValidationError.
     """
-    test_contrast = RAT.models.ContrastWithRatio(**{field: 'undefined'})
+    test_contrast = demo_recv.models.ContrastWithRatio(**{field: 'undefined'})
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "contrasts" must be '
                                                        f'defined in "{model_name}".'):
-        RAT.Project(calculation=Calculations.Domains, contrasts=RAT.ClassList(test_contrast))
+        demo_recv.Project(calculation=Calculations.Domains, contrasts=demo_recv.ClassList(test_contrast))
 
 
 @pytest.mark.parametrize(["input_calc", "input_model", "test_contrast", "field_name"], [
     (Calculations.Domains, LayerModels.StandardLayers,
-     RAT.models.ContrastWithRatio(name='Test Contrast', model=['undefined', 'undefined']), 'domain_contrasts'),
+     demo_recv.models.ContrastWithRatio(name='Test Contrast', model=['undefined', 'undefined']), 'domain_contrasts'),
     (Calculations.Domains, LayerModels.CustomLayers,
-     RAT.models.ContrastWithRatio(name='Test Contrast', model=['undefined']), 'custom_files'),
+     demo_recv.models.ContrastWithRatio(name='Test Contrast', model=['undefined']), 'custom_files'),
     (Calculations.Domains, LayerModels.CustomXY,
-     RAT.models.ContrastWithRatio(name='Test Contrast', model=['undefined']), 'custom_files'),
+     demo_recv.models.ContrastWithRatio(name='Test Contrast', model=['undefined']), 'custom_files'),
     (Calculations.NonPolarised, LayerModels.StandardLayers,
-     RAT.models.Contrast(name='Test Contrast', model=['undefined', 'undefined', 'undefined']), 'layers'),
+     demo_recv.models.Contrast(name='Test Contrast', model=['undefined', 'undefined', 'undefined']), 'layers'),
     (Calculations.NonPolarised, LayerModels.CustomLayers,
-     RAT.models.Contrast(name='Test Contrast', model=['undefined']), 'custom_files'),
+     demo_recv.models.Contrast(name='Test Contrast', model=['undefined']), 'custom_files'),
     (Calculations.NonPolarised, LayerModels.CustomXY,
-     RAT.models.Contrast(name='Test Contrast', model=['undefined']), 'custom_files'),
+     demo_recv.models.Contrast(name='Test Contrast', model=['undefined']), 'custom_files'),
 ])
-def test_allowed_contrast_models(input_calc: Calculations, input_model: LayerModels, test_contrast: 'RAT.models',
+def test_allowed_contrast_models(input_calc: Calculations, input_model: LayerModels, test_contrast: 'demo_recv.models',
                                  field_name: str) -> None:
     """If any value in the model field of the contrasts is set to a value not specified in the appropriate part of the
     project, we should raise a ValidationError.
@@ -571,23 +571,23 @@ def test_allowed_contrast_models(input_calc: Calculations, input_model: LayerMod
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The values: '
                                                        f'"{", ".join(test_contrast.model)}" in the "model" field of '
                                                        f'"contrasts" must be defined in "{field_name}".'):
-        RAT.Project(calculation=input_calc, model=input_model, contrasts=RAT.ClassList(test_contrast))
+        demo_recv.Project(calculation=input_calc, model=input_model, contrasts=demo_recv.ClassList(test_contrast))
 
 
 def test_allowed_domain_contrast_models() -> None:
     """If any value in the model field of the domain_contrasts is set to a value not specified in the "layers" field of
     the project, we should raise a ValidationError.
     """
-    test_contrast = RAT.models.DomainContrast(name='Test Domain Contrast', model=['undefined'])
+    test_contrast = demo_recv.models.DomainContrast(name='Test Domain Contrast', model=['undefined'])
     with pytest.raises(pydantic.ValidationError, match='1 validation error for Project\n  Value error, The values: '
                                                        '"undefined" in the "model" field of "domain_contrasts" must be '
                                                        'defined in "layers".'):
-        RAT.Project(calculation=Calculations.Domains, domain_contrasts=RAT.ClassList(test_contrast))
+        demo_recv.Project(calculation=Calculations.Domains, domain_contrasts=demo_recv.ClassList(test_contrast))
 
 
 def test_repr(default_project_repr: str) -> None:
     """We should be able to print the "Project" model as a formatted list of the fields."""
-    assert repr(RAT.Project()) == default_project_repr
+    assert repr(demo_recv.Project()) == default_project_repr
 
 
 def test_get_all_names(test_project) -> None:
@@ -628,7 +628,7 @@ def test_get_all_protected_parameters(test_project) -> None:
 ])
 def test_check_allowed_values(test_value: str) -> None:
     """We should not raise an error if string values are defined and on the list of allowed values."""
-    project = RAT.Project.model_construct(backgrounds=RAT.ClassList(RAT.models.Background(value_1=test_value)))
+    project = demo_recv.Project.model_construct(backgrounds=demo_recv.ClassList(demo_recv.models.Background(value_1=test_value)))
     assert project.check_allowed_values("backgrounds", ["value_1"], ["Background Param 1"]) is None
 
 
@@ -637,7 +637,7 @@ def test_check_allowed_values(test_value: str) -> None:
 ])
 def test_check_allowed_values_not_on_list(test_value: str) -> None:
     """If string values are defined and are not included on the list of allowed values we should raise a ValueError."""
-    project = RAT.Project.model_construct(backgrounds=RAT.ClassList(RAT.models.Background(value_1=test_value)))
+    project = demo_recv.Project.model_construct(backgrounds=demo_recv.ClassList(demo_recv.models.Background(value_1=test_value)))
     with pytest.raises(ValueError, match=f'The value "{test_value}" in the "value_1" field of "backgrounds" must be '
                                          f'defined in "background_parameters".'):
         project.check_allowed_values("backgrounds", ["value_1"], ["Background Param 1"])
@@ -650,7 +650,7 @@ def test_check_allowed_values_not_on_list(test_value: str) -> None:
 def test_check_contrast_model_allowed_values(test_values: list[str]) -> None:
     """We should not raise an error if values are defined in a non-empty list and all are on the list of allowed values.
     """
-    project = RAT.Project.model_construct(contrasts=RAT.ClassList(RAT.models.Contrast(name='Test Contrast',
+    project = demo_recv.Project.model_construct(contrasts=demo_recv.ClassList(demo_recv.models.Contrast(name='Test Contrast',
                                                                                       model=test_values)))
     assert project.check_contrast_model_allowed_values("contrasts", ["Test Layer"], "layers") is None
 
@@ -663,7 +663,7 @@ def test_check_allowed_values_not_on_list(test_values: list[str]) -> None:
     """If string values are defined in a non-empty list and any of them are not included on the list of allowed values
     we should raise a ValueError.
     """
-    project = RAT.Project.model_construct(contrasts=RAT.ClassList(RAT.models.Contrast(name='Test Contrast',
+    project = demo_recv.Project.model_construct(contrasts=demo_recv.ClassList(demo_recv.models.Contrast(name='Test Contrast',
                                                                                       model=test_values)))
     with pytest.raises(ValueError, match=f'The values: "{", ".join(str(i) for i in test_values)}" in the "model" field '
                                          f'of "contrasts" must be defined in "layers".'):
@@ -682,7 +682,7 @@ def test_get_contrast_model_field(input_calc: Calculations, input_model: LayerMo
     """Each combination of calculation and model determines the field where the values of "model" field of "contrasts"
     are defined.
     """
-    project = RAT.Project(calculation=input_calc, model=input_model)
+    project = demo_recv.Project(calculation=input_calc, model=input_model)
     assert project.get_contrast_model_field() == expected_field_name
 
 
@@ -708,7 +708,7 @@ def test_write_script(test_project, temp_dir, test_project_script, input_filenam
     exec(script)
     new_project = locals()['problem']
 
-    for class_list in RAT.project.class_lists:
+    for class_list in demo_recv.project.class_lists:
         assert getattr(new_project, class_list) == getattr(test_project, class_list)
 
 
@@ -753,7 +753,7 @@ def test_wrap_set(test_project, class_list: str, field: str) -> None:
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "{class_list}" must be '
                                                        f'defined in '
-                                                       f'"{RAT.project.values_defined_in[f"{class_list}.{field}"]}".'):
+                                                       f'"{demo_recv.project.values_defined_in[f"{class_list}.{field}"]}".'):
         test_attribute.set_fields(0, **{field: 'undefined'})
 
     # Ensure invalid model was not changed
@@ -779,7 +779,7 @@ def test_wrap_del(test_project, class_list: str, parameter: str, field: str) -> 
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"{parameter}" in the "{field}" field of '
-                                                       f'"{RAT.project.model_names_used_in[class_list].attribute}" '
+                                                       f'"{demo_recv.project.model_names_used_in[class_list].attribute}" '
                                                        f'must be defined in "{class_list}".'):
         del test_attribute[index]
 
@@ -812,12 +812,12 @@ def test_wrap_iadd(test_project, class_list: str, field: str, model_params: dict
     """If we add a model containing undefined values to a ClassList, we should raise a ValidationError."""
     test_attribute = getattr(test_project, class_list)
     orig_class_list = copy.deepcopy(test_attribute)
-    input_model = getattr(RAT.models, RAT.project.model_in_classlist[class_list])
+    input_model = getattr(demo_recv.models, demo_recv.project.model_in_classlist[class_list])
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "{class_list}" must be '
                                                        f'defined in '
-                                                       f'"{RAT.project.values_defined_in[f"{class_list}.{field}"]}".'):
+                                                       f'"{demo_recv.project.values_defined_in[f"{class_list}.{field}"]}".'):
         test_attribute += [input_model(**{**model_params, field: 'undefined'})]
 
     # Ensure invalid model was not added
@@ -849,12 +849,12 @@ def test_wrap_append(test_project, class_list: str, field: str, model_params: di
     """If we append a model containing undefined values to a ClassList, we should raise a ValidationError."""
     test_attribute = getattr(test_project, class_list)
     orig_class_list = copy.deepcopy(test_attribute)
-    input_model = getattr(RAT.models, RAT.project.model_in_classlist[class_list])
+    input_model = getattr(demo_recv.models, demo_recv.project.model_in_classlist[class_list])
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "{class_list}" must be '
                                                        f'defined in '
-                                                       f'"{RAT.project.values_defined_in[f"{class_list}.{field}"]}".'):
+                                                       f'"{demo_recv.project.values_defined_in[f"{class_list}.{field}"]}".'):
         test_attribute.append(input_model(**{**model_params, field: 'undefined'}))
 
     # Ensure invalid model was not appended
@@ -886,12 +886,12 @@ def test_wrap_insert(test_project, class_list: str, field: str, model_params: di
     """If we insert a model containing undefined values into a ClassList, we should raise a ValidationError."""
     test_attribute = getattr(test_project, class_list)
     orig_class_list = copy.deepcopy(test_attribute)
-    input_model = getattr(RAT.models, RAT.project.model_in_classlist[class_list])
+    input_model = getattr(demo_recv.models, demo_recv.project.model_in_classlist[class_list])
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "{class_list}" must be '
                                                        f'defined in '
-                                                       f'"{RAT.project.values_defined_in[f"{class_list}.{field}"]}".'):
+                                                       f'"{demo_recv.project.values_defined_in[f"{class_list}.{field}"]}".'):
         test_attribute.insert(0, input_model(**{**model_params, field: 'undefined'}))
 
     # Ensure invalid model was not inserted
@@ -920,7 +920,7 @@ def test_wrap_insert_type_error(test_project, class_list: str, field: str) -> No
     """If we raise a TypeError using the wrapped insert routine, we should re-raise the error."""
     test_attribute = getattr(test_project, class_list)
     orig_class_list = copy.deepcopy(test_attribute)
-    input_model = getattr(RAT.models, RAT.project.model_in_classlist[class_list])
+    input_model = getattr(demo_recv.models, demo_recv.project.model_in_classlist[class_list])
 
     with pytest.raises(TypeError):
         test_attribute.insert(input_model)
@@ -948,7 +948,7 @@ def test_wrap_pop(test_project, class_list: str, parameter: str, field: str) -> 
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"{parameter}" in the "{field}" field of '
-                                                       f'"{RAT.project.model_names_used_in[class_list].attribute}" '
+                                                       f'"{demo_recv.project.model_names_used_in[class_list].attribute}" '
                                                        f'must be defined in "{class_list}".'):
         test_attribute.pop(index)
 
@@ -974,7 +974,7 @@ def test_wrap_remove(test_project, class_list: str, parameter: str, field: str) 
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"{parameter}" in the "{field}" field of '
-                                                       f'"{RAT.project.model_names_used_in[class_list].attribute}" '
+                                                       f'"{demo_recv.project.model_names_used_in[class_list].attribute}" '
                                                        f'must be defined in "{class_list}".'):
         test_attribute.remove(parameter)
 
@@ -1000,7 +1000,7 @@ def test_wrap_clear(test_project, class_list: str, parameter: str, field: str) -
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"{parameter}" in the "{field}" field of '
-                                                       f'"{RAT.project.model_names_used_in[class_list].attribute}" '
+                                                       f'"{demo_recv.project.model_names_used_in[class_list].attribute}" '
                                                        f'must be defined in "{class_list}".'):
         test_attribute.clear()
 
@@ -1033,12 +1033,12 @@ def test_wrap_extend(test_project, class_list: str, field: str, model_params: di
     """If we extend a ClassList with model containing undefined values, we should raise a ValidationError."""
     test_attribute = getattr(test_project, class_list)
     orig_class_list = copy.deepcopy(test_attribute)
-    input_model = getattr(RAT.models, RAT.project.model_in_classlist[class_list])
+    input_model = getattr(demo_recv.models, demo_recv.project.model_in_classlist[class_list])
 
     with pytest.raises(pydantic.ValidationError, match=f'1 validation error for Project\n  Value error, The value '
                                                        f'"undefined" in the "{field}" field of "{class_list}" must be '
                                                        f'defined in '
-                                                       f'"{RAT.project.values_defined_in[f"{class_list}.{field}"]}".'):
+                                                       f'"{demo_recv.project.values_defined_in[f"{class_list}.{field}"]}".'):
         test_attribute.extend([input_model(**{**model_params, field: 'undefined'})])
 
     # Ensure invalid model was not appended

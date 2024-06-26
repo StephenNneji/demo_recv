@@ -1,5 +1,5 @@
 from typing import Callable, Union, List
-from RAT.rat_core import EventBridge, EventTypes, PlotEventData, ProgressEventData
+from demo_recv.rat_core import EventBridge, EventTypes, PlotEventData, ProgressEventData
 
 
 def notify(event_type: EventTypes, data: Union[str, PlotEventData, ProgressEventData]) -> None:

@@ -5,8 +5,8 @@ import pickle
 from unittest.mock import patch
 from unittest.mock import MagicMock
 import matplotlib.pyplot as plt
-from RAT.rat_core import PlotEventData
-from RAT.utils.plotting import Figure, plot_ref_sld_helper
+from demo_recv.rat_core import PlotEventData
+from demo_recv.utils.plotting import Figure, plot_ref_sld_helper
 
 
 TEST_DIR_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),
@@ -134,7 +134,7 @@ def test_eventhandler_variable_update(fig: Figure) -> None:
     assert fig._close_clicked
 
 
-@patch("RAT.utils.plotting.plt.waitforbuttonpress")  
+@patch("demo_recv.utils.plotting.plt.waitforbuttonpress")  
 def test_wait_for_close(mock: MagicMock, fig: Figure) -> None:
     """
     Tests the _wait_for_close method stops the
@@ -149,7 +149,7 @@ def test_wait_for_close(mock: MagicMock, fig: Figure) -> None:
     assert fig._esc_pressed
 
 
-@patch("RAT.utils.plotting.makeSLDProfileXY")   
+@patch("demo_recv.utils.plotting.makeSLDProfileXY")   
 def test_sld_profile_function_call(mock: MagicMock) -> None:
     """
     Tests the makeSLDProfileXY function called with

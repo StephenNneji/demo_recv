@@ -17,7 +17,7 @@ libevent = ('eventManager', {'sources': ['cpp/RAT/events/eventManager.cpp'],
 
 ext_modules = [
     Extension(
-        'RAT.rat_core',
+        'demo_recv.rat_core',
         sources=['cpp/rat.cpp', *glob('cpp/RAT/*.c*')],
         include_dirs=[
             # Path to pybind11 headers
@@ -97,7 +97,7 @@ class BuildExt(build_ext):
         if self.inplace:
             obj_name = get_shared_object_name(libevent[0])
             src = f'{build_py.build_lib}/RAT/{obj_name}'
-            dest = f'{build_py.get_package_dir("RAT")}/{obj_name}'
+            dest = f'{build_py.get_package_dir("demo_recv")}/{obj_name}'
             build_py.copy_file(src, dest)
 
 
@@ -146,7 +146,7 @@ class BuildClib(build_clib):
                                            
 
 setup(
-    name='RAT',
+    name='demo_recv',
     version=__version__,
     author='',
     author_email='',

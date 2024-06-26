@@ -4,11 +4,11 @@ Plots using the matplotlib library
 from typing import Optional, Union
 import matplotlib.pyplot as plt
 import numpy as np
-from RAT.rat_core import PlotEventData, makeSLDProfileXY
+from demo_recv.rat_core import PlotEventData, makeSLDProfileXY
 
-import RAT
-import RAT.inputs
-import RAT.outputs
+import demo_recv
+import demo_recv.inputs
+import demo_recv.outputs
 
 
 class Figure:
@@ -200,7 +200,7 @@ def plot_ref_sld_helper(data: PlotEventData, fig: Optional[Figure] = None, delay
     return fig
 
 
-def plot_ref_sld(project: RAT.Project, results: Union[RAT.outputs.Results, RAT.outputs.BayesResults], block: bool = False):
+def plot_ref_sld(project: demo_recv.Project, results: Union[demo_recv.outputs.Results, demo_recv.outputs.BayesResults], block: bool = False):
     """
     Plots the reflectivity and SLD profiles.
 
@@ -219,9 +219,9 @@ def plot_ref_sld(project: RAT.Project, results: Union[RAT.outputs.Results, RAT.o
     data.shiftedData = results.shiftedData
     data.sldProfiles = results.sldProfiles
     data.resampledLayers = results.resampledLayers
-    data.dataPresent = RAT.inputs.make_data_present(project)
+    data.dataPresent = demo_recv.inputs.make_data_present(project)
     data.subRoughs = results.contrastParams.subRoughs
-    data.resample = RAT.inputs.make_resample(project)
+    data.resample = demo_recv.inputs.make_resample(project)
 
     figure = Figure(1, 2)
 

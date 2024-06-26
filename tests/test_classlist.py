@@ -6,7 +6,7 @@ import re
 from typing import Any, Union
 import warnings
 
-from RAT.classlist import ClassList
+from demo_recv.classlist import ClassList
 from tests.utils import InputAttributes, SubInputAttributes
 
 

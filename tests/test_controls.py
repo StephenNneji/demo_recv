@@ -4,8 +4,8 @@ import pytest
 import pydantic
 from typing import Union, Any
 
-from RAT.controls import Calculate, Simplex, DE, NS, Dream, set_controls
-from RAT.utils.enums import Parallel, Procedures, Display, BoundHandling, Strategies
+from demo_recv.controls import Calculate, Simplex, DE, NS, Dream, set_controls
+from demo_recv.utils.enums import Parallel, Procedures, Display, BoundHandling, Strategies
 
 
 class TestCalculate:

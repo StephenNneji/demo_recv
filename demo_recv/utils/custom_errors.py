@@ -1,4 +1,4 @@
-"""Defines routines for custom error handling in RAT."""
+"""Defines routines for custom error handling in demo_recv."""
 import pydantic_core
 
 

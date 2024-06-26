@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Any
 
-import RAT.outputs
+import demo_recv.outputs
 
 
 class InputAttributes:
@@ -33,10 +33,10 @@ def check_results_equal(actual_results, expected_results) -> None:
     contrast_param_fields = ["backgroundParams", "scalefactors", "bulkIn", "bulkOut", "resolutionParams", "subRoughs",
                              "resample"]
 
-    assert ((isinstance(actual_results, RAT.outputs.Results) and
-             isinstance(expected_results, RAT.outputs.Results)) or
-            (isinstance(actual_results, RAT.outputs.BayesResults) and
-             isinstance(expected_results, RAT.outputs.BayesResults)))
+    assert ((isinstance(actual_results, demo_recv.outputs.Results) and
+             isinstance(expected_results, demo_recv.outputs.Results)) or
+            (isinstance(actual_results, demo_recv.outputs.BayesResults) and
+             isinstance(expected_results, demo_recv.outputs.BayesResults)))
 
     # The first set of fields are either 1D or 2D python lists containing numpy arrays.
     # Hence, we need to compare them element-wise.
@@ -63,7 +63,7 @@ def check_results_equal(actual_results, expected_results) -> None:
     for field in contrast_param_fields:
         assert (getattr(actual_results.contrastParams, field) == getattr(expected_results.contrastParams, field)).all()
 
-    if isinstance(actual_results, RAT.outputs.BayesResults) and isinstance(expected_results, RAT.outputs.BayesResults):
+    if isinstance(actual_results, demo_recv.outputs.BayesResults) and isinstance(expected_results, demo_recv.outputs.BayesResults):
         check_bayes_fields_equal(actual_results, expected_results)
 
     return None

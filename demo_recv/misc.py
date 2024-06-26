@@ -2,7 +2,7 @@ import pathlib
 from typing import Callable, Tuple
 import numpy as np
 from numpy.typing import ArrayLike
-import RAT.rat_core
+import demo_recv.rat_core
 
 
 class MatlabWrapper:
@@ -63,7 +63,7 @@ class DylibWrapper:
         The name of the function to call
     """
     def __init__(self, filename, function_name) -> None:
-        self.engine = RAT.rat_core.DylibEngine(filename, function_name)
+        self.engine = demo_recv.rat_core.DylibEngine(filename, function_name)
     
     def getHandle(self)\
             -> Callable[[ArrayLike, ArrayLike, ArrayLike, int, int], Tuple[ArrayLike, float]]:

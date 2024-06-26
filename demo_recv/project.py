@@ -1,4 +1,4 @@
-"""The project module. Defines and stores all the input data required for reflectivity calculations in RAT."""
+"""The project module. Defines and stores all the input data required for reflectivity calculations in demo_recv."""
 
 import collections
 import copy
@@ -8,10 +8,10 @@ import os
 from pydantic import BaseModel, ValidationInfo, field_validator, model_validator, ValidationError
 from typing import Any, Callable
 
-from RAT.classlist import ClassList
-import RAT.models
-from RAT.utils.custom_errors import custom_pydantic_validation_error
-from RAT.utils.enums import Calculations, Geometries, LayerModels, Priors, TypeOptions
+from demo_recv.classlist import ClassList
+import demo_recv.models
+from demo_recv.utils.custom_errors import custom_pydantic_validation_error
+from demo_recv.utils.enums import Calculations, Geometries, LayerModels, Priors, TypeOptions
 
 
 # Map project fields to pydantic models
@@ -79,7 +79,7 @@ class_lists = [*parameter_class_lists, 'backgrounds', 'resolutions', 'custom_fil
 
 
 class Project(BaseModel, validate_assignment=True, extra='forbid', arbitrary_types_allowed=True):
-    """Defines the input data for a reflectivity calculation in RAT.
+    """Defines the input data for a reflectivity calculation in demo_recv.
 
     This class combines the data defined in each of the pydantic models included in "models.py" into the full set of
     inputs required for a reflectivity calculation.
@@ -92,35 +92,35 @@ class Project(BaseModel, validate_assignment=True, extra='forbid', arbitrary_typ
 
     parameters: ClassList = ClassList()
 
-    bulk_in: ClassList = ClassList(RAT.models.Parameter(name='SLD Air', min=0.0, value=0.0, max=0.0, fit=False,
+    bulk_in: ClassList = ClassList(demo_recv.models.Parameter(name='SLD Air', min=0.0, value=0.0, max=0.0, fit=False,
                                                         prior_type=Priors.Uniform, mu=0.0, sigma=np.inf))
 
-    bulk_out: ClassList = ClassList(RAT.models.Parameter(name='SLD D2O', min=6.2e-6, value=6.35e-6, max=6.35e-6,
+    bulk_out: ClassList = ClassList(demo_recv.models.Parameter(name='SLD D2O', min=6.2e-6, value=6.35e-6, max=6.35e-6,
                                                          fit=False, prior_type=Priors.Uniform, mu=0.0,
                                                          sigma=np.inf))
 
-    scalefactors: ClassList = ClassList(RAT.models.Parameter(name='Scalefactor 1', min=0.02, value=0.23, max=0.25,
+    scalefactors: ClassList = ClassList(demo_recv.models.Parameter(name='Scalefactor 1', min=0.02, value=0.23, max=0.25,
                                                              fit=False, prior_type=Priors.Uniform, mu=0.0,
                                                              sigma=np.inf))
 
-    domain_ratios: ClassList = ClassList(RAT.models.Parameter(name='Domain Ratio 1', min=0.4, value=0.5, max=0.6,
+    domain_ratios: ClassList = ClassList(demo_recv.models.Parameter(name='Domain Ratio 1', min=0.4, value=0.5, max=0.6,
                                                               fit=False, prior_type=Priors.Uniform, mu=0.0,
                                                               sigma=np.inf))
 
-    background_parameters: ClassList = ClassList(RAT.models.Parameter(name='Background Param 1', min=1e-7, value=1e-6,
+    background_parameters: ClassList = ClassList(demo_recv.models.Parameter(name='Background Param 1', min=1e-7, value=1e-6,
                                                                       max=1e-5, fit=False,
                                                                       prior_type=Priors.Uniform, mu=0.0,
                                                                       sigma=np.inf))
 
-    backgrounds: ClassList = ClassList(RAT.models.Background(name='Background 1', type=TypeOptions.Constant,
+    backgrounds: ClassList = ClassList(demo_recv.models.Background(name='Background 1', type=TypeOptions.Constant,
                                                              value_1='Background Param 1'))
 
-    resolution_parameters: ClassList = ClassList(RAT.models.Parameter(name='Resolution Param 1', min=0.01, value=0.03,
+    resolution_parameters: ClassList = ClassList(demo_recv.models.Parameter(name='Resolution Param 1', min=0.01, value=0.03,
                                                                       max=0.05, fit=False,
                                                                       prior_type=Priors.Uniform, mu=0.0,
                                                                       sigma=np.inf))
 
-    resolutions: ClassList = ClassList(RAT.models.Resolution(name='Resolution 1', type=TypeOptions.Constant,
+    resolutions: ClassList = ClassList(demo_recv.models.Resolution(name='Resolution 1', type=TypeOptions.Constant,
                                                              value_1='Resolution Param 1'))
 
     custom_files: ClassList = ClassList()
@@ -146,7 +146,7 @@ class Project(BaseModel, validate_assignment=True, extra='forbid', arbitrary_typ
         if info.field_name == 'contrasts' and info.data['calculation'] == Calculations.Domains:
             model_name = 'ContrastWithRatio'
 
-        model = getattr(RAT.models, model_name)
+        model = getattr(demo_recv.models, model_name)
         if not all(isinstance(element, model) for element in value):
             raise ValueError(f'"{info.field_name}" ClassList contains objects other than "{model_name}"')
         return value
@@ -160,35 +160,35 @@ class Project(BaseModel, validate_assignment=True, extra='forbid', arbitrary_typ
         layer_field = getattr(self, 'layers')
         if not hasattr(layer_field, "_class_handle"):
             if self.absorption:
-                setattr(layer_field, "_class_handle", getattr(RAT.models, 'AbsorptionLayer'))
+                setattr(layer_field, "_class_handle", getattr(demo_recv.models, 'AbsorptionLayer'))
             else:
-                setattr(layer_field, "_class_handle", getattr(RAT.models, 'Layer'))
+                setattr(layer_field, "_class_handle", getattr(demo_recv.models, 'Layer'))
 
         contrast_field = getattr(self, 'contrasts')
         if not hasattr(contrast_field, "_class_handle"):
             if self.calculation == Calculations.Domains:
-                setattr(contrast_field, "_class_handle", getattr(RAT.models, 'ContrastWithRatio'))
+                setattr(contrast_field, "_class_handle", getattr(demo_recv.models, 'ContrastWithRatio'))
             else:
-                setattr(contrast_field, "_class_handle", getattr(RAT.models, 'Contrast'))
+                setattr(contrast_field, "_class_handle", getattr(demo_recv.models, 'Contrast'))
 
         for field_name, model in model_in_classlist.items():
             field = getattr(self, field_name)
             if not hasattr(field, "_class_handle"):
-                setattr(field, "_class_handle", getattr(RAT.models, model))
+                setattr(field, "_class_handle", getattr(demo_recv.models, model))
 
         if 'Substrate Roughness' not in self.parameters.get_names():
-            self.parameters.insert(0, RAT.models.ProtectedParameter(name='Substrate Roughness', min=1.0, value=3.0,
+            self.parameters.insert(0, demo_recv.models.ProtectedParameter(name='Substrate Roughness', min=1.0, value=3.0,
                                                                     max=5.0, fit=True,
-                                                                    prior_type=RAT.models.Priors.Uniform, mu=0.0,
+                                                                    prior_type=demo_recv.models.Priors.Uniform, mu=0.0,
                                                                     sigma=np.inf))
         elif 'Substrate Roughness' not in self.get_all_protected_parameters().values():
             # If substrate roughness is included as a standard parameter replace it with a protected parameter
             substrate_roughness_values = self.parameters[self.parameters.index('Substrate Roughness')].model_dump()
             self.parameters.remove('Substrate Roughness')
-            self.parameters.insert(0, RAT.models.ProtectedParameter(**substrate_roughness_values))
+            self.parameters.insert(0, demo_recv.models.ProtectedParameter(**substrate_roughness_values))
 
         if 'Simulation' not in self.data.get_names():
-            self.data.insert(0, RAT.models.Data(name='Simulation'))
+            self.data.insert(0, demo_recv.models.Data(name='Simulation'))
 
         self._all_names = self.get_all_names()
         self._contrast_model_field = self.get_contrast_model_field()
@@ -234,19 +234,19 @@ class Project(BaseModel, validate_assignment=True, extra='forbid', arbitrary_typ
         handle = getattr(self.contrasts, '_class_handle').__name__
         if self.calculation == Calculations.Domains and handle == 'Contrast':
             for contrast in self.contrasts:
-                contrast_list.append(RAT.models.ContrastWithRatio(**contrast.model_dump()))
+                contrast_list.append(demo_recv.models.ContrastWithRatio(**contrast.model_dump()))
             self.contrasts.data = contrast_list
-            self.domain_ratios.data = [RAT.models.Parameter(name='Domain Ratio 1', min=0.4, value=0.5, max=0.6,
-                                                            fit=False, prior_type=RAT.models.Priors.Uniform, mu=0.0,
+            self.domain_ratios.data = [demo_recv.models.Parameter(name='Domain Ratio 1', min=0.4, value=0.5, max=0.6,
+                                                            fit=False, prior_type=demo_recv.models.Priors.Uniform, mu=0.0,
                                                             sigma=np.inf)]
-            setattr(self.contrasts, '_class_handle', getattr(RAT.models, 'ContrastWithRatio'))
+            setattr(self.contrasts, '_class_handle', getattr(demo_recv.models, 'ContrastWithRatio'))
         elif self.calculation != Calculations.Domains and handle == 'ContrastWithRatio':
             for contrast in self.contrasts:
                 contrast_params = contrast.model_dump()
                 del contrast_params['domain_ratio']
-                contrast_list.append(RAT.models.Contrast(**contrast_params))
+                contrast_list.append(demo_recv.models.Contrast(**contrast_params))
             self.contrasts.data = contrast_list
-            setattr(self.contrasts, '_class_handle', getattr(RAT.models, 'Contrast'))
+            setattr(self.contrasts, '_class_handle', getattr(demo_recv.models, 'Contrast'))
         return self
 
     @model_validator(mode='after')
@@ -285,16 +285,16 @@ class Project(BaseModel, validate_assignment=True, extra='forbid', arbitrary_typ
         handle = getattr(self.layers, '_class_handle').__name__
         if self.absorption and handle == 'Layer':
             for layer in self.layers:
-                layer_list.append(RAT.models.AbsorptionLayer(**layer.model_dump()))
+                layer_list.append(demo_recv.models.AbsorptionLayer(**layer.model_dump()))
             self.layers.data = layer_list
-            setattr(self.layers, '_class_handle', getattr(RAT.models, 'AbsorptionLayer'))
+            setattr(self.layers, '_class_handle', getattr(demo_recv.models, 'AbsorptionLayer'))
         elif not self.absorption and handle == 'AbsorptionLayer':
             for layer in self.layers:
                 layer_params = layer.model_dump()
                 del layer_params['SLD_imaginary']
-                layer_list.append(RAT.models.Layer(**layer_params))
+                layer_list.append(demo_recv.models.Layer(**layer_params))
             self.layers.data = layer_list
-            setattr(self.layers, '_class_handle', getattr(RAT.models, 'Layer'))
+            setattr(self.layers, '_class_handle', getattr(demo_recv.models, 'Layer'))
         return self
 
     @model_validator(mode='after')
@@ -342,7 +342,7 @@ class Project(BaseModel, validate_assignment=True, extra='forbid', arbitrary_typ
         """Protected parameters should not be deleted. If this is attempted, raise an error."""
         for class_list in parameter_class_lists:
             protected_parameters = [param.name for param in getattr(self, class_list)
-                                    if isinstance(param, RAT.models.ProtectedParameter)]
+                                    if isinstance(param, demo_recv.models.ProtectedParameter)]
             # All previously existing protected parameters should be present in new list
             if not all(element in protected_parameters for element in self._protected_parameters[class_list]):
                 removed_params = [param for param in self._protected_parameters[class_list]
@@ -371,7 +371,7 @@ class Project(BaseModel, validate_assignment=True, extra='forbid', arbitrary_typ
     def get_all_protected_parameters(self):
         """Record the protected parameters defined in the project."""
         return {class_list: [param.name for param in getattr(self, class_list)
-                             if isinstance(param, RAT.models.ProtectedParameter)]
+                             if isinstance(param, demo_recv.models.ProtectedParameter)]
                 for class_list in parameter_class_lists}
 
     def check_allowed_values(self, attribute: str, field_list: list[str], allowed_values: list[str]) -> None:
@@ -468,15 +468,15 @@ class Project(BaseModel, validate_assignment=True, extra='forbid', arbitrary_typ
                     '\n\n')
 
             # Need imports
-            f.write('import RAT\nfrom RAT.models import *\nfrom numpy import array, inf\n\n')
+            f.write('import demo_recv\nfrom demo_recv.models import *\nfrom numpy import array, inf\n\n')
 
-            f.write(f"{obj_name} = RAT.Project(\n{indent}name='{self.name}', calculation='{self.calculation}',"
+            f.write(f"{obj_name} = demo_recv.Project(\n{indent}name='{self.name}', calculation='{self.calculation}',"
                     f" model='{self.model}', geometry='{self.geometry}', absorption={self.absorption},\n")
 
             for class_list in class_lists:
                 contents = getattr(self, class_list).data
                 if contents:
-                    f.write(f'{indent}{class_list}=RAT.ClassList({contents}),\n')
+                    f.write(f'{indent}{class_list}=demo_recv.ClassList({contents}),\n')
             f.write(f'{indent})\n')
 
     def _classlist_wrapper(self, class_list: ClassList, func: Callable):

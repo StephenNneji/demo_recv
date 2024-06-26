@@ -3,36 +3,36 @@
 import pathlib
 from typing import Union
 
-import RAT
-import RAT.controls
-from RAT.utils.enums import Calculations, LayerModels
+import demo_recv
+import demo_recv.controls
+from demo_recv.utils.enums import Calculations, LayerModels
 
-from RAT.rat_core import Cells, Checks, Control, Limits, Priors, ProblemDefinition
+from demo_recv.rat_core import Cells, Checks, Control, Limits, Priors, ProblemDefinition
 
 
-def make_input(project: RAT.Project, controls: Union[RAT.controls.Calculate, RAT.controls.Simplex, RAT.controls.DE,
-                                                     RAT.controls.NS, RAT.controls.Dream]
+def make_input(project: demo_recv.Project, controls: Union[demo_recv.controls.Calculate, demo_recv.controls.Simplex, demo_recv.controls.DE,
+                                                     demo_recv.controls.NS, demo_recv.controls.Dream]
                ) -> tuple[ProblemDefinition, Cells, Limits, Priors, Control]:
     """Constructs the inputs required for the compiled RAT code using the data defined in the input project and controls.
 
     Parameters
     ----------
-    project : RAT.Project
+    project : demo_recv.Project
         The project model, which defines the physical system under study.
-    controls : Union[RAT.controls.Calculate, RAT.controls.Simplex, RAT.controls.DE, RAT.controls.NS, RAT.controls.Dream]
+    controls : Union[demo_recv.controls.Calculate, demo_recv.controls.Simplex, demo_recv.controls.DE, demo_recv.controls.NS, demo_recv.controls.Dream]
         The controls model, which defines algorithmic properties.
 
     Returns
     -------
-    problem : RAT.rat_core.ProblemDefinition
+    problem : demo_recv.rat_core.ProblemDefinition
         The problem input used in the compiled RAT code.
-    cells : RAT.rat_core.Cells
+    cells : demo_recv.rat_core.Cells
         The set of inputs that are defined in MATLAB as cell arrays.
-    limits : RAT.rat_core.Limits
+    limits : demo_recv.rat_core.Limits
         A list of min/max values for each parameter defined in the project.
-    priors : RAT.rat_core.Priors
+    priors : demo_recv.rat_core.Priors
         The priors defined for each parameter in the project.
-    cpp_controls : RAT.rat_core.Control
+    cpp_controls : demo_recv.rat_core.Control
         The controls object used in the compiled RAT code.
     """
 
@@ -62,7 +62,7 @@ def make_input(project: RAT.Project, controls: Union[RAT.controls.Calculate, RAT
     limits = Limits()
     priors = Priors()
 
-    for class_list in RAT.project.parameter_class_lists:
+    for class_list in demo_recv.project.parameter_class_lists:
         setattr(checks, checks_field[class_list], [int(element.fit) for element in getattr(project, class_list)])
         setattr(limits, parameter_field[class_list], [[element.min, element.max]
                                                       for element in getattr(project, class_list)])
@@ -74,10 +74,10 @@ def make_input(project: RAT.Project, controls: Union[RAT.controls.Calculate, RAT
     limits.qzshift = []
     priors.qzshift = []
 
-    priors.priorNames = [param.name for class_list in RAT.project.parameter_class_lists
+    priors.priorNames = [param.name for class_list in demo_recv.project.parameter_class_lists
                          for param in getattr(project, class_list)]
     priors.priorValues = [[prior_id[param.prior_type], param.mu, param.sigma]
-                          for class_list in RAT.project.parameter_class_lists
+                          for class_list in demo_recv.project.parameter_class_lists
                           for param in getattr(project, class_list)]
 
     if project.model == LayerModels.CustomXY:
@@ -88,17 +88,17 @@ def make_input(project: RAT.Project, controls: Union[RAT.controls.Calculate, RAT
     return problem, cells, limits, priors, cpp_controls
 
 
-def make_problem(project: RAT.Project) -> ProblemDefinition:
+def make_problem(project: demo_recv.Project) -> ProblemDefinition:
     """Constructs the problem input required for the compiled RAT code.
 
     Parameters
     ----------
-    project : RAT.Project
+    project : demo_recv.Project
         The project model, which defines the physical system under study.
 
     Returns
     -------
-    problem : RAT.rat_core.ProblemDefinition
+    problem : demo_recv.rat_core.ProblemDefinition
         The problem input used in the compiled RAT code.
     """
     action_id = {'add': 1, 'subtract': 2}
@@ -139,24 +139,24 @@ def make_problem(project: RAT.Project) -> ProblemDefinition:
     problem.numberOfContrasts = len(project.contrasts)
     problem.numberOfLayers = len(project.layers)
     problem.numberOfDomainContrasts = len(project.domain_contrasts)
-    problem.fitParams = [param.value for class_list in RAT.project.parameter_class_lists
+    problem.fitParams = [param.value for class_list in demo_recv.project.parameter_class_lists
                          for param in getattr(project, class_list) if param.fit]
-    problem.fitLimits = [[param.min, param.max] for class_list in RAT.project.parameter_class_lists
+    problem.fitLimits = [[param.min, param.max] for class_list in demo_recv.project.parameter_class_lists
                          for param in getattr(project, class_list) if param.fit]
-    problem.otherParams = [param.value for class_list in RAT.project.parameter_class_lists
+    problem.otherParams = [param.value for class_list in demo_recv.project.parameter_class_lists
                            for param in getattr(project, class_list) if not param.fit]
-    problem.otherLimits = [[param.min, param.max] for class_list in RAT.project.parameter_class_lists
+    problem.otherLimits = [[param.min, param.max] for class_list in demo_recv.project.parameter_class_lists
                            for param in getattr(project, class_list) if not param.fit]
 
     return problem
 
 
-def make_resample(project: RAT.Project) -> list[int]:
+def make_resample(project: demo_recv.Project) -> list[int]:
     """Constructs the "resample" field of the problem input required for the compiled RAT code.
 
     Parameters
     ----------
-    project : RAT.Project
+    project : demo_recv.Project
         The project model, which defines the physical system under study.
 
     Returns
@@ -167,12 +167,12 @@ def make_resample(project: RAT.Project) -> list[int]:
     return [contrast.resample for contrast in project.contrasts]
 
 
-def make_data_present(project: RAT.Project) -> list[int]:
+def make_data_present(project: demo_recv.Project) -> list[int]:
     """Constructs the "dataPresent" field of the problem input required for the compiled RAT code.
 
     Parameters
     ----------
-    project : RAT.Project
+    project : demo_recv.Project
         The project model, which defines the physical system under study.
 
     Returns
@@ -183,19 +183,19 @@ def make_data_present(project: RAT.Project) -> list[int]:
     return [1 if project.data[project.data.index(contrast.data)].data.size != 0 else 0 for contrast in project.contrasts]
 
 
-def make_cells(project: RAT.Project) -> Cells:
+def make_cells(project: demo_recv.Project) -> Cells:
     """Constructs the cells input required for the compiled RAT code.
 
     Note that the order of the inputs (i.e, f1 to f20) has been hard--coded into the compiled RAT code.
 
     Parameters
     ----------
-    project : RAT.Project
+    project : demo_recv.Project
         The project model, which defines the physical system under study.
 
     Returns
     -------
-    cells : RAT.rat_core.Cells
+    cells : demo_recv.rat_core.Cells
         The set of inputs that are defined in MATLAB as cell arrays.
     """
 
@@ -268,24 +268,24 @@ def make_cells(project: RAT.Project) -> Cells:
     return cells
 
 
-def make_controls(controls: Union[RAT.controls.Calculate, RAT.controls.Simplex, RAT.controls.DE, RAT.controls.NS,
-                                  RAT.controls.Dream], checks: Checks) -> Control:
+def make_controls(controls: Union[demo_recv.controls.Calculate, demo_recv.controls.Simplex, demo_recv.controls.DE, demo_recv.controls.NS,
+                                  demo_recv.controls.Dream], checks: Checks) -> Control:
     """Converts the controls object to the format required by the compiled RAT code.
 
     Parameters
     ----------
-    controls : Union[RAT.controls.Calculate, RAT.controls.Simplex, RAT.controls.DE, RAT.controls.NS, RAT.controls.Dream]
+    controls : Union[demo_recv.controls.Calculate, demo_recv.controls.Simplex, demo_recv.controls.DE, demo_recv.controls.NS, demo_recv.controls.Dream]
         The controls model, which defines algorithmic properties.
     checks : Rat.rat_core.Checks
         States whether or not to fit each parameter defined in the project.
 
     Returns
     -------
-    controls : RAT.rat_core.Control
+    controls : demo_recv.rat_core.Control
         The controls object used in the compiled RAT code.
     """
 
-    full_controls = RAT.controls.Controls(**controls.model_dump())
+    full_controls = demo_recv.controls.Controls(**controls.model_dump())
     cpp_controls = Control()
 
     cpp_controls.procedure = full_controls.procedure
