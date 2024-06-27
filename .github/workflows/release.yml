@@ -36,11 +36,11 @@ jobs:
           path: dist
           merge-multiple: true
       - run: echo ${{github.event.type}}
+      - name: Publish
+        if: github.event.type == 'release'
+        uses: pypa/gh-action-pypi-publish@release/v1
       - name: Publish to TestPyPi
         if: github.event.type == 'workflow_dispatch' 
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
-      - name: Publish
-        if: github.event.type == 'release'
-        uses: pypa/gh-action-pypi-publish@release/v1
